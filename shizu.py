@@ -116,10 +116,10 @@ if __name__ == "__main__":
             join(chan)
 
         if ircmsg.find(' PRIVMSG ') != -1:
-            nick = ircmsg.split('!')[0][1:]
+            usernick = ircmsg.split('!')[0][1:]
             chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
-            commands(nick, chan, ircmsg)
-            triggers(nick, chan, ircmsg, ircraw)
+            commands(usernick, chan, ircmsg)
+            triggers(usernick, chan, ircmsg, ircraw)
 
 # See ya!
 ircsock.send("QUIT %s\r\n" % quitmsg)
