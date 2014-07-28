@@ -71,7 +71,7 @@ def join(chan):
 def getGreeting(greeter):
     t = int(time.strftime("%H"))
     debug(str(t))
-    if t >= 17:
+    if t >= 17 or t < 4:
         greeting = "Konbanwa"
     elif t >= 12:
         greeting = "Konnichiwa"
