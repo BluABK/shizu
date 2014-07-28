@@ -27,12 +27,13 @@ nickservPass = config.config.get('nickserv', 'password')
 def commands(nick, chan, msg):
     # syntax: elif msg.find(nick + ": <trigger>") != 1:
     if msg.find(cmdsym + "awesome") != -1:
-        ircsock.send("PRIVMSG %s :Everything is awesome!\r\n" % chan)
+        sendmsg("Everything is awesome!")
     elif msg.find(cmdsym + "smblogins") != -1:
     #    ircsock.send("PRIVMSG %s :DEBUG AHEAD:%s@%s\t[ID: %s]\r\n" % (chan, tmpList[0].name, tmpList[0].host, tmpList[0].id))
     #    ircsock.send("PRIVMSG %s: The following users are currently logged in:" % chan)
         for item in xrange(len(samba.getLogins())):
-            ircsock.send("PRIVMSG %s :%s@%s        [ID: %s]\r\n" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
+        #    ircsock.send("PRIVMSG %s :%s@%s        [ID: %s]\r\n" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
+            sendmsg("%s@%s        [ID: %s]" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
     elif msg.find(cmdsym + "nyaa") != -1:
         nyaa()
     elif msg.find(cmdsym + "quit%s" % quitProtection) != -1:
@@ -47,16 +48,17 @@ def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
        debug("IRCMSG = " + ircmsg)
        greeter = ircmsg.strip(":").split("!")[0]
        debug("greeter = " + greeter)
-       debug("%s :%s" % (chan, getGreeting(greeter)))
+       sendmsg("%s :%s" % (chan, getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
-       ircsock.send("PRIVMSG %s :H-h...Hi there\r\n" % chan)
+       sendmsg("H-h...Hi there")
 
 # other functions
 def ping():
     ircsock.send("PONG :Pong\n")
 
-def sendmsg(chan, msg): # TODO : implement across code
-    ircsock.send("PRIVMSG " + chan + " :" + msg + "\n")
+def sendmsg(msg): # TODO : implement across code
+    global chan
+    ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
 
 def sendmsg_all(chans, msg):    # TODO : implement across code
     for i in chans:
