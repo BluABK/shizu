@@ -5,7 +5,7 @@ import socket           # A rather useful network tool
 import time             # For time-based greeting functionality
 
 # Project-specific modules
-import config
+import ConfigParser, io
 import samba    # for server-specific samba functionality
 
 # Some basic and/or static configuration
@@ -13,15 +13,32 @@ run = True
 
 # Read the rest from file
 # TODO: Ditch this bit and make the bot read the config file on-demand (dynamic config)
-server = config.config.get('irc', 'server')
-server_pass = config.config.get('irc', 'password')
-port = config.config.getint('irc', 'port')
-chan = config.config.get('irc', 'channel')
-nick = config.config.get('irc', 'nickname')
-cmdsym = config.config.get('irc', 'cmdsymbol')
-quitmsg = config.config.get('irc', 'quit-message')
-quitProtection = config.config.get('irc', 'quit-protection')
-nickservPass = config.config.get('nickserv', 'password')
+class binfo:
+	# Shizu's config class
+
+	config = ConfigParser.RawConfigParser()
+
+	def __init__ (self):
+		self.config.read("config.ini")
+
+	def server():
+		return self.config.get('irc','server')
+	def spass():
+		return self.config.get('irc','password')
+	def port():
+		return self.config.get('irc','port')
+	def chan():
+		return self.config.get('irc','channel')
+	def nick():
+		return self.config.get('irc','nickname')
+	def cmdsym():
+		return self.config.get('irc','cmdsymbol')
+	def quitmsg():
+		return self.config.get('irc','quit-message')
+	def quitpro():
+		return self.config.get('irc','quit-protection')
+	def nspass():
+		return self.config.get('nickserv','password')
 
 # Commands
 def commands(nick, chan, msg):
