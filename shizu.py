@@ -63,10 +63,9 @@ def sendmsg_all(chans, msg):    # TODO : implement across code
         ircsock.send("PRIVMSG " + chan + " :" + msg + "\n")
 def debug(msg):
     global chan
-    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % chan, msg)
+    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (chan, msg))
 def join(chan):
     ircsock.send("JOIN " + chan + "\n")
-
 def getGreeting(greeter):
     t = int(time.strftime("%H"))
     debug(str(t))
