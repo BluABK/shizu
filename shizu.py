@@ -13,32 +13,34 @@ run = True
 
 # Read the rest from file
 # TODO: Ditch this bit and make the bot read the config file on-demand (dynamic config)
+
 class binfo:
-	# Shizu's config class
+    # Shizu's config class
 
-	config = ConfigParser.RawConfigParser()
+    config = ConfigParser.RawConfigParser()
 
-	def __init__ (self):
-		self.config.read("config.ini")
+    def __init__ (self):
+        self.config.read("config.ini")
 
-	def server():
-		return self.config.get('irc','server')
-	def spass():
-		return self.config.get('irc','password')
-	def port():
-		return self.config.get('irc','port')
-	def chan():
-		return self.config.get('irc','channel')
-	def nick():
-		return self.config.get('irc','nickname')
-	def cmdsym():
-		return self.config.get('irc','cmdsymbol')
-	def quitmsg():
-		return self.config.get('irc','quit-message')
-	def quitpro():
-		return self.config.get('irc','quit-protection')
-	def nspass():
-		return self.config.get('nickserv','password')
+    def server(self):
+        return self.config.get('irc', 'server')
+    def spass(self):
+        return self.config.get('irc', 'password')
+    def port(self):
+        return self.config.get('irc', 'port')
+    def chan(self):
+        return self.config.get('irc', 'channel')
+    def nick(self):
+        return self.config.get('irc', 'nickname')
+	def cmdsym(self):
+        return self.config.get('irc', 'cmdsymbol')
+	def quitmsg(self):
+		return self.config.get('irc', 'quit-message')
+	def quitpro(self):
+		return self.config.get('irc', 'quit-protection')
+	def nspass(self):
+		return self.config.get('nickserv', 'password')
+
 bI = binfo()
 # Commands
 def commands(nick, chan, msg):
@@ -60,13 +62,12 @@ def commands(nick, chan, msg):
         ircsock.send("PRIVMSG %s :Syntax incorrect, please rephrase.\r\n" % chan)
 
 def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
-<<<<<<< HEAD
     global nick
     if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
        greeter = ircmsg.strip(":").split("!")[0]
        sendmsg((getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
-=======
+
     global bI
     if raw.find(":Hello " + bI.nick) != -1:  # If someone greets me, I will greet back.
        debug("Greet function triggered")
@@ -75,7 +76,6 @@ def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
        debug("greeter = " + greeter)
        sendmsg("%s :%s" % (chan, getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + bI.nick) != -1:  # If someone greets me, I will greet back.
->>>>>>> origin/master-configtest
        sendmsg("H-h...Hi there")
 
 # other functions
