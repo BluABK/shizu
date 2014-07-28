@@ -1,0 +1,17 @@
+[irc]
+server = 79.160.59.72
+port = 6667
+password =
+nickname = shizu
+channel = #blu
+cmdsymbol = !
+quit-message = Bye!
+quit-protection =
+
+[nickserv]
+password =
+
+[samba]
+smbstatus-command = sudo smbstatus -b | grep ipv
+exclude-names =
+exclude-paths =
