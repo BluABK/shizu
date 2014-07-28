@@ -40,13 +40,13 @@ def commands(nick, chan, msg):
     elif ircmsg.find(cmdsym + "help") != -1:
         ircsock.send("PRIVMSG %s :Syntax incorrect, please rephrase.\r\n" % chan)
 
-def triggers(nick, chan, msg):  # TODO : Doesn't work apparently =/
-        if msg.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
-            ircsock.send("PRIVMSG %s: DEBUG: Greet function triggered" % chan)
+def triggers(nick, chan, msg, raw):  # TODO : Doesn't work apparently =/
+        if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
+            ircsock.send("PRIVMSG %s: DEBUG: Greet function triggered\r\n" % chan)
             greeter = ircmsg.strip(":").split("!")[0]
-            ircsock.send("PRIVMSG %s:%s" % (chan, getGreeting(greeter)))
+            ircsock.send("PRIVMSG %s:%s\r\n" % (chan, getGreeting(greeter)))
         elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
-            ircsock.send("PRIVMSG %s :H-h...Hi there" % chan)
+            ircsock.send("PRIVMSG %s :H-h...Hi there\r\n" % chan)
 
 # other functions
 def ping():
@@ -102,6 +102,7 @@ if __name__ == "__main__":
 
     while run:
         ircmsg = ircsock.recv(2048)             # Receive data from the server
+        ircraw = ircmsg                         # Keep a raw handle
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         print(ircmsg)                           # print received data
 
@@ -118,7 +119,7 @@ if __name__ == "__main__":
             nick = ircmsg.split('!')[0][1:]
             chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
             commands(nick, chan, ircmsg)
-            triggers(nick, chan, ircmsg)
+            triggers(nick, chan, ircmsg, ircraw)
 
 # See ya!
 ircsock.send("QUIT %s\r\n" % quitmsg)
