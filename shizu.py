@@ -43,12 +43,11 @@ def commands(nick, chan, msg):
 def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
     global nick
     if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
-       print("DEBUG :Hello %s" % nick)
-       ircsock.send("PRIVMSG %s :DEBUG: Greet function triggered\r\n" % chan)
-       print("DEBUG: IRCMSG = %s" % ircmsg)
+       debug("Greet function triggered")
+       debug("IRCMSG = " + ircmsg)
        greeter = ircmsg.strip(":").split("!")[0]
-       print("DEBUG: greeter = %s"% greeter)
-       ircsock.send("PRIVMSG %s :%s\r\n" % (chan, getGreeting(greeter)))
+       debug("greeter = " + greeter)
+       debug("%s :%s" % (chan, getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
        ircsock.send("PRIVMSG %s :H-h...Hi there\r\n" % chan)
 
@@ -62,13 +61,15 @@ def sendmsg(chan, msg): # TODO : implement across code
 def sendmsg_all(chans, msg):    # TODO : implement across code
     for i in chans:
         ircsock.send("PRIVMSG " + chan + " :" + msg + "\n")
-
+def debug(msg):
+    global chan
+    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % chan, msg)
 def join(chan):
     ircsock.send("JOIN " + chan + "\n")
 
 def getGreeting(greeter):
     t = int(time.strftime("%H"))
-
+    debug(str(t))
     if t >= 17:
         greeting = "Konbanwa"
     elif t >= 12:
