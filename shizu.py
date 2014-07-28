@@ -33,7 +33,7 @@ def commands(nick, chan, msg):
     #    ircsock.send("PRIVMSG %s: The following users are currently logged in:" % chan)
         for item in xrange(len(samba.getLogins())):
         #    ircsock.send("PRIVMSG %s :%s@%s        [ID: %s]\r\n" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
-            sendmsg("%s@%s        [ID: %s]" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
+            sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
     elif msg.find(cmdsym + "nyaa") != -1:
         nyaa()
     elif msg.find(cmdsym + "quit%s" % quitProtection) != -1:
