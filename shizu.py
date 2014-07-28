@@ -62,13 +62,12 @@ def commands(nick, chan, msg):
         ircsock.send("PRIVMSG %s :Syntax incorrect, please rephrase.\r\n" % chan)
 
 def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
-    global nick
-    if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
+    global bI
+    if raw.find(":Hello " + bI.nick) != -1:  # If someone greets me, I will greet back.
        greeter = ircmsg.strip(":").split("!")[0]
        sendmsg((getGreeting(greeter)))
-    elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
+    elif msg.find((":hi " or ":Hi " or ":ohi ") + bI.nick) != -1:  # If someone greets me, I will greet back.
 
-    global bI
     if raw.find(":Hello " + bI.nick) != -1:  # If someone greets me, I will greet back.
        debug("Greet function triggered")
        debug("IRCMSG = " + ircmsg)
