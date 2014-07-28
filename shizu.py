@@ -44,10 +44,7 @@ def commands(nick, chan, msg):
 def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
     global nick
     if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
-       debug("Greet function triggered")
-       debug("IRCMSG = " + ircmsg)
        greeter = ircmsg.strip(":").split("!")[0]
-       debug("greeter = " + greeter)
        sendmsg((getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
        sendmsg("H-h...Hi there")
