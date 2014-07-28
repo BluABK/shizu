@@ -23,23 +23,23 @@ class binfo:
         self.config.read("config.ini")
 
     def server(self):
-        return self.config.get('irc', 'server')
+         return self.config.get('irc', 'server')
     def spass(self):
-        return self.config.get('irc', 'password')
+         return self.config.get('irc', 'password')
     def port(self):
-        return self.config.get('irc', 'port')
+         return self.config.get('irc', 'port')
     def chan(self):
-        return self.config.get('irc', 'channel')
+         return self.config.get('irc', 'channel')
     def nick(self):
-        return self.config.get('irc', 'nickname')
+         return self.config.get('irc', 'nickname')
 	def cmdsym(self):
-        return self.config.get('irc', 'cmdsymbol')
+         return self.config.get('irc', 'cmdsymbol')
 	def quitmsg(self):
-		return self.config.get('irc', 'quit-message')
+		 return self.config.get('irc', 'quit-message')
 	def quitpro(self):
-		return self.config.get('irc', 'quit-protection')
+		 return self.config.get('irc', 'quit-protection')
 	def nspass(self):
-		return self.config.get('nickserv', 'password')
+		 return self.config.get('nickserv', 'password')
 
 bI = binfo()
 # Commands
