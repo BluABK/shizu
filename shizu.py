@@ -44,7 +44,7 @@ def triggers(nick, chan, msg, raw):  # TODO : Doesn't work apparently =/
         if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
             print("DEBUG :Hello %s" % nick)
             ircsock.send("PRIVMSG %s: DEBUG: Greet function triggered\r\n" % chan)
-            print("DEBUG: %s --> %s" % ircmsg, (ircmsg.strip(":").split("!")[0]))
+            print("DEBUG: IRCMSG = %s" % ircmsg)
             greeter = ircmsg.strip(":").split("!")[0]
             print("DEBUG: greeter = %s"% greeter)
             ircsock.send("PRIVMSG %s:%s\r\n" % (chan, getGreeting(greeter)))
