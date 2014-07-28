@@ -48,7 +48,7 @@ def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
        debug("IRCMSG = " + ircmsg)
        greeter = ircmsg.strip(":").split("!")[0]
        debug("greeter = " + greeter)
-       sendmsg("%s :%s" % (chan, getGreeting(greeter)))
+       sendmsg((getGreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
        sendmsg("H-h...Hi there")
 
