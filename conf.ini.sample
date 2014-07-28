@@ -12,6 +12,6 @@ quit-protection =
 password =
 
 [samba]
-smbstatus-command = sudo smbstatus -b | grep ipv
+smbstatus-command =
 exclude-names =
 exclude-paths =
