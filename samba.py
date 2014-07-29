@@ -1,6 +1,7 @@
 __author__ = 'bluabk'
 
 from subprocess import check_output
+import re
 import config
 
 regex = re.compile(" +")
