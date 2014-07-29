@@ -16,8 +16,12 @@ run = True
 ircbacklog = list()
 maxbacklog = 10
 
-# Read the rest from file
-
+def is_number(s):
+     try:
+        int(s)
+        return True
+     except ValueError:
+        return False
 
 class BotInfo:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
@@ -59,21 +63,16 @@ bI = BotInfo()
 
 
 def commands(usernick, msg):
-    global bI
+    global bI, re
     # General commands
     if msg.find(bI.cmdsym() + "awesome") != -1:
         sendmsg("Everything is awesome!")
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
     elif msg.find(bI.cmdsym() + "replay") != -1:
-        def is_number(s):
-            try:
-                int(s)
-                return True
-            except ValueError:
-                return False
-        arg = str(msg.find(bI.cmdsym() + "replay")).split("replay ", 1)[1]
-        if is_number(arg):
+        matches = re.search(r"reply (\d+)",msg)
+        arg = matches.group(1)
+        if is_number(arg) and int(arg) <= maxbacklog:
             replay(int(arg))
         else:
             replay(0)
@@ -175,12 +174,11 @@ if __name__ == "__main__":
 
     while run:
         i += 1
-        ircmsg = ircsock.recv(512)             # Receive data from the server
-        ircraw = ircmsg                         # Keep a raw handle
+        ircraw = ircsock.recv(512)             # Receive data from the server
         if len(ircbacklog) > maxbacklog:
-            del ircbacklog[-1]                    # Remove oldest entry
+            del ircbacklog[-1]                 # Remove oldest entry
         ircbacklog.insert(0, ircraw)
-        ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
+        ircmsg = ircraw.strip("\r\n")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(str(i) + ": " + ircmsg)                           # print received data
 
