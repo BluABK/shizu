@@ -73,11 +73,19 @@ def commands(usernick, msg):
     # Module: samba
     if msg.find(bI.cmdsym() + "samba") != -1:
         if msg.find(bI.cmdsym() + "samba logins") != -1:
-            for item in xrange(len(samba.getlogins())):
-                sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
+            tmpuser = "placeholder"
+            if msg.find(bI.cmdsym() + "samba logins %s" % tmpuser) != -1:
+                s = msg
+                p = re.compile("samba logins \d{2}")
+                match = p.search(s)
+                s[:match.end()]
+            else:
+                for item in xrange(len(samba.getlogins())):
+                    sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
         elif msg.find(bI.cmdsym() + "samba" or bI.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
+
 
 def triggers(usernick, msg, raw):
     global bI
