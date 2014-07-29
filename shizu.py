@@ -188,8 +188,7 @@ if __name__ == "__main__":
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(ircmsg)                           # print received data
 
-        ircparts = re.split("\s", ircmsg, 4)
-        print(ircparts)
+        ircparts = re.split("\s", ircmsg, 3)
 
         if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
