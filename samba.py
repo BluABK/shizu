@@ -1,20 +1,23 @@
 __author__ = 'bluabk'
 
+import ConfigParser, re
 from subprocess import check_output
-import re
-import config
 
 regex = re.compile(" +")
 sambaUsers = list()
-
-#print 'test'
-#call(['echo', 'shellexectest'])
-
 loginHandlesRaw = check_output(config.config.get('samba', 'smbstatus-command'), shell=True)
-
-print loginHandlesRaw
-
 loginHandles = loginHandlesRaw.splitlines()
+
+class Config:  # Shizu's config class
+    config = ConfigParser.RawConfigParser()
+
+    def __init__(self):
+        self.config.read("config.ini")
+
+    def arbitrary(self):
+        return str(self.config.get('samba', 'item'))
+
+cfg = Config()
 
 
 def getplaying():
