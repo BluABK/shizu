@@ -17,41 +17,41 @@ run = True
 class binfo: # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
-    def __init__ (self):
+    def __init__(self):
         self.config.read("config.ini")
 
     def server(self):
-        return self.config.get('irc', 'server')
+        return str(self.config.get('irc', 'server'))
 
     def spass(self):
-        return self.config.get('irc', 'password')
+        return str(self.config.get('irc', 'password'))
 
     def port(self):
-        return self.config.get('irc', 'port')
+        return int(self.config.get('irc', 'port'))
 
     def chan(self):
-        return self.config.get('irc', 'channel')
+        return str(self.config.get('irc', 'channel'))
 
     def nick(self):
-        return self.config.get('irc', 'nickname')
+        return str(self.config.get('irc', 'nickname'))
 
     def cmdsym(self):
-        return self.config.get('irc', 'cmdsymbol')
+        return str(self.config.get('irc', 'cmdsymbol'))
 
     def quitmsg(self):
-        return self.config.get('irc', 'quit-message')
+        return str(self.config.get('irc', 'quit-message'))
 
     def quitpro(self):
-        return self.config.get('irc', 'quit-protection')
+        return str(self.config.get('irc', 'quit-protection'))
 
     def nspass(self):
-        return self.config.get('nickserv', 'password')
+        return str(self.config.get('nickserv', 'password'))
 
 bI = binfo()
 
 
-def commands(nick, chan, msg):
-    # syntax: elif msg.find(nick + ": <trigger>") != 1:
+def commands(usernick, msg):
+    global bI
     if msg.find(bI.cmdsym() + "awesome") != -1:
         sendmsg("Everything is awesome!")
     elif msg.find(bI.cmdsym() + "smblogins") != -1:
@@ -62,15 +62,15 @@ def commands(nick, chan, msg):
     elif msg.find(bI.cmdsym() + "quit%s" % bI.quitpro()) != -1:
         quit()
     elif ircmsg.find(bI.cmdsym() + "help") != -1:
-        ircsock.send("PRIVMSG %s :Syntax incorrect, please rephrase.\r\n" % chan)
+        sendmsg(usernick + ": Syntax incorrect, please rephrase.")
 
 
-def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
-    global nick
-    if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
+def triggers(usernick, msg, raw):  # TODO : Doesn't work apparently =/
+    global bI
+    if raw.find(":Hello " + bI.nick()) != -1:  # If someone greets me, I will greet back.
         greeter = ircmsg.strip(":").split("!")[0]
         sendmsg((getGreeting(greeter)))
-    elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
+    elif msg.find((":hi " or ":Hi " or ":ohi ") + usernick) != -1:  # If someone greets me, I will greet back.
         sendmsg("H-h...Hi there")
 
 
@@ -145,8 +145,8 @@ if __name__ == "__main__":
         if ircmsg.find(' PRIVMSG ') != -1:
             usernick = ircmsg.split('!')[0][1:]
             chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
-            commands(usernick, chan, ircmsg)
-            triggers(usernick, chan, ircmsg, ircraw)
+            commands(usernick, ircmsg)
+            triggers(usernick, ircmsg, ircraw)
 
 # See ya!
 ircsock.send("QUIT %s\r\n" % bI.quitmsg())
