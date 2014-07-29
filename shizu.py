@@ -12,22 +12,24 @@ import samba    # for server-specific samba functionality
 # Some basic and/or static configuration
 run = True
 
-# Some varibles
+# Some variables
 ircbacklog = list()
 maxbacklog = 10
 
-def is_number(s):
-     try:
+
+def ian(s):  # is a number
+    try:
         int(s)
         return True
-     except ValueError:
+    except ValueError:
         return False
+
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        self.config.read("config.ini")
+        self.config.read('config.ini')
 
     def server(self):
         return str(self.config.get('irc', 'server'))
@@ -73,7 +75,7 @@ def commands(usernick, msg, chan):
         matches = re.search(r"replay (\d+)", msg)
         try:
             arg = matches.group(1)
-            if is_number(arg) and int(arg) <= maxbacklog:
+            if ian(arg) and int(arg) <= maxbacklog:
                 replay(int(arg))
             else:
                 replay(0)

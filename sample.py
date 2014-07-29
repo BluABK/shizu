@@ -10,7 +10,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        self.config.read("config.ini")
+        self.config.read('config.ini')
 
     def sample(self):
         return str(self.config.get('sample', 'sampleitem'))
@@ -23,6 +23,6 @@ cfg = Config()
 
 def help():
     cmdlist = list()
-    cmdlist.append("Syntax: samba command arg1..argN")
-    cmdlist.append("Available commands: sample (* command contains sub-commands)")
+    cmdlist.append('Syntax: samba command arg1..argN')
+    cmdlist.append('Available commands: sample (* command contains sub-commands)')
     return cmdlist
