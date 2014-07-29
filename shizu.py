@@ -47,6 +47,9 @@ class binfo: # Shizu's config class
     def nspass(self):
         return str(self.config.get('nickserv', 'password'))
 
+    def getvar(self,group,name):
+        return str(self.config.get(group,name))
+
 bI = binfo()
 
 
