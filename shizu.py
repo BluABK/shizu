@@ -145,9 +145,12 @@ if __name__ == "__main__":
         ircmsg = ircsock.recv(2048)             # Receive data from the server
         ircraw = ircmsg                         # Keep a raw handle
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
+        ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_>
         print(ircmsg)                           # print received data
 
-        if ircmsg.find("PING :") != -1:  # Gotta pong that ping...pong..<vicious cycle>
+        ircparts = re.split("\s", ircmsg, 4)
+
+        if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
 
         if ircmsg.find("NOTICE %s :This nickname is registered" % bI.nick()) != -1:
@@ -162,6 +165,6 @@ if __name__ == "__main__":
             commands(tmpusernick, ircmsg)
             triggers(tmpusernick, ircmsg, ircraw)
 
-# See ya!
-ircsock.send("QUIT %s\r\n" % bI.quitmsg())
-ircsock.close()
+    # See ya!
+    ircsock.send("QUIT %s\r\n" % bI.quitmsg())
+    ircsock.close()
