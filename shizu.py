@@ -79,13 +79,12 @@ def ping():
 
 
 def sendmsg(msg): # TODO : implement across code
-    global chan
-    ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
-
+    global bI
+    ircsock.send("PRIVMSG %s :%s\r\n" % (bI.chan(), msg))
 
 def debug(msg):
-    global chan
-    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (chan, msg))
+    global bI
+    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (bI.chan(), msg))
 
 
 def join(chan):
