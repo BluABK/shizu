@@ -65,7 +65,7 @@ def commands(usernick, msg):
         sendmsg("Everything is awesome!")
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
-    elif msg.find(bI.cmdsym() + "replay"):
+    elif msg.find(bI.cmdsym() + "replay") != -1:
         def is_number(s):
             try:
                 int(s)
