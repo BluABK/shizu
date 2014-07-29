@@ -84,7 +84,7 @@ def commands(usernick, msg):
         sendmsg(matches.group(1))
     elif msg.find(cfg.cmdsym() + "act") != -1:
         action = re.search(r"act (\w+)", msg)
-        ircsock.send(u"PRIVMSG %s :\x01ACTION %s\x01" % (chan, action))
+        ircsock.send(u"PRIVMSG %s :\x01ACTION %s\x01\r\n" % (chan, action.group(1)))
     elif msg.find(cfg.cmdsym() + "quit%s" % cfg.quitpro()) != -1:
         ircquit()
 
