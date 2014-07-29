@@ -82,6 +82,7 @@ def sendmsg(msg): # TODO : implement across code
     global bI
     ircsock.send("PRIVMSG %s :%s\r\n" % (bI.chan(), msg))
 
+
 def debug(msg):
     global bI
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (bI.chan(), msg))
@@ -93,7 +94,7 @@ def join(chan):
 
 def getGreeting(greeter):
     t = int(time.strftime("%H"))
-    debug(str(t))
+
     if t >= 17 or t < 4:
         greeting = "Konbanwa"
     elif t >= 12:
