@@ -203,7 +203,7 @@ if __name__ == "__main__":
         if ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
             chan = ircparts[2]
-            if chan[0] != '#'
+            if chan[0] != '#':
                 chan = tmpusernick
             message = ircparts[3].lstrip(":")
             commands(tmpusernick, message)
