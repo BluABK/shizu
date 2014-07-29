@@ -72,7 +72,7 @@ def commands(usernick, msg):
                 return True
             except ValueError:
                 return False
-        arg = msg.find(bI.cmdsym() + "replay").split("replay ", 1)[1]
+        arg = str(msg.find(bI.cmdsym() + "replay")).split("replay ", 1)[1]
         if is_number(arg):
             replay(int(arg))
         else:
