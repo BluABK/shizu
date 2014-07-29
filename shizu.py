@@ -5,7 +5,7 @@ import socket           # A rather useful network tool
 import time             # For time-based greeting functionality
 
 # Project-specific modules
-import ConfigParser, io
+import config
 import samba    # for server-specific samba functionality
 
 # Some basic and/or static configuration
@@ -13,68 +13,40 @@ run = True
 
 # Read the rest from file
 # TODO: Ditch this bit and make the bot read the config file on-demand (dynamic config)
+server = config.config.get('irc', 'server')
+server_pass = config.config.get('irc', 'password')
+port = config.config.getint('irc', 'port')
+chan = config.config.get('irc', 'channel')
+nick = config.config.get('irc', 'nickname')
+cmdsym = config.config.get('irc', 'cmdsymbol')
+quitmsg = config.config.get('irc', 'quit-message')
+quitProtection = config.config.get('irc', 'quit-protection')
+nickservPass = config.config.get('nickserv', 'password')
 
-class binfo:
-    # Shizu's config class
-
-    config = ConfigParser.RawConfigParser()
-
-    def __init__ (self):
-        self.config.read("config.ini")
-
-        def server(self):
-            return self.config.get('irc', 'server')
-        def spass(self):
-            return self.config.get('irc', 'password')
-        def port(self):
-            return self.config.get('irc', 'port')
-        def chan(self):
-            return self.config.get('irc', 'channel')
-        def nick(self):
-            return self.config.get('irc', 'nickname')
-        def cmdsym(self):
-            return self.config.get('irc', 'cmdsymbol')
-        def quitmsg(self):
-            return self.config.get('irc', 'quit-message')
-        def quitpro(self):
-            return self.config.get('irc', 'quit-protection')
-        def nspass(self):
-            return self.config.get('nickserv', 'password')
-
-bI = binfo()
 # Commands
 def commands(nick, chan, msg):
-    global bI
     # syntax: elif msg.find(nick + ": <trigger>") != 1:
-    if msg.find(bI.cmdsym + "awesome") != -1:
+    if msg.find(cmdsym + "awesome") != -1:
         sendmsg("Everything is awesome!")
-    elif msg.find(bI.cmdsym + "smblogins") != -1:
+    elif msg.find(cmdsym + "smblogins") != -1:
     #    ircsock.send("PRIVMSG %s :DEBUG AHEAD:%s@%s\t[ID: %s]\r\n" % (chan, tmpList[0].name, tmpList[0].host, tmpList[0].id))
     #    ircsock.send("PRIVMSG %s: The following users are currently logged in:" % chan)
         for item in xrange(len(samba.getLogins())):
         #    ircsock.send("PRIVMSG %s :%s@%s        [ID: %s]\r\n" % (chan, samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
             sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
-    elif msg.find(bI.cmdsym + "nyaa") != -1:
+    elif msg.find(cmdsym + "nyaa") != -1:
         nyaa()
-    elif msg.find(bI.cmdsym + "quit%s" % bI.quitProtection) != -1:
+    elif msg.find(cmdsym + "quit%s" % quitProtection) != -1:
         quit()
-    elif ircmsg.find(bI.cmdsym + "help") != -1:
+    elif ircmsg.find(cmdsym + "help") != -1:
         ircsock.send("PRIVMSG %s :Syntax incorrect, please rephrase.\r\n" % chan)
 
 def triggers(usernick, chan, msg, raw):  # TODO : Doesn't work apparently =/
-    global bI
-    if raw.find(":Hello " + bI.nick) != -1:  # If someone greets me, I will greet back.
+    global nick
+    if raw.find(":Hello " + nick) != -1:  # If someone greets me, I will greet back.
        greeter = ircmsg.strip(":").split("!")[0]
        sendmsg((getGreeting(greeter)))
-    elif msg.find((":hi " or ":Hi " or ":ohi ") + bI.nick) != -1:  # If someone greets me, I will greet back.
-
-    if raw.find(":Hello " + bI.nick) != -1:  # If someone greets me, I will greet back.
-       debug("Greet function triggered")
-       debug("IRCMSG = " + ircmsg)
-       greeter = ircmsg.strip(":").split("!")[0]
-       debug("greeter = " + greeter)
-       sendmsg("%s :%s" % (chan, getGreeting(greeter)))
-    elif msg.find((":hi " or ":Hi " or ":ohi ") + bI.nick) != -1:  # If someone greets me, I will greet back.
+    elif msg.find((":hi " or ":Hi " or ":ohi ") + nick) != -1:  # If someone greets me, I will greet back.
        sendmsg("H-h...Hi there")
 
 # other functions
@@ -82,12 +54,15 @@ def ping():
     ircsock.send("PONG :Pong\n")
 
 def sendmsg(msg): # TODO : implement across code
-    global bI
-    ircsock.send("PRIVMSG %s :%s\r\n" % (bI.chan, msg))
+    global chan
+    ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
 
+def sendmsg_all(chans, msg):    # TODO : implement across code
+    for i in chans:
+        ircsock.send("PRIVMSG " + chan + " :" + msg + "\n")
 def debug(msg):
-    global bI
-    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (bI.chan, msg))
+    global chan
+    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (chan, msg))
 def join(chan):
     ircsock.send("JOIN " + chan + "\n")
 def getGreeting(greeter):
@@ -105,8 +80,7 @@ def getGreeting(greeter):
     return "%s %s~" % (greeting,  greeter)
 
 def nyaa():
-    global bI
-    ircsock.send("PRIVMSG " + bI.chan + " :Nyaa~\n")
+    ircsock.send("PRIVMSG " + chan + " :Nyaa~\n")
 
 def quit():
     global run
@@ -115,14 +89,14 @@ def quit():
 if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ircsock.connect((bI.server, bI.port))
-    #if bI.spass != "" {
-    #    ircsock.send("PASS " + bI.spass + "\n")
+    ircsock.connect((server, port))
+    #if server_pass != "" {
+    #    ircsock.send("PASS " + server_pass + "\n")
     #}
 
     # Register with the server
-    ircsock.send("USER " + bI.nick + " " + bI.nick + " " + bI.nick + " :Nibiiro Shizuka\n")
-    ircsock.send("NICK " + bI.nick + "\n")
+    ircsock.send("USER " + nick + " " + nick + " " + nick + " :Nibiiro Shizuka\n")
+    ircsock.send("NICK " + nick + "\n")
 
     while run:
         ircmsg = ircsock.recv(2048)             # Receive data from the server
@@ -133,11 +107,11 @@ if __name__ == "__main__":
         if ircmsg.find("PING :") != -1:  # Gotta pong that ping...pong..<vicious cycle>
             ping()
 
-        if ircmsg.find("NOTICE %s :This nickname is registered" % bI.nick) != -1:
-            ircsock.send("PRIVMSG NickServ :identify %s\r\n" % bI.nspass)
+        if ircmsg.find("NOTICE %s :This nickname is registered" % nick) != -1:
+            ircsock.send("PRIVMSG NickServ :identify %s\r\n" % nickservPass)
 
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
-            join(bI.chan)
+            join(chan)
 
         if ircmsg.find(' PRIVMSG ') != -1:
             usernick = ircmsg.split('!')[0][1:]
@@ -146,5 +120,5 @@ if __name__ == "__main__":
             triggers(usernick, chan, ircmsg, ircraw)
 
 # See ya!
-ircsock.send("QUIT %s\r\n" % bI.quitmsg)
+ircsock.send("QUIT %s\r\n" % quitmsg)
 ircsock.close()
