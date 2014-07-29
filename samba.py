@@ -52,7 +52,7 @@ for index, line in enumerate(loginHandles):
 
     splitLine = list()
     for metaIndex, test in enumerate(tmpLine):
-        if not ' ':
+        if not test.__contains__(' '):
             splitLine.append(test)
 
     sambaUsers.insert(index, sambaUser(splitLine[0], splitLine[1], splitLine[3]))
