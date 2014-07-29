@@ -1,6 +1,7 @@
 __author__ = 'bluabk'
 
-import ConfigParser, re
+import ConfigParser
+import re
 from subprocess import check_output
 
 
