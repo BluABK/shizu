@@ -140,11 +140,11 @@ if __name__ == "__main__":
             ircsock.send("PRIVMSG NickServ :identify %s\r\n" % bI.nspass())
 
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
-            join(chan)
+            join(bI.chan())
 
         if ircmsg.find(' PRIVMSG ') != -1:
             usernick = ircmsg.split('!')[0][1:]
-            chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
+        #    chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
             commands(usernick, ircmsg)
             triggers(usernick, ircmsg, ircraw)
 
