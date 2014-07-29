@@ -70,7 +70,7 @@ def commands(usernick, msg):
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
     elif msg.find(bI.cmdsym() + "replay") != -1:
-        matches = re.search(r"reply (\d+)",msg)
+        matches = re.search(r"replay (\d+)",msg)
         arg = matches.group(1)
         if is_number(arg) and int(arg) <= maxbacklog:
             replay(int(arg))
