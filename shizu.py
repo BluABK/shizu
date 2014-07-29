@@ -80,10 +80,10 @@ def commands(usernick, msg):
         except AttributeError:
             replay(0)
     elif msg.find(cfg.cmdsym() + "say") != -1:
-        matches = re.search(r"say (\w+)", msg)
+        matches = re.search(r"say (.+)", msg)
         sendmsg(matches.group(1))
     elif msg.find(cfg.cmdsym() + "act") != -1:
-        action = re.search(r"act (\w+)", msg)
+        action = re.search(r"act (.+)", msg)
         ircsock.send(u"PRIVMSG %s :\x01ACTION %s\x01\r\n" % (chan, action.group(1)))
     elif msg.find(cfg.cmdsym() + "quit%s" % cfg.quitpro()) != -1:
         ircquit()
