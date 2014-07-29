@@ -182,7 +182,7 @@ if __name__ == "__main__":
         ircbacklog.append(ircraw)
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print(i + ": " + ircmsg)                           # print received data
+        print(str(i) + ": " + ircmsg)                           # print received data
 
         ircparts = re.split("\s", ircmsg, 4)
 
