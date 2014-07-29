@@ -55,20 +55,31 @@ bI = binfo()
 
 def commands(usernick, msg):
     global bI
+    # General commands
     if msg.find(bI.cmdsym() + "awesome") != -1:
         sendmsg("Everything is awesome!")
-    elif msg.find(bI.cmdsym() + "smblogins") != -1:
-        for item in xrange(len(samba.getLogins())):
-            sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
     elif msg.find(bI.cmdsym() + "quit%s" % bI.quitpro()) != -1:
         quit()
-    elif ircmsg.find(bI.cmdsym() + "help") != -1:
-        sendmsg(usernick + ": Syntax incorrect, please rephrase.")
+
+    # Help calls
+    if ircmsg.find(bI.cmdsym() + "help") != -1:
+        sendmsg(usernick + ": Yeah, no...")
+        sendmsg("Syntax: %shelp command arg1..argN" % bI.cmdsym())
+        sendmsg("Available commands: awesome, nyaa, samba* (* command contains sub-commands)")
+
+    # Module: samba
+    elif msg.find(bI.cmdsym() + "samba") != -1:
+        if msg.find(bI.cmdsym()) != -1:
+            for i in samba.help():
+                sendmsg(samba.help()[i])
+        elif msg.find(bI.cmdsym() + "logins") != -1:
+            for item in xrange(len(samba.getLogins())):
+                sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
 
 
-def triggers(usernick, msg, raw):  # TODO : Doesn't work apparently =/
+def triggers(usernick, msg, raw):
     global bI
     if raw.find(":Hello " + bI.nick()) != -1:  # If someone greets me, I will greet back.
         greeter = ircmsg.strip(":").split("!")[0]
@@ -81,7 +92,7 @@ def ping():
     ircsock.send("PONG :Pong\n")
 
 
-def sendmsg(msg): # TODO : implement across code
+def sendmsg(msg):
     global bI
     ircsock.send("PRIVMSG %s :%s\r\n" % (bI.chan(), msg))
 
@@ -105,7 +116,7 @@ def getGreeting(greeter):
     elif t >= 4:
         greeting = "Ohayou gozaimasu"
     else:
-        greeting = "ohi dur"
+        greeting = "Time is no longer relative, someone might want to investigate this."
 
     return "%s %s~" % (greeting,  greeter)
 

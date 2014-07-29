@@ -58,3 +58,9 @@ for index, line in enumerate(loginHandles):
     sambaUsers.insert(index, sambaUser(splitLine[0], splitLine[1], splitLine[3]))
  #   print('DEBUG: Creating user ' + splitLine[0] + ' ' + splitLine[1] + ' ' + splitLine[3])
     print('Successfully created user #' + str(index) + ': ' + str(sambaUsers[index].id) + ' - ' + sambaUsers[index].name + '@' + sambaUsers[index].host + '.')
+
+def help():
+    cmdList = list()
+    cmdList.append("Syntax: samba command arg1..argN")
+    cmdList.append("Available commands: logins (* command contains sub-commands)")
+    return cmdList
