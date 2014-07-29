@@ -171,7 +171,10 @@ if __name__ == "__main__":
     ircsock.send("USER " + bI.nick() + " " + bI.nick() + " " + bI.nick() + " :Nibiiro Shizuka\n")
     ircsock.send("NICK " + bI.nick() + "\n")
 
+    i = 0
+
     while run:
+        i += 1
         ircmsg = ircsock.recv(2048)             # Receive data from the server
         ircraw = ircmsg                         # Keep a raw handle
         if len(ircbacklog) > maxbacklog:
@@ -179,7 +182,7 @@ if __name__ == "__main__":
         ircbacklog.append(ircraw)
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print(ircmsg)                           # print received data
+        print(i + ": " + ircmsg)                           # print received data
 
         ircparts = re.split("\s", ircmsg, 4)
 
