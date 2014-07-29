@@ -15,7 +15,7 @@ run = True
 # Read the rest from file
 
 
-class binfo: # Shizu's config class
+class BotInfo:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
@@ -48,10 +48,10 @@ class binfo: # Shizu's config class
     def nspass(self):
         return str(self.config.get('nickserv', 'password'))
 
-    def getvar(self,group,name):
-        return str(self.config.get(group,name))
+    def getvar(self, group, name):
+        return str(self.config.get(group, name))
 
-bI = binfo()
+bI = BotInfo()
 
 
 def commands(usernick, msg):
@@ -62,7 +62,7 @@ def commands(usernick, msg):
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
     elif msg.find(bI.cmdsym() + "quit%s" % bI.quitpro()) != -1:
-        quit()
+        ircquit()
 
     # Help calls
     if ircmsg.find(bI.cmdsym() + "help") != -1:
@@ -77,14 +77,14 @@ def commands(usernick, msg):
                 sendmsg(str(samba.help()[item]))
         elif msg.find(bI.cmdsym() + "samba logins") != -1:
             for item in xrange(len(samba.getLogins())):
-                sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
+                sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].uid))
 
 
 def triggers(usernick, msg, raw):
     global bI
     if raw.find(":Hello " + bI.nick()) != -1:  # If someone greets me, I will greet back.
         greeter = ircmsg.strip(":").split("!")[0]
-        sendmsg((getGreeting(greeter)))
+        sendmsg((getgreeting(greeter)))
     elif msg.find((":hi " or ":Hi " or ":ohi ") + usernick) != -1:  # If someone greets me, I will greet back.
         sendmsg("H-h...Hi there")
 
@@ -107,7 +107,7 @@ def join(chan):
     ircsock.send("JOIN " + chan + "\n")
 
 
-def getGreeting(greeter):
+def getgreeting(greeter):
     t = int(time.strftime("%H"))
 
     if t >= 17 or t < 4:
@@ -126,7 +126,7 @@ def nyaa():
     sendmsg("Nyaa~")
 
 
-def quit():
+def ircquit():
     global run
     run = False
 
@@ -158,10 +158,10 @@ if __name__ == "__main__":
             join(bI.chan())
 
         if ircmsg.find(' PRIVMSG ') != -1:
-            usernick = ircmsg.split('!')[0][1:]
+            tmpusernick = ircmsg.split('!')[0][1:]
         #    chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
-            commands(usernick, ircmsg)
-            triggers(usernick, ircmsg, ircraw)
+            commands(tmpusernick, ircmsg)
+            triggers(tmpusernick, ircmsg, ircraw)
 
 # See ya!
 ircsock.send("QUIT %s\r\n" % bI.quitmsg())
