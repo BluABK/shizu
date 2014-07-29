@@ -98,7 +98,7 @@ def commands(usernick, msg):
                         sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
             except AttributeError:
                     for item in xrange(len(samba.getlogins())):
-                    sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
+                        sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
         elif msg.find(bI.cmdsym() + "samba" or bI.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
