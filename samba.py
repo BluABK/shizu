@@ -54,5 +54,5 @@ for index, line in enumerate(loginHandles):
 def help():
     cmdlist = list()
     cmdlist.append("Syntax: samba command arg1..argN")
-    cmdlist.append("Available commands: logins (* command contains sub-commands)")
+    cmdlist.append("Available commands: logins* (* command contains sub-commands)")
     return cmdlist
