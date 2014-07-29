@@ -187,8 +187,6 @@ if __name__ == "__main__":
 
         ircparts = re.split("\s", ircmsg, 4)
 
-        print('"' + ircparts[0] + '"')
-
         if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
 
