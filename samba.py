@@ -17,11 +17,11 @@ print loginHandlesRaw
 loginHandles = loginHandlesRaw.splitlines()
 
 
-def getPlaying():
+def getplaying():
     return True
 
 
-def getLogins():
+def getlogins():
     return sambaUsers
 
 
@@ -36,10 +36,10 @@ class SambaUser:
         self.uid = uid
         self.host = host
 
-        def setPlaying(media):
+        def setplaying(media):
             self.playing = media
 
-        def nowPlaying():
+        def nowplaying():
             return self.playing
 
 for index, line in enumerate(loginHandles):
