@@ -178,7 +178,7 @@ if __name__ == "__main__":
         if len(ircbacklog) > maxbacklog:
             del ircbacklog[-1]                 # Remove oldest entry
         ircbacklog.insert(0, ircraw)
-        ircmsg = ircraw.strip("\r\n")           # Remove protocol junk (linebreaks and return carriage)
+        ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(ircmsg)                           # print received data
 
