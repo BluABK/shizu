@@ -106,6 +106,7 @@ def commands(usernick, msg):
 
 def triggers(usernick, msg, raw):
     global bI, re
+    print("MESSAGES> " + msg)
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + bI.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
