@@ -115,6 +115,7 @@ def triggers(usernick, msg, raw):
 
 def ping():
     ircsock.send("PONG :Pong\n")
+    debug("Ping Pong bitchez!")
 
 
 def sendmsg(msg):
