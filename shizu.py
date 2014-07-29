@@ -62,7 +62,7 @@ class Config:  # Shizu's config class
 cfg = Config()
 
 
-def commands(usernick, msg):
+def commands(usernick, msg, chan):
     global cfg, re
     # General commands
     if msg.find(cfg.cmdsym() + "awesome") != -1:
@@ -111,7 +111,7 @@ def commands(usernick, msg):
                 sendmsg(str(samba.help()[item]))
 
 
-def triggers(usernick, msg, raw):
+def triggers(usernick, msg, chan, raw):
     global cfg, re
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
@@ -206,8 +206,8 @@ if __name__ == "__main__":
             if chan[0] != '#':
                 chan = tmpusernick
             message = ircparts[3].lstrip(":")
-            commands(tmpusernick, message)
-            triggers(tmpusernick, message, ircraw)
+            commands(tmpusernick, message, chan)
+            triggers(tmpusernick, message, chan, ircraw)
 
     # See ya!
     ircsock.send("QUIT %s\r\n" % cfg.quitmsg())
