@@ -175,9 +175,9 @@ if __name__ == "__main__":
 
     while run:
         i += 1
-        ircmsg = ircsock.recv(2048)             # Receive data from the server
+        ircmsg = ircsock.recv(512)             # Receive data from the server
         ircraw = ircmsg                         # Keep a raw handle
-        if len(ircbacklog) >= maxbacklog:
+        if len(ircbacklog) > maxbacklog:
             del ircbacklog[-1]                    # Remove oldest entry
         ircbacklog.insert(0, ircraw)
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
