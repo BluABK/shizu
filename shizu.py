@@ -94,7 +94,7 @@ def commands(usernick, msg):
             matches = re.search(r"samba logins (\w+)", msg)
             try:
                 for item in xrange(len(samba.getlogins())):
-                    if samba.getlogins()[item].name == matches.group(1)
+                    if samba.getlogins()[item].name == matches.group(1):
                         sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
             except AttributeError:
                     for item in xrange(len(samba.getlogins())):
