@@ -106,7 +106,6 @@ def commands(usernick, msg):
 
 def triggers(usernick, msg, raw):
     global bI, re
-    print("MESSAGES> " + msg)
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + bI.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
@@ -184,6 +183,7 @@ if __name__ == "__main__":
         print(ircmsg)                           # print received data
 
         ircparts = re.split("\s", ircmsg, 4)
+        print(ircparts)
 
         if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
