@@ -3,10 +3,6 @@ __author__ = 'bluabk'
 import ConfigParser, re
 from subprocess import check_output
 
-regex = re.compile(" +")
-sambaUsers = list()
-loginHandlesRaw = check_output(config.config.get('samba', 'smbstatus-command'), shell=True)
-loginHandles = loginHandlesRaw.splitlines()
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
@@ -17,8 +13,15 @@ class Config:  # Shizu's config class
     def arbitrary(self):
         return str(self.config.get('samba', 'item'))
 
+    def rawlogins(self):
+        return str(self.config.get('samba', 'smbstatus-command'))
+
 cfg = Config()
 
+regex = re.compile(" +")
+sambaUsers = list()
+loginHandlesRaw = check_output(cfg.rawlogins(), shell=True)
+loginHandles = loginHandlesRaw.splitlines()
 
 def getplaying():
     return True
