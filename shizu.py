@@ -91,14 +91,13 @@ def commands(usernick, msg):
     # Module: samba
     if msg.find(bI.cmdsym() + "samba") != -1:
         if msg.find(bI.cmdsym() + "samba logins") != -1:
-            tmpuser = "placeholder"
-            if msg.find(bI.cmdsym() + "samba logins %s" % tmpuser) != -1:
-                s = msg
-                p = re.compile("samba logins \d{2}")
-                match = p.search(s)
-                s[:match.end()]
-            else:
+            matches = re.search(r"samba logins (\w+)", msg)
+            try:
                 for item in xrange(len(samba.getlogins())):
+                    if samba.getlogins()[item].name == matches.group(1)
+                        sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
+            except AttributeError:
+                    for item in xrange(len(samba.getlogins())):
                     sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
         elif msg.find(bI.cmdsym() + "samba" or bI.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
@@ -173,17 +172,14 @@ if __name__ == "__main__":
     ircsock.send("USER " + bI.nick() + " " + bI.nick() + " " + bI.nick() + " :Nibiiro Shizuka\n")
     ircsock.send("NICK " + bI.nick() + "\n")
 
-    i = 0
-
     while run:
-        i += 1
         ircraw = ircsock.recv(512)             # Receive data from the server
         if len(ircbacklog) > maxbacklog:
             del ircbacklog[-1]                 # Remove oldest entry
         ircbacklog.insert(0, ircraw)
         ircmsg = ircraw.strip("\r\n")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print(str(i) + ": " + ircmsg)                           # print received data
+        print(ircmsg)                           # print received data
 
         ircparts = re.split("\s", ircmsg, 4)
 
