@@ -70,7 +70,7 @@ def commands(usernick, msg):
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
     elif msg.find(bI.cmdsym() + "replay") != -1:
-        matches = re.search(r"replay (\d+)",msg)
+        matches = re.search(r"replay (\d+)", msg)
         try:
             arg = matches.group(1)
             if is_number(arg) and int(arg) <= maxbacklog:
@@ -105,12 +105,9 @@ def commands(usernick, msg):
 
 
 def triggers(usernick, msg, raw):
-    global bI
-    if raw.find(":Hello " + bI.nick()) != -1:  # If someone greets me, I will greet back.
-        greeter = ircmsg.strip(":").split("!")[0]
-        sendmsg((getgreeting(greeter)))
-    elif msg.find((":hi " or ":Hi " or ":ohi ") + usernick) != -1:  # If someone greets me, I will greet back.
-        sendmsg("H-h...Hi there")
+    global bI, re
+    if re.match("(Hello|O?hi|Ohay) " + bI.nick(), msg, flags=re.IGNORECASE) != -1:  # If someone greets me, I will greet back.
+        sendmsg((getgreeting(usernick)))
 
 
 def ping():
@@ -192,11 +189,12 @@ if __name__ == "__main__":
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(bI.chan())
 
-        if ircmsg.find(' PRIVMSG ') != -1:
-            tmpusernick = ircmsg.split('!')[0][1:]
-        #    chan = ircmsg.split(' PRIVMSG ')[-1].split(' :')[0]
-            commands(tmpusernick, ircmsg)
-            triggers(tmpusernick, ircmsg, ircraw)
+        if ircparts[1] == "PRIVMSG":
+            tmpusernick = ircparts[0].split('!')[0][1:]
+            chan = ircparts[2]
+            message = ircparts[3].lstrip(":")
+            commands(tmpusernick, message)
+            triggers(tmpusernick, message, ircraw)
 
     # See ya!
     ircsock.send("QUIT %s\r\n" % bI.quitmsg())
