@@ -10,11 +10,14 @@ class Config:  # Shizu's config class
     def __init__(self):
         self.config.read("config.ini")
 
-    def arbitrary(self):
-        return str(self.config.get('samba', 'item'))
-
     def rawlogins(self):
         return str(self.config.get('samba', 'smbstatus-command'))
+
+    def excludelogins(self):
+        return str(self.config.get('samba', 'exclude-names'))
+
+    def excludepaths(self):
+        return str(self.config.get('samba', 'exclude-paths'))
 
 cfg = Config()
 
