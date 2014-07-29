@@ -12,6 +12,10 @@ import samba    # for server-specific samba functionality
 # Some basic and/or static configuration
 run = True
 
+# Some varibles
+ircbacklog = list()
+maxbacklog = 10
+
 # Read the rest from file
 
 
@@ -61,6 +65,18 @@ def commands(usernick, msg):
         sendmsg("Everything is awesome!")
     elif msg.find(bI.cmdsym() + "nyaa") != -1:
         nyaa()
+    elif msg.find(bI.cmdsym() + "replay"):
+        def is_number(s):
+            try:
+                int(s)
+                return True
+            except ValueError:
+                return False
+        arg = msg.find(bI.cmdsym() + "replay").split("replay ", 1)[1]
+        if is_number(arg):
+            replay(int(arg))
+        else:
+            replay(0)
     elif msg.find(bI.cmdsym() + "quit%s" % bI.quitpro()) != -1:
         ircquit()
 
@@ -129,6 +145,12 @@ def getgreeting(greeter):
     return "%s %s~" % (greeting,  greeter)
 
 
+def replay(lines):
+    global ircbacklog
+    for i in range(0, lines):
+        sendmsg(ircbacklog[i])
+
+
 def nyaa():
     sendmsg("Nyaa~")
 
@@ -152,8 +174,11 @@ if __name__ == "__main__":
     while run:
         ircmsg = ircsock.recv(2048)             # Receive data from the server
         ircraw = ircmsg                         # Keep a raw handle
+        if len(ircbacklog) > maxbacklog:
+            ircbacklog.remove(0)                    # Remove oldest entry
+        ircbacklog.append(ircraw)
         ircmsg = ircmsg.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
-        ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_>
+        ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(ircmsg)                           # print received data
 
         ircparts = re.split("\s", ircmsg, 4)
