@@ -3,9 +3,10 @@ __author__ = 'bluabk'
 # Import necessary modules
 import socket           # A rather useful network tool
 import time             # For time-based greeting functionality
+import re               # RegEx for string work.
 
 # Project-specific modules
-import ConfigParser, io
+import ConfigParser
 import samba    # for server-specific samba functionality
 
 # Some basic and/or static configuration
