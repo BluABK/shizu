@@ -106,7 +106,8 @@ def commands(usernick, msg):
 
 def triggers(usernick, msg, raw):
     global bI, re
-    if re.match("(Hello|O?hi|Ohay) " + bI.nick(), msg, flags=re.IGNORECASE) != -1:  # If someone greets me, I will greet back.
+    matches = re.match("^(Hello|O?hi|Ohay|Hey) " + bI.nick(), msg, flags=re.IGNORECASE)
+    if matches != -1:  # If someone greets me, I will greet back.
         sendmsg((getgreeting(usernick)))
 
 
@@ -190,7 +191,7 @@ if __name__ == "__main__":
             join(bI.chan())
 
         if ircparts[1] == "PRIVMSG":
-            tmpusernick = ircparts[0].split('!')[0][1:]
+            tmpusernick = ircparts[0].split('!')[0]
             chan = ircparts[2]
             message = ircparts[3].lstrip(":")
             commands(tmpusernick, message)
