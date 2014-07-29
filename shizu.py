@@ -67,7 +67,7 @@ def commands(usernick, msg):
     # Help calls
     if ircmsg.find(bI.cmdsym() + "help") != -1:
         sendmsg(usernick + ": Yeah, no...")
-        sendmsg("Syntax: %command help arg1..argN" % bI.cmdsym())
+        sendmsg("Syntax: %scommand help arg1..argN" % bI.cmdsym())
         sendmsg("Available commands: awesome, nyaa, samba* (* command contains sub-commands)")
 
     # Module: samba
