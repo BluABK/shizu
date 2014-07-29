@@ -27,13 +27,13 @@ def getLogins():
 
 class SambaUser:
     name = ''
-    id = 0
+    uid = 0
     host = ''
     playing = ''
 
     def __init__(self, uid, name, host):
         self.name = name
-        self.id = uid
+        self.uid = uid
         self.host = host
 
         def setPlaying(media):
