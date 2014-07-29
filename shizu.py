@@ -108,10 +108,12 @@ def triggers(usernick, msg, raw):
     global bI, re
     matches = re.match("^(Hello|O?hi|Ohay|Hey) " + bI.nick(), msg, flags=re.IGNORECASE)
     try:
+        print(matches.group(0))
         if matches.group(0) != "":  # If someone greets me, I will greet back.
             sendmsg((getgreeting(usernick)))
     except AttributeError:
         return
+
 
 def ping():
     ircsock.send("PONG :Pong\n")
