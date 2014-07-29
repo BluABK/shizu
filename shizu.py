@@ -66,14 +66,14 @@ def commands(usernick, msg):
     # Help calls
     if ircmsg.find(bI.cmdsym() + "help") != -1:
         sendmsg(usernick + ": Yeah, no...")
-        sendmsg("Syntax: %shelp command arg1..argN" % bI.cmdsym())
+        sendmsg("Syntax: %command help arg1..argN" % bI.cmdsym())
         sendmsg("Available commands: awesome, nyaa, samba* (* command contains sub-commands)")
 
     # Module: samba
-    elif msg.find(bI.cmdsym() + "samba") != -1:
+    elif msg.find(bI.cmdsym() + "samba" or bI.cmdsym() + "samba help") != -1:
         if msg.find(bI.cmdsym()) != -1:
             for i in samba.help():
-                sendmsg(samba.help()[i])
+                sendmsg(str(samba.help()[i]))
         elif msg.find(bI.cmdsym() + "logins") != -1:
             for item in xrange(len(samba.getLogins())):
                 sendmsg("%s@%s        [ID: %s]" % (samba.getLogins()[item].name, samba.getLogins()[item].host, samba.getLogins()[item].id))
