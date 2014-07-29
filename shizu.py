@@ -71,10 +71,13 @@ def commands(usernick, msg):
         nyaa()
     elif msg.find(bI.cmdsym() + "replay") != -1:
         matches = re.search(r"replay (\d+)",msg)
-        arg = matches.group(1)
-        if is_number(arg) and int(arg) <= maxbacklog:
-            replay(int(arg))
-        else:
+        try:
+            arg = matches.group(1)
+            if is_number(arg) and int(arg) <= maxbacklog:
+                replay(int(arg))
+            else:
+                replay(0)
+        except AttributeError:
             replay(0)
     elif msg.find(bI.cmdsym() + "quit%s" % bI.quitpro()) != -1:
         ircquit()
