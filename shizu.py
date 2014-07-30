@@ -180,7 +180,8 @@ if __name__ == "__main__":
         ircsock.send("PASS " + cfg.spass() + "\n")
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     ircsock.send("NICK " + cfg.nick() + "\n")
-    if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+    #if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+    if ircsock.recv(512).find("433") != -1:
         print "hi"
         ircsock.send("NICK " + cfg.nick() + randint(0.256) + "\n")      # TODO: Implement a proper nick setter to call
     ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", "Nibiiro Shizuka"))
