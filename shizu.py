@@ -32,6 +32,9 @@ class Config:  # Shizu's config class
     def nick(self):
         return str(self.config.get('irc', 'nickname'))
 
+    def realname(self):
+        return str(self.config.get('irc', 'real name'))
+
     def cmdsym(self):
         return str(self.config.get('irc', 'cmdsymbol'))
 
@@ -180,7 +183,7 @@ if __name__ == "__main__":
         ircsock.send("PASS " + cfg.spass() + "\n")
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     ircsock.send("NICK " + cfg.nick() + "\n")
-    ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", "Nibiiro Shizuka"))
+    ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()))
 
     while running:
         ircraw = ircsock.recv(512)             # Receive data from the server
