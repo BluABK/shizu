@@ -190,7 +190,6 @@ if __name__ == "__main__":
         ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(ircmsg)                           # print received data
-        debug(cfg.spass() + "|")
 
         ircparts = re.split("\s", ircmsg, 3)
 
