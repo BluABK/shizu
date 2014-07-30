@@ -181,6 +181,7 @@ if __name__ == "__main__":
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     ircsock.send("NICK " + cfg.nick() + "\n")
     #if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+    print ("    SOCKET-DEBUGZ: " + ircsock.recv(512))
     variable = ircsock.recv(512)
     if variable.find("433") != -1:     # TODO: Never triggers for some reason
         print "hi"
