@@ -186,6 +186,7 @@ if __name__ == "__main__":
         #if tmprecv.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
         if tmprecv.find("433") != -1:     # TODO: Never triggers for some reason
                 ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")  # TODO: Implement a proper nick setter to call
+        print timer
 
     ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", "Nibiiro Shizuka"))
 
