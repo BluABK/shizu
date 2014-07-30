@@ -182,7 +182,7 @@ if __name__ == "__main__":
     ircsock.send("NICK " + cfg.nick() + "\n")
     #if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
     variable = ircsock.recv(512)
-    ircsock.send("NICK " + cfg.nick() + randint(0,256) + "\n")      # TODO: Implement a proper nick setter to call
+    ircsock.send("NICK " + cfg.nick() + str(randint(0, 256)) + "\n")      # TODO: Implement a proper nick setter to call
     if variable.find("433") != -1:     # TODO: Never triggers for some reason
         print "hi"
 
