@@ -180,12 +180,13 @@ if __name__ == "__main__":
         ircsock.send("PASS " + cfg.spass() + "\n")
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     ircsock.send("NICK " + cfg.nick() + "\n")
-    #if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
-#    print ("    SOCKET-DEBUGZ: " + ircsock.recv(512))
-    variable = ircsock.recv(512)
-    if variable.find("433") != -1:     # TODO: Never triggers for some reason
-        print "hi"
-        ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")  # TODO: Implement a proper nick setter to call
+
+    for timer in range(0, 1000):
+        tmprecv = ircsock.recv(512)
+        #if tmprecv.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+        if tmprecv.find("433") != -1:     # TODO: Never triggers for some reason
+                ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")  # TODO: Implement a proper nick setter to call
+
     ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", "Nibiiro Shizuka"))
 
     while running:
