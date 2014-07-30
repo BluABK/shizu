@@ -182,7 +182,7 @@ if __name__ == "__main__":
     ircsock.send("NICK " + cfg.nick() + "\n")
     if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
         ircsock.send("NICK " + cfg.nick() + randint(0.256) + "\n")      # TODO: Implement a proper nick setter to call
-    ircsock.send("USER " + cfg.nick() + " " + cfg.nick() + "*" + cfg.nick() + " :Nibiiro Shizuka\n")
+    ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", "Nibiiro Shizuka"))
 
     while running:
         ircraw = ircsock.recv(512)             # Receive data from the server
