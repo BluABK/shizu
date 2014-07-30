@@ -5,6 +5,7 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # RegEx for string work.
 import ConfigParser
+from random import randint
 
 # Project-specific modules
 import samba            # for server-specific samba functionality
@@ -48,7 +49,7 @@ class Config:  # Shizu's config class
 
 
 # Some basic and/or static configuration
-run = True
+running = True
 
 # Variables
 ircbacklog = list()
@@ -167,21 +168,23 @@ def nyaa():
 
 
 def ircquit():
-    global run
-    run = False
+    global running
+    running = False
 
 if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((cfg.server(), cfg.port()))
-
-    # Register with the server
+    # Send password before registration [RFC2812 section-3.1.1 Password message]
     if cfg.spass() != "":
         ircsock.send("PASS " + cfg.spass() + "\n")
-    ircsock.send("USER " + cfg.nick() + " " + cfg.nick() + " " + cfg.nick() + " :Nibiiro Shizuka\n")
+    # Register with the server [RFC2812 section-3.1 Connection Registration]
     ircsock.send("NICK " + cfg.nick() + "\n")
+    if ircsock.recv(512).find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+        ircsock.send("NICK " + cfg.nick() + randint(0.256) + "\n")      # TODO: Implement a proper nick setter to call
+    ircsock.send("USER " + cfg.nick() + "0" + cfg.nick() + "*" + cfg.nick() + " :Nibiiro Shizuka\n")
 
-    while run:
+    while running:
         ircraw = ircsock.recv(512)             # Receive data from the server
         if len(ircbacklog) > maxbacklog:
             del ircbacklog[-1]                 # Remove oldest entry
