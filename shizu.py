@@ -174,10 +174,10 @@ if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ircsock.connect((cfg.server(), cfg.port()))
-    if cfg.spass() != "":
-        ircsock.send("PASS " + cfg.spass() + "\n")
 
     # Register with the server
+    if cfg.spass() != "":
+        ircsock.send("PASS " + cfg.spass() + "\n")
     ircsock.send("USER " + cfg.nick() + " " + cfg.nick() + " " + cfg.nick() + " :Nibiiro Shizuka\n")
     ircsock.send("NICK " + cfg.nick() + "\n")
 
