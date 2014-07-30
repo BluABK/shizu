@@ -1,28 +1,13 @@
 __author__ = 'bluabk'
 
 # Import necessary modules
-import socket           # A rather useful network tool
+import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # RegEx for string work.
+import ConfigParser
 
 # Project-specific modules
-import ConfigParser
-import samba    # for server-specific samba functionality
-
-# Some basic and/or static configuration
-run = True
-
-# Some variables
-ircbacklog = list()
-maxbacklog = 10
-
-
-def ian(s):  # is a number
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
+import samba            # for server-specific samba functionality
 
 
 class Config:  # Shizu's config class
@@ -61,7 +46,22 @@ class Config:  # Shizu's config class
     def getvar(self, group, name):
         return str(self.config.get(group, name))
 
+
+# Some basic and/or static configuration
+run = True
+
+# Variables
+ircbacklog = list()
+maxbacklog = 10
 cfg = Config()
+
+
+def ian(s):  # is a number
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
 
 
 def commands(usernick, msg, chan):
@@ -190,6 +190,7 @@ if __name__ == "__main__":
         ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print(ircmsg)                           # print received data
+        debug(cfg.spass())
 
         ircparts = re.split("\s", ircmsg, 3)
 
