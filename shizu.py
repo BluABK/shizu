@@ -25,7 +25,7 @@ global running
 #import samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-mod_dir == "modules"
+mod_dir = "modules"
 
 
 def LoadModules(directory):
