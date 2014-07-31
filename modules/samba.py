@@ -21,7 +21,7 @@ class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        self.config.read("config.ini")
+        self.config.read("../config.ini")
 
     def rawlogins(self):
         return str(self.config.get('samba', 'smbstatus-command'))
