@@ -1,8 +1,24 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
+# TODO: Load smbstatus on demand
+# TODO: Load smbstatus' BATCHes into separate command
+# TODO: Implement user exemption
+# TODO: Implement path exemption
+# TODO: Implement samba directory and file index (probably via server-side mlocate db)
+# TODO: Implement search/lookup for aforementioned index
+# TODO: Implement "new files" func (13:37 shizu > New file: tv-series/TUTVS/The.Ultimate.TV-Series.4K.FLAC-iNSANE.mkv)
+# TODO: Add try and SomeReasonableExceptionHandler across code
+# TODO: Implement support for checking that samba installation is sane and contains all required binaries and libraries
+
 import ConfigParser
 import re
 from subprocess import check_output
+
+# Define variables
+global re
+global cfg
+
+regex = re.compile(" +")
 
 
 class Config:  # Shizu's config class
@@ -19,6 +35,9 @@ class Config:  # Shizu's config class
 
     def excludepaths(self):
         return str(self.config.get('samba', 'exclude-paths'))
+
+cfg = Config()
+
 
 class SambaUser:
     name = ''
@@ -37,27 +56,25 @@ class SambaUser:
         def nowplaying():
             return self.playing
 
-cfg = Config()
-regex = re.compile(" +")
-sambaUsers = list()
-loginHandlesRaw = check_output(cfg.rawlogins(), shell=True)
-loginHandles = loginHandlesRaw.splitlines()
-
 
 def getplaying():
     return True
 
 
 def getlogins():
-    return sambaUsers
+    loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
+    loginhandles = loginhandlesraw.splitlines()
+    sambausers = list()
 
-for index, line in enumerate(loginHandles):
-    tmpLine = regex.split(line)
-    splitLine = list()
-    for test in tmpLine:
-        if not ' ' in test:
-            splitLine.append(test)
-    sambaUsers.insert(index, SambaUser(splitLine[0], splitLine[1], splitLine[3]))
+    for index, line in enumerate(loginhandles):
+        tmpline = regex.split(line)
+        splitline = list()
+        for test in tmpline:
+            if not ' ' in test:
+                splitline.append(test)
+        sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+
+    return sambausers
 
 
 def help():

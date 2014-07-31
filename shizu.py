@@ -1,11 +1,11 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
-# TODO: <OVERVIEW>
 # TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
 # TODO: Support multiple IRC channels
 # TODO: Support multiple IRC Servers
 # TODO: Support SSL
-# TODO: </OVERVIEW>
+# TODO: Implement command to trigger server-side permission-sentinel.sh - and assign this to a server-side features mod
+# TODO: Add try and SomeReasonableExceptionHandler across code
 
 # Import necessary modules
 import socket           # A rather *useful* network tool
@@ -16,6 +16,18 @@ from random import randint
 
 # Project-specific modules # TODO: Make module loading dynamic
 import samba            # for server-specific samba functionality
+
+# Define variables
+global re
+global cfg
+global ircbacklog
+global running
+
+ircbacklog = list()
+maxbacklog = cfg.backlog()
+running = True
+commandsavail = "awesome, nyaa, help, quit, triggers, replay"
+modulesavail = "samba*"
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -57,18 +69,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def backlog(self):
         return str(self.config.getint('irc', 'backlog-limit'))
 
-# Define variables
-global re
-global cfg
-global ircbacklog
-global running
-
 cfg = Config()
-ircbacklog = list()
-maxbacklog = cfg.backlog()
-running = True
-commandsavail = "awesome, nyaa, help, quit, triggers, replay"
-modulesavail = "samba*"
 
 
 def ian(s):  # is a number
@@ -77,6 +78,56 @@ def ian(s):  # is a number
         return True
     except ValueError:
         return False
+
+
+def ping():
+    ircsock.send("PONG :Pong\n")
+
+
+def sendmsg(msg):
+    ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
+
+
+def debug(msg):
+    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
+
+
+def join(chan):
+    ircsock.send("JOIN " + chan + "\n")
+
+
+def getgreeting(greeter):
+    t = int(time.strftime("%H"))
+
+    if t >= 17 or t < 4:
+        greeting = "Konbanwa"
+    elif t >= 12:
+        greeting = "Konnichiwa"
+    elif t >= 4:
+        greeting = "Ohayou gozaimasu"
+    elif t <= -1:
+        debug("Negative time returned")
+        greeting = "ohi"
+    else:
+        debug("Time returned had no valid integer value.")
+        greeting = "ohi"
+
+    return "%s %s~" % (greeting,  greeter)
+
+
+def replay(lines):
+    for i in range(0, lines):
+        sendmsg(ircbacklog[i])
+
+
+def ircquit():
+    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
+    running = False
+
+
+def help(user, msg):
+        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
+        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
 
 
 def commands(usernick, msg, chan):
@@ -132,57 +183,6 @@ def triggers(usernick, msg, chan, raw):
             sendmsg((getgreeting(usernick)))
     except AttributeError:
         return
-
-
-def ping():
-    ircsock.send("PONG :Pong\n")
-
-
-def sendmsg(msg):
-    ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
-
-
-def debug(msg):
-    ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
-
-
-def join(chan):
-    ircsock.send("JOIN " + chan + "\n")
-
-
-def getgreeting(greeter):
-    t = int(time.strftime("%H"))
-
-    if t >= 17 or t < 4:
-        greeting = "Konbanwa"
-    elif t >= 12:
-        greeting = "Konnichiwa"
-    elif t >= 4:
-        greeting = "Ohayou gozaimasu"
-    elif t <= -1:
-        debug("Negative time returned")
-        greeting = "ohi"
-    else:
-        debug("Time returned had no valid integer value.")
-        greeting = "ohi"
-
-    return "%s %s~" % (greeting,  greeter)
-
-
-def replay(lines):
-    for i in range(0, lines):
-        sendmsg(ircbacklog[i])
-
-
-def ircquit():
-    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
-    running = False
-
-
-def help(user, msg):
-        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
-        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
-
 
 if __name__ == "__main__":
     # Connect to the the server
