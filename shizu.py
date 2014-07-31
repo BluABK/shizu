@@ -28,11 +28,11 @@ global running
 mod_dir = "modules/"
 
 
-def loadmodules(mod_dir):
+def loadmodules(directory):
     modules = {}
     oldcwd = os.getcwd()
-    os.chdir(mod_dir)   # change working directory so we know import will work
-    for filename in os.listdir(mod_dir):
+    os.chdir(directory)   # change working directory so we know import will work
+    for filename in os.listdir(directory):
         if filename.endswith(".py"):
             modname = filename[:-3]
             modules[modname] = getattr(__import__(modname), modname)
