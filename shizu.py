@@ -15,7 +15,8 @@ import ConfigParser
 from random import randint
 
 # Project-specific modules # TODO: Make module loading dynamic
-import samba            # for server-specific samba functionality
+import samba            # for server-side samba functionality
+import db               # for server-side file search and lookup
 
 # Define variables
 global re
@@ -28,6 +29,8 @@ maxbacklog = cfg.backlog()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
 modulesavail = "samba*"
+
+# TODO: NOT-A-TODO/Shortcut: Classes
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -70,6 +73,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         return str(self.config.getint('irc', 'backlog-limit'))
 
 cfg = Config()
+
+# TODO: NOT-A-TODO/Shortcut: Functions
 
 
 def ian(s):  # is a number
@@ -123,11 +128,6 @@ def replay(lines):
 def ircquit():
     global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
     running = False
-
-
-def help(user, msg):
-        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
-        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
 
 
 def commands(usernick, msg, chan):
@@ -184,6 +184,12 @@ def triggers(usernick, msg, chan, raw):
     except AttributeError:
         return
 
+
+def help(user, msg):
+        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
+        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
+
+# TODO: NOT-A-TODO/Shortcut: Main()
 if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

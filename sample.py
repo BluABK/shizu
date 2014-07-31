@@ -5,6 +5,11 @@ __author__ = 'BluABK <abk@blucoders.net'
 # Imports
 import ConfigParser
 
+# Variables
+commandsavail = "wishfulthinking, pipedreams, 42, imagination"
+
+# Classes
+
 
 class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
@@ -15,7 +20,6 @@ class Config:  # Mandatory Config class
     def sample(self):
         return str(self.config.get('sample', 'sampleitem'))
 
-# Variables
 cfg = Config()
 
 # Functions
@@ -23,6 +27,6 @@ cfg = Config()
 
 def help():
     cmdlist = list()
-    cmdlist.append('Syntax: samba command arg1..argN')
-    cmdlist.append('Available commands: sample (* command contains sub-commands)')
+    cmdlist.append("Syntax: %scommand help arg1..argN" % cfg.cmdsym())
+    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
     return cmdlist
