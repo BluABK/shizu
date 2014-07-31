@@ -36,7 +36,8 @@ def loadmodules(directory):
     for filename in modlist:
         if filename.endswith(".py"):
             modname = filename[:-3]
-            modules[modname] = getattr(__import__(modname), modname)
+           # modules[modname] = getattr(__import__(modname), modname)
+            modules[modname] = getattr(__import__(modname))
     os.chdir(oldcwd)
     return modules
 
