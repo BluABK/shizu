@@ -32,7 +32,7 @@ def loadmodules():
     for filename in os.listdir(directory):
         if filename.endswith(".py"):
             modname = filename[:-3]
-            __import__(modname)
+            __import__(modname, globals(), locals(), [], -1)
     os.chdir(oldcwd)
 
 ircbacklog = list()
