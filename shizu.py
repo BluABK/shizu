@@ -17,7 +17,6 @@ from random import randint
 
 # Define variables
 global re  # TODO: Find out why this complaints about "redeclared"
-global cfg
 global ircbacklog
 global running
 
