@@ -12,7 +12,6 @@ import re
 from subprocess import check_output
 
 # Define variables
-global re
 global cfg
 
 regex = re.compile(" +")

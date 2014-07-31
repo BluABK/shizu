@@ -14,15 +14,15 @@ import re               # RegEx for string work.
 import ConfigParser
 from random import randint
 
-# Project-specific modules # TODO: Make module loading dynamic
-import samba            # for server-side samba functionality
-import db               # for server-side file search and lookup
-
 # Define variables
 global re  # TODO: Find out why this complaints about "redeclared"
 global cfg
 global ircbacklog
 global running
+
+# Project-specific modules # TODO: Make module loading dynamic
+import samba            # for server-side samba functionality
+import db               # for server-side file search and lookup
 
 ircbacklog = list()
 maxbacklog = cfg.backlog()
