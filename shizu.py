@@ -180,15 +180,16 @@ def commands(usernick, msg, chan):
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
+            smblogins =
             matches = re.search(r"samba logins (\w+)", msg)
             try:
-                for item in xrange(len(samba.getlogins())):
-                    if samba.getlogins()[item].name == matches.group(1):
+                for item in xrange(len(smblogins)):
+                    if smblogins[item].name == matches.group(1):
                         #if excluded user
-                        sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
+                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
             except AttributeError:
-                    for item in xrange(len(samba.getlogins())):
-                        sendmsg("%s@%s        [ID: %s]" % (samba.getlogins()[item].name, samba.getlogins()[item].host, samba.getlogins()[item].uid))
+                    for item in xrange(len(smblogins)):
+                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
