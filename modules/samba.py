@@ -22,7 +22,7 @@ class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        configloc = os.getcwd + '/' + "config.ini"
+        configloc = os.getcwd() + '/' + "config.ini"
         print(configloc)
         self.config.read(configloc)
 
