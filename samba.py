@@ -4,9 +4,6 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Load smbstatus' BATCHes into separate command
 # TODO: Implement user exemption
 # TODO: Implement path exemption
-# TODO: Implement samba directory and file index (probably via server-side mlocate db)
-# TODO: Implement search/lookup for aforementioned index
-# TODO: Implement "new files" func (13:37 shizu > New file: tv-series/TUTVS/The.Ultimate.TV-Series.4K.FLAC-iNSANE.mkv)
 # TODO: Add try and SomeReasonableExceptionHandler across code
 # TODO: Implement support for checking that samba installation is sane and contains all required binaries and libraries
 
