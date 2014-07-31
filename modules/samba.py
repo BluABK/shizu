@@ -16,6 +16,7 @@ from subprocess import check_output
 
 regex = re.compile(" +")
 
+print check_output("sudo smbstatus -b | grep ipv", shell=True)
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
