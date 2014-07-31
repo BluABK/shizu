@@ -28,8 +28,7 @@ global running
 mod_dir = "modules/"
 
 
-def LoadModules(directory):
-    global mod_dir
+def loadmodules(mod_dir):
     modules = {}
     oldcwd = os.getcwd()
     os.chdir(mod_dir)   # change working directory so we know import will work
@@ -40,7 +39,7 @@ def LoadModules(directory):
     os.setcwd(oldcwd)
     return modules
 
-globals().update(LoadModules(r"%s" % mod_dir))
+globals().update(loadmodules(r"%s" % mod_dir))
 
 ircbacklog = list()
 running = True
