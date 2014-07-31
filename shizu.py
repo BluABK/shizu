@@ -31,7 +31,7 @@ mod_dir = "modules/"
 def loadmodules(directory):
     modules = {}
     oldcwd = os.getcwd()
-    os.chdir(directory)   # change working directory so we know import will work
+    os.chdir(oldcwd + directory)   # change working directory so we know import will work
     for filename in os.listdir(directory):
         if filename.endswith(".py"):
             modname = filename[:-3]
