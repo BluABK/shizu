@@ -25,21 +25,15 @@ global running
 #import samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-mod_dir = "modules/"
-
-
-def loadmodules(directory):
-    modules = {}
+def loadmodules():
+    directory = "modules/"
     oldcwd = os.getcwd()
     os.chdir(directory)   # change working directory so we know import will work
     for filename in os.listdir(directory):
         if filename.endswith(".py"):
             modname = filename[:-3]
-            modules[modname] = getattr(__import__(modname), modname)
-    os.setcwd(oldcwd)
-    return modules
-
-globals().update(loadmodules(r"%s" % mod_dir))
+            __import__(modname)
+    os.chdir(oldcwd)
 
 ircbacklog = list()
 running = True
@@ -180,7 +174,7 @@ def commands(usernick, msg, chan):
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            smblogins =
+            smblogins = samba.getlogins()
             matches = re.search(r"samba logins (\w+)", msg)
             try:
                 for item in xrange(len(smblogins)):
