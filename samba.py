@@ -1,4 +1,4 @@
-__author__ = 'bluabk'
+__author__ = 'BluABK <abk@blucoders.net'
 
 import ConfigParser
 import re

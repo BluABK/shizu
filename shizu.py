@@ -1,4 +1,11 @@
-__author__ = 'bluabk'
+__author__ = 'BluABK <abk@blucoders.net'
+
+# TODO: <OVERVIEW>
+# TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
+# TODO: Support multiple IRC channels
+# TODO: Support multiple IRC Servers
+# TODO: Support SSL
+# TODO: </OVERVIEW>
 
 # Import necessary modules
 import socket           # A rather *useful* network tool
@@ -7,11 +14,11 @@ import re               # RegEx for string work.
 import ConfigParser
 from random import randint
 
-# Project-specific modules
+# Project-specific modules # TODO: Make module loading dynamic
 import samba            # for server-specific samba functionality
 
 
-class Config:  # Shizu's config class
+class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
@@ -47,17 +54,21 @@ class Config:  # Shizu's config class
     def nspass(self):
         return str(self.config.get('nickserv', 'password'))
 
-    def getvar(self, group, name):
-        return str(self.config.get(group, name))
+    def backlog(self):
+        return str(self.config.getint('irc', 'backlog-limit'))
 
+# Define variables
+global re
+global cfg
+global ircbacklog
+global running
 
-# Some basic and/or static configuration
-running = True
-
-# Variables
-ircbacklog = list()
-maxbacklog = 10
 cfg = Config()
+ircbacklog = list()
+maxbacklog = cfg.backlog()
+running = True
+commandsavail = "awesome, nyaa, help, quit, triggers, replay"
+modulesavail = "samba*"
 
 
 def ian(s):  # is a number
@@ -69,12 +80,11 @@ def ian(s):  # is a number
 
 
 def commands(usernick, msg, chan):
-    global cfg, re
     # General commands
     if msg.find(cfg.cmdsym() + "awesome") != -1:
         sendmsg("Everything is awesome!")
     elif msg.find(cfg.cmdsym() + "nyaa") != -1:
-        nyaa()
+        sendmsg("Nyaa~")
     elif msg.find(cfg.cmdsym() + "replay") != -1:
         matches = re.search(r"replay (\d+)", msg)
         try:
@@ -96,9 +106,7 @@ def commands(usernick, msg, chan):
 
     # Help calls
     if ircmsg.find(cfg.cmdsym() + "help") != -1:
-        sendmsg(usernick + ": Yeah, no...")
-        sendmsg("Syntax: %scommand help arg1..argN" % cfg.cmdsym())
-        sendmsg("Available commands: awesome, nyaa, samba* (* command contains sub-commands)")
+        help(ircmsg, usernick)
 
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
@@ -118,7 +126,6 @@ def commands(usernick, msg, chan):
 
 
 def triggers(usernick, msg, chan, raw):
-    global cfg, re
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
@@ -132,12 +139,10 @@ def ping():
 
 
 def sendmsg(msg):
-    global cfg
     ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
 
 
 def debug(msg):
-    global cfg
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
 
 
@@ -154,25 +159,30 @@ def getgreeting(greeter):
         greeting = "Konnichiwa"
     elif t >= 4:
         greeting = "Ohayou gozaimasu"
+    elif t <= -1:
+        debug("Negative time returned")
+        greeting = "ohi"
     else:
-        greeting = "Time is no longer relative, someone might want to investigate this."
+        debug("Time returned had no valid integer value.")
+        greeting = "ohi"
 
     return "%s %s~" % (greeting,  greeter)
 
 
 def replay(lines):
-    global ircbacklog
     for i in range(0, lines):
         sendmsg(ircbacklog[i])
 
 
-def nyaa():
-    sendmsg("Nyaa~")
-
-
 def ircquit():
-    global running
+    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
     running = False
+
+
+def help(user, msg):
+        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
+        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
+
 
 if __name__ == "__main__":
     # Connect to the the server
@@ -210,12 +220,12 @@ if __name__ == "__main__":
 
         if ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
-            chan = ircparts[2]
-            if chan[0] != '#':
-                chan = tmpusernick
+            channel = ircparts[2]
+            if channel[0] != '#':
+                channel = tmpusernick
             message = ircparts[3].lstrip(":")
-            commands(tmpusernick, message, chan)
-            triggers(tmpusernick, message, chan, ircraw)
+            commands(tmpusernick, message, channel)
+            triggers(tmpusernick, message, channel, ircraw)
 
     # See ya!
     ircsock.send("QUIT %s\r\n" % cfg.quitmsg())

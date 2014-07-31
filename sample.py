@@ -1,4 +1,4 @@
-__author__ = 'bluabk'
+__author__ = 'BluABK <abk@blucoders.net'
 
 # This is a module specification, which contains everything you need to get started on writing a module.
 
