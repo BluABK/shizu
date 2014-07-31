@@ -12,6 +12,7 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # RegEx for string work.
 import ConfigParser
+import sys, os
 from random import randint
 
 # Define variables
@@ -20,9 +21,26 @@ global cfg
 global ircbacklog
 global running
 
-# Project-specific modules # TODO: Make module loading dynamic
-import samba            # for server-side samba functionality
-import db               # for server-side file search and lookup
+# Project-specific modules # TODO: Make module loading dynamic | TODO: Migrate modules to subdir modules/
+#import samba            # for server-side samba functionality
+#import db               # for server-side file search and lookup
+
+global mod_dir
+mod_dir == "modules"
+
+
+def LoadModules(directory):
+    modules = {}
+    oldcwd = os.getcwd()
+    os.chdir(mod_dir)   # change working directory so we know import will work
+    for filename in os.listdir(mod_dir):
+        if filename.endswith(".py"):
+            modname = filename[:-3]
+            modules[modname] = getattr(__import__(modname), modname)
+    os.setcwd(oldcwd)
+    return modules
+
+globals().update(LoadModules(r"%s" % mod_dir))
 
 ircbacklog = list()
 running = True
