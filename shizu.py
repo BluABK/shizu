@@ -25,7 +25,6 @@ import samba            # for server-side samba functionality
 import db               # for server-side file search and lookup
 
 ircbacklog = list()
-maxbacklog = cfg.backlog()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
 modulesavail = "samba*"
@@ -72,7 +71,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def backlog(self):
         return str(self.config.getint('irc', 'backlog-limit'))
 
+# TODO: NOT-A-TODO/Shortcut: Variables declared by config file
 cfg = Config()
+maxbacklog = cfg.backlog()
 
 # TODO: NOT-A-TODO/Shortcut: Functions
 
