@@ -25,11 +25,11 @@ global running
 #import samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-global mod_dir
 mod_dir == "modules"
 
 
 def LoadModules(directory):
+    global mod_dir
     modules = {}
     oldcwd = os.getcwd()
     os.chdir(mod_dir)   # change working directory so we know import will work
