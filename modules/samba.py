@@ -20,7 +20,6 @@ print check_output("sudo smbstatus -b | grep ipv", shell=True)
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
-    os = os()
 
     def __init__(self):
         configloc = os.getcwd + '/' + "config.ini"
