@@ -20,7 +20,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        self.config.read('config.ini')
+        self.config.read('../config.ini')
 
     def sample(self):
         return str(self.config.get('db', 'file'))

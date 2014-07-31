@@ -9,6 +9,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 
 import ConfigParser
 import re
+import os
 from subprocess import check_output
 
 # Define variables
@@ -18,9 +19,12 @@ regex = re.compile(" +")
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
+    os = os()
 
     def __init__(self):
-        self.config.read("config.ini")
+        configloc = os.getcwd + '/' + "config.ini"
+        print(configloc)
+        self.config.read(configloc)
 
     def rawlogins(self):
         return str(self.config.get('samba', 'smbstatus-command'))
