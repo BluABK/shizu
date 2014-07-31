@@ -19,7 +19,7 @@ import samba            # for server-side samba functionality
 import db               # for server-side file search and lookup
 
 # Define variables
-global re
+global re  # TODO: Find out why this complaints about "redeclared"
 global cfg
 global ircbacklog
 global running
