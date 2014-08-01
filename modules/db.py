@@ -15,6 +15,9 @@ commandsavail = "search, update, locations, erase"
 
 # Classes
 
+class db:
+    def __init__(self):
+        print "dummy class"
 
 class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
