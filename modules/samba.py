@@ -89,3 +89,7 @@ def help():
     cmdlist.append("Syntax: samba command arg1..argN")
     cmdlist.append("Available commands: logins* (* command contains sub-commands)")
     return cmdlist
+
+print "Bergh DEBUG incoming"
+print getlogins()
+print "Bergh DEBUG done or something"
