@@ -26,7 +26,7 @@ global running
 
 mod_dir = "modules/"
 
-from modules import *
+from modules import samba
 
 blockcomment = """
 def loadmodules(directory):
