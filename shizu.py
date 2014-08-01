@@ -41,8 +41,9 @@ def loadmodules(directory):
             modules[modname] = __import__(modname)
     os.chdir(oldcwd)
     return modules
-"""
+
 globals().update(loadmodules(r"%s" % mod_dir))
+"""
 
 ircbacklog = list()
 running = True
