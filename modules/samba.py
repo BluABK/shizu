@@ -30,6 +30,7 @@ class Config:  # Shizu's config class
         configloc = os.getcwd() + '/' + "config.ini"
         print(configloc)
         self.config.read(configloc)
+        return True
 
     def rawlogins(self):
         return str(self.config.get('samba', 'smbstatus-command'))
@@ -66,7 +67,8 @@ def getplaying():
 
 
 def getlogins():
-    cfg.loadconfig()
+    if cfg.loadconfig :
+        print("Loaded config.")
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
     sambausers = list()
