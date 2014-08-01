@@ -26,7 +26,9 @@ global running
 
 mod_dir = "modules/"
 
+from modules import *
 
+blockcomment = """
 def loadmodules(directory):
     modules = {}
     modlist = os.listdir(directory)
@@ -39,7 +41,7 @@ def loadmodules(directory):
             modules[modname] = __import__(modname)
     os.chdir(oldcwd)
     return modules
-
+"""
 globals().update(loadmodules(r"%s" % mod_dir))
 
 ircbacklog = list()
