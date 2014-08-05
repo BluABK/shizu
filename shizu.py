@@ -231,7 +231,7 @@ if __name__ == "__main__":
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(cfg.chan())
 
-        if ircparts[1] == "PRIVMSG":
+        if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
             channel = ircparts[2]
             if channel[0] != '#':
