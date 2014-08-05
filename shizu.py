@@ -27,10 +27,13 @@ from random import randint
 
 def getmodules():
     mod_dir = "modules/"
+    curdir = os.getcwd()
     modlist = os.listdir(mod_dir)
     modulelist = list()
+    os.chdir(mod_dir)
     for mod in modlist:
         modulelist.append(__import__(mod))
+    os.chdir(curdir)
     return modulelist
 
 modules = getmodules()
