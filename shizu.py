@@ -25,7 +25,8 @@ from random import randint
 
 mod_dir = "modules/"
 
-from modules import samba
+#from modules import samba
+from modules import *
 
 something = samba.getlogins()
 print(something)
