@@ -83,7 +83,7 @@ def getlogins():
     return sambausers
 
 
-def help():
+def sambahelp():
     cmdlist = list()
     cmdlist.append("Syntax: samba command arg1..argN")
     cmdlist.append("Available commands: logins* (* command contains sub-commands)")

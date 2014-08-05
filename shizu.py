@@ -26,7 +26,7 @@ global running
 
 mod_dir = "modules/"
 
-from modules import samba
+from modules import *
 
 blockcomment = """
 def loadmodules(directory):
@@ -184,7 +184,8 @@ def commands(usernick, msg, chan):
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            smblogins = samba.getlogins()
+            #smblogins = samba.getlogins()
+            smblogins = getlogins()
             matches = re.search(r"samba logins (\w+)", msg)
             try:
                 for item in xrange(len(smblogins)):
@@ -195,9 +196,10 @@ def commands(usernick, msg, chan):
                     for item in xrange(len(smblogins)):
                         sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
-            for item in xrange(len(samba.help())):
-                sendmsg(str(samba.help()[item]))
-
+           # for item in xrange(len(samba.help())):
+               # sendmsg(str(samba.help()[item]))
+            for item in xrange(len(sambahelp())):
+               sendmsg(str(sambahelp()[item]))
 
 def triggers(usernick, msg, chan, raw):
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
