@@ -14,7 +14,7 @@ from subprocess import check_output
 
 # Define variables
 
-smbregex = re.compile(" +")
+regex = re.compile(" +")
 
 print check_output("sudo smbstatus -b | grep ipv", shell=True)
 
@@ -73,7 +73,7 @@ def getlogins():
     sambausers = list()
 
     for index, line in enumerate(loginhandles):
-        tmpline = smbregex.split(line)
+        tmpline = regex.split(line)
         splitline = list()
         for test in tmpline:
             if not ' ' in test:
@@ -83,7 +83,7 @@ def getlogins():
     return sambausers
 
 
-def sambahelp():
+def help():
     cmdlist = list()
     cmdlist.append("Syntax: samba command arg1..argN")
     cmdlist.append("Available commands: logins* (* command contains sub-commands)")
