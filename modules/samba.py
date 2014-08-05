@@ -89,3 +89,5 @@ class SambaUser:
 
         def nowplaying():
             return self.playing
+
+samba = Samba()
