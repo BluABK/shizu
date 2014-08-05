@@ -50,7 +50,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def spass(self):
         return str(self.config.get('irc', 'password'))
 
-    def port(self)
+    def port(self):
         return int(self.config.get('irc', 'port'))
 
     def chan(self):
