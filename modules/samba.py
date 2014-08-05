@@ -8,7 +8,6 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement support for checking that samba installation is sane and contains all required binaries and libraries
 
 import ConfigParser
-import re
 import os
 from subprocess import check_output
 

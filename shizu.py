@@ -7,18 +7,17 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement command to trigger server-side permission-sentinel.sh - and assign this to a server-side features mod
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
+# Global variables
+global re
+global ircbacklog
+global running
+
 # Import necessary modules
 import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
-import re               # RegEx for string work.
+import re               # Regex for the win.
 import ConfigParser
-import sys, os
 from random import randint
-
-# Define variables
-global re  # TODO: Find out why this complaints about "redeclared"
-global ircbacklog
-global running
 
 # Project-specific modules # TODO: Make module loading dynamic | TODO: Migrate modules to subdir modules/
 #import samba            # for server-side samba functionality
@@ -27,23 +26,6 @@ global running
 mod_dir = "modules/"
 
 from modules import samba
-
-blockcomment = """
-def loadmodules(directory):
-    modules = {}
-    modlist = os.listdir(directory)
-    oldcwd = os.getcwd()
-    os.chdir(oldcwd + '/' + directory)   # change working directory so we know import will work
-    for filename in modlist:
-        if filename.endswith(".py"):
-            modname = filename[:-3]
-            #modules[modname] = getattr(__import__(modname), modname)
-            modules[modname] = __import__(modname)
-    os.chdir(oldcwd)
-    return modules
-
-globals().update(loadmodules(r"%s" % mod_dir))
-"""
 
 ircbacklog = list()
 running = True
