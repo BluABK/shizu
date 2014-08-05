@@ -25,7 +25,7 @@ from random import randint
 #import db               # for server-side file search and lookup
 
 
-def getmodules():
+from modules import samba
 
     mod_dir = "modules/"
     modlist = os.listdir(mod_dir)
