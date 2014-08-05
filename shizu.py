@@ -30,7 +30,8 @@ def getmodules():
     modlist = os.listdir(mod_dir)
     modulelist = list()
     for mod in modlist:
-        modulelist.append(map(__import__, mod))
+        if mod != '_':
+            modulelist.append(map(__import__, mod))
     return modulelist
 
 modules = getmodules()
