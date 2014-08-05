@@ -25,17 +25,15 @@ from random import randint
 #import db               # for server-side file search and lookup
 
 
-from modules import samba
+def getmodules():
+    mod_dir = "modules/"
+    modlist = os.listdir(mod_dir)
+    modulelist = list()
+    for mod in modlist:
+        modulelist.append(map(__import__, mod))
+    return modulelist
 
-#def getmodules():
-mod_dir = "modules/"
-modlist = os.listdir(mod_dir)
-modulelist = list()
-for mod in modlist:
-    modulelist.append(map(__import__, mod))
-#return modulelist
-
-modules = modulelist #  getmodules()
+modules = getmodules()
 
 ircbacklog = list()
 running = True
