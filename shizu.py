@@ -27,7 +27,7 @@ mod_dir = "modules/"
 
 from modules import samba
 
-something = samba.getlogins()
+something = samba.samba.getlogins()
 print(something)
 
 ircbacklog = list()
