@@ -219,7 +219,7 @@ if __name__ == "__main__":
 
         ircparts = re.split("\s", ircmsg, 3)
 
-        if ircparts == ''
+        if ircparts[0] == '':
             continue
 
         if ircraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
