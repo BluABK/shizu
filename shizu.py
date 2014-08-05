@@ -17,18 +17,24 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
+import os
 from random import randint
 
 # Project-specific modules # TODO: Make module loading dynamic | TODO: Migrate modules to subdir modules/
 #import samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-mod_dir = "modules/"
 
-from modules import samba
+def getmodules():
 
-something = samba.getlogins()
-print(something)
+    mod_dir = "modules/"
+    modlist = os.listdir(mod_dir)
+    modulelist = list()
+    for mod in modlist:
+        modulelist.append(map(__import__, mod))
+    return modulelist
+
+modules = getmodules()
 
 ircbacklog = list()
 running = True
