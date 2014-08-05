@@ -240,7 +240,7 @@ if __name__ == "__main__":
             commands(tmpusernick, message, channel)
             triggers(tmpusernick, message, channel, ircraw)
 
-        i++
+        i += 1
 
     # See ya!
     ircsock.send("QUIT %s\r\n" % cfg.quitmsg())
