@@ -27,6 +27,7 @@ mod_dir = "modules/"
 
 import modules
 
+modules.samba = modules.Samba()
 something = modules.samba.getlogins()
 print(something)
 
