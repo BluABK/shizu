@@ -29,6 +29,7 @@ def getmodules():
     mod_dir = "modules/"
     curdir = os.getcwd()
     modlist = os.listdir(mod_dir)
+    print(modlist)
     modulelist = list()
     os.chdir(mod_dir)
     for mod in modlist:
