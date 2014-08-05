@@ -231,13 +231,14 @@ if __name__ == "__main__":
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(cfg.chan())
 
-        if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
-            tmpusernick = ircparts[0].split('!')[0]
-            try:
+        try:
+            if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
+                tmpusernick = ircparts[0].split('!')[0]
                 channel = ircparts[2]
-            except IndexError:
-                sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):")
-                sendmsg(IndexError.message)
+        except IndexError:
+            sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):")
+            sendmsg(IndexError.message)
+
             if channel[0] != '#':
                 channel = tmpusernick
             message = ircparts[3].lstrip(":")
