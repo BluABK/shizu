@@ -9,6 +9,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 
 import ConfigParser
 import os
+import re
 from subprocess import check_output
 
 # Define variables
