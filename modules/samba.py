@@ -9,68 +9,37 @@ __author__ = 'BluABK <abk@blucoders.net'
 
 import ConfigParser
 import os
-import re
 from subprocess import check_output
 
 # Define variables
 
-
-class Samba:
-    class Config:  # Shizu's config class
-        config = ConfigParser.RawConfigParser()
-
-        def __init__(self):
-            self.config.read(os.getcwd() + '/' + "config.ini")
-
-        def loadconfig(self):
-            configloc = os.getcwd() + '/' + "config.ini"
-            print(configloc)
-            self.config.read(configloc)
-            return True
-
-        def rawlogins(self):
-            return str(self.config.get('samba', 'smbstatus-command'))
-
-        def excludelogins(self):
-            return str(self.config.get('samba', 'exclude-names'))
-
-        def excludepaths(self):
-            return str(self.config.get('samba', 'exclude-paths'))
-
-    regex = re.compile(" +")
-
-    def __init__(self):
-        self.cfg = self.Config()
-        return
-
-    def getlogins(self):
-        self.cfg.loadconfig
-        print("Loaded config: " + os.getcwd() + '/' + "config.ini")
-        loginhandlesraw = check_output(self.cfg.rawlogins(), shell=True)
-        loginhandles = loginhandlesraw.splitlines()
-        sambausers = list()
-
-        for index, line in enumerate(loginhandles):
-            tmpline = self.regex.split(line)
-            splitline = list()
-            for test in tmpline:
-                if not ' ' in test:
-                    splitline.append(test)
-            sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
-
-        return sambausers
-
-    def getplaying(self):
-        self.cfg.rawlogins()
-        return True
-
-    def help(self):
-        cmdlist = list()
-        cmdlist.append("Syntax: samba command arg1..argN")
-        cmdlist.append("Available commands: logins* (* command contains sub-commands)")
-        return cmdlist
+regex = re.compile(" +")
 
 print check_output("sudo smbstatus -b | grep ipv", shell=True)
+
+
+class Config:  # Shizu's config class
+    config = ConfigParser.RawConfigParser()
+
+    def __init__(self):
+        self.config.read(os.getcwd() + '/' + "config.ini")
+
+    def loadconfig(self):
+        configloc = os.getcwd() + '/' + "config.ini"
+        print(configloc)
+        self.config.read(configloc)
+        return True
+
+    def rawlogins(self):
+        return str(self.config.get('samba', 'smbstatus-command'))
+
+    def excludelogins(self):
+        return str(self.config.get('samba', 'exclude-names'))
+
+    def excludepaths(self):
+        return str(self.config.get('samba', 'exclude-paths'))
+
+cfg = Config()
 
 
 class SambaUser:
@@ -90,4 +59,31 @@ class SambaUser:
         def nowplaying():
             return self.playing
 
-samba = Samba()
+
+def getplaying():
+    return True
+
+
+def getlogins():
+    cfg.loadconfig
+    print("Loaded config: " + os.getcwd() + '/' + "config.ini")
+    loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
+    loginhandles = loginhandlesraw.splitlines()
+    sambausers = list()
+
+    for index, line in enumerate(loginhandles):
+        tmpline = regex.split(line)
+        splitline = list()
+        for test in tmpline:
+            if not ' ' in test:
+                splitline.append(test)
+        sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+
+    return sambausers
+
+
+def help():
+    cmdlist = list()
+    cmdlist.append("Syntax: samba command arg1..argN")
+    cmdlist.append("Available commands: logins* (* command contains sub-commands)")
+    return cmdlist
