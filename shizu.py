@@ -25,10 +25,10 @@ from random import randint
 
 mod_dir = "modules/"
 
-import modules as mods
+from modules import samba as Samba
 
-mods.samba = mods.Samba()
-something = mods.samba.getlogins()
+samba = Samba()
+something = samba.getlogins()
 print(something)
 
 ircbacklog = list()
@@ -51,7 +51,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def spass(self):
         return str(self.config.get('irc', 'password'))
 
-    def port(self):
+    def port(self)
         return int(self.config.get('irc', 'port'))
 
     def chan(self):
