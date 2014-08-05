@@ -25,10 +25,10 @@ from random import randint
 
 mod_dir = "modules/"
 
-import modules
+import mods
 
-modules.samba = modules.Samba()
-something = modules.samba.getlogins()
+mods.samba = mods.Samba()
+something = mods.samba.getlogins()
 print(something)
 
 ircbacklog = list()
