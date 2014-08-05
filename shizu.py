@@ -25,7 +25,7 @@ from random import randint
 
 mod_dir = "modules/"
 
-from modules import *
+import modules
 
 ircbacklog = list()
 running = True
