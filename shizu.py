@@ -206,6 +206,8 @@ if __name__ == "__main__":
     ircsock.send("NICK " + cfg.nick() + "\n")
     ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()))
 
+    i = 1
+
     while running:
         ircraw = ircsock.recv(512)             # Receive data from the server
         if len(ircbacklog) > maxbacklog:
@@ -213,7 +215,7 @@ if __name__ == "__main__":
         ircbacklog.insert(0, ircraw)
         ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print(ircmsg)                           # print received data
+        print("%s: %s" % (i, ircmsg))                           # print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
@@ -237,6 +239,8 @@ if __name__ == "__main__":
             message = ircparts[3].lstrip(":")
             commands(tmpusernick, message, channel)
             triggers(tmpusernick, message, channel, ircraw)
+
+        i++
 
     # See ya!
     ircsock.send("QUIT %s\r\n" % cfg.quitmsg())
