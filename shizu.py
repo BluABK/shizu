@@ -27,14 +27,15 @@ from random import randint
 
 from modules import samba
 
-    mod_dir = "modules/"
-    modlist = os.listdir(mod_dir)
-    modulelist = list()
-    for mod in modlist:
-        modulelist.append(map(__import__, mod))
-    return modulelist
+#def getmodules():
+mod_dir = "modules/"
+modlist = os.listdir(mod_dir)
+modulelist = list()
+for mod in modlist:
+    modulelist.append(map(__import__, mod))
+#return modulelist
 
-modules = getmodules()
+modules = modulelist #  getmodules()
 
 ircbacklog = list()
 running = True
