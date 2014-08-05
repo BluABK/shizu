@@ -25,7 +25,7 @@ from random import randint
 
 mod_dir = "modules/"
 
-from modules import samba
+from modules import * as mods
 
 ircbacklog = list()
 running = True
