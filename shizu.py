@@ -239,7 +239,7 @@ if __name__ == "__main__":
                 tmpusernick = ircparts[0].split('!')[0]
                 channel = ircparts[2]
                 if channel[0] != '#':
-                channel = tmpusernick
+                    channel = tmpusernick
                 message = ircparts[3].lstrip(":")
                 commands(tmpusernick, message, channel)
                 triggers(tmpusernick, message, channel, ircraw)
