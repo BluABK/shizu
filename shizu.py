@@ -27,6 +27,9 @@ mod_dir = "modules/"
 
 import modules
 
+something = modules.samba.getlogins()
+print(something)
+
 ircbacklog = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
