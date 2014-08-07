@@ -91,11 +91,19 @@ def ping():
 
 
 def sendmsg(msg):
-    try:
-        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
-    except ValueError:
-        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Oi! That's not a string OwO Are you trying to kill me?!"))
-        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Hey... Are you trying to kill me?!"))
+    if isinstance(msg, basestring):
+        try:
+            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
+        except ValueError:
+            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Oi! That's not a string OwO Are you trying to kill me?!"))
+            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Hey... Are you trying to kill me?!"))
+    elif all(isinstance(item, basestring) for item in msg):  # check iterable string type of all items.
+        for lines in range(len(msg)):
+            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg[lines]))
+    else:
+        print("Item not iterable, raising TypeError")
+        raise TypeError
+
 
 def debug(msg):
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
