@@ -20,34 +20,10 @@ import ConfigParser
 import os
 from random import randint
 
-# Project-specific modules # TODO: Make module loading dynamic | TODO: Migrate modules to subdir modules/
+# Project-specific modules
 import modules.samba as samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-debug = """
-def getmodules():
-    mod_dir = "modules/"
-    curdir = os.getcwd()
-    modlist = os.listdir(mod_dir)
-    print(modlist)
-    modulelist = []
-    os.chdir(mod_dir)
-    for mod in modlist:
-        print(mod[:-3])
-        if mod[:-3] != "__init__":
-            modulelist.append(mod[:-3])
-    os.chdir(curdir)
-    return modulelist
-
-
-def loadmodules(modlist):
-    for i in range(len(modlist)):
-        print modlist[i]
-        __import__('modules.' + str(modlist[i]))
-
-modules = getmodules()
-loadmodules(modules)
-"""
 ircbacklog = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
@@ -115,8 +91,11 @@ def ping():
 
 
 def sendmsg(msg):
-    ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
-
+    try:
+        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
+    except ValueError:
+        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Oi! That's not a string OwO Are you trying to kill me?!"))
+        ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Hey... Are you trying to kill me?!"))
 
 def debug(msg):
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
@@ -183,29 +162,15 @@ def commands(usernick, msg, chan):
     # Help calls
     if ircmsg.find(cfg.cmdsym() + "help") != -1:
         help(ircmsg, usernick)
-#debug = """
+
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            smblogins = samba.getlogins()
-            matches = re.search(r"samba logins (\w+)", msg)
-            try:
-                for item in xrange(len(smblogins)):
-                    if smblogins[item].name == matches.group(1):
-                        #if excluded user
-                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
-            except AttributeError:
-                    for item in xrange(len(smblogins)):
-                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
+            sendmsg(samba.getlogins(msg))
+
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
-#"""
-
-
-def modulecommands(usrnick, msg, chan, modlist):
-    for i in range(len(modules)):
-        getattr(modlist[i], 'modcommands')(usrnick, msg, chan)
 
 
 def triggers(usernick, msg, chan, raw):

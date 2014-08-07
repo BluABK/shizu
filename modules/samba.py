@@ -65,7 +65,7 @@ def getplaying():
     return True
 
 
-def getlogins():
+def getlogins(msg):
     cfg.loadconfig
     print("Loaded config: " + os.getcwd() + '/' + "config.ini")
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
@@ -80,26 +80,17 @@ def getlogins():
                 splitline.append(test)
         sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
 
-    return sambausers
+        matches = re.search(r"samba logins (\w+)", msg)
+        try:
+            for item in xrange(len(sambausers)):
+                if sambausers[item].name == matches.group(1):
+                    #if excluded user
+                    return "%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
+        except AttributeError:
+                for item in xrange(len(sambausers)):
+                    return "%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
+ #   return sambausers
 
-debug = """
-def modcommands(usrnick, msg, chan):
-    if msg.find(cfg.cmdsym() + "samba") != -1:
-        if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            smblogins = getlogins()
-            matches = re.search(r"samba logins (\w+)", msg)
-            try:
-                for item in xrange(len(smblogins)):
-                    if smblogins[item].name == matches.group(1):
-                        #if excluded user
-                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
-            except AttributeError:
-                    for item in xrange(len(smblogins)):
-                        sendmsg("%s@%s        [ID: %s]" % (smblogins[item].name, smblogins[item].host, smblogins[item].uid))
-        elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
-            for item in xrange(len(help())):
-                sendmsg(str(help()[item]))
-"""
 
 def help():
     cmdlist = list()
