@@ -91,6 +91,9 @@ def getlogins(msg):
                 for item in xrange(len(sambausers)):
                     loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
 
+        for debug in range(len(loginlist)):
+            print loginlist[debug]
+
         return loginlist
 
 
