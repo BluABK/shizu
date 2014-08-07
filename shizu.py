@@ -183,7 +183,7 @@ def commands(usernick, msg, chan):
     # Help calls
     if ircmsg.find(cfg.cmdsym() + "help") != -1:
         help(ircmsg, usernick)
-
+debug = """
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
@@ -200,6 +200,12 @@ def commands(usernick, msg, chan):
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
+"""
+
+
+def modulecommands(usrnick, msg, chan, modlist):
+    for i in range(len(modules)):
+        getattr(modlist[i], 'modcommands')(usrnick, msg, chan)
 
 
 def triggers(usernick, msg, chan, raw):
@@ -264,6 +270,8 @@ if __name__ == "__main__":
                 message = ircparts[3].lstrip(":")
                 commands(tmpusernick, message, channel)
                 triggers(tmpusernick, message, channel, ircraw)
+                modulecommands(tmpusernick, message, channel)
+
         except IndexError:
             sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):")
             sendmsg(IndexError.message)
