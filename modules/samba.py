@@ -92,6 +92,9 @@ def getlogins(msg):
                     print "DEBUGZ-B:  %s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
                     loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
 
+        for smbusers in range(len(sambausers)):
+            print sambausers[smbusers]
+
         for debug in range(len(loginlist)):
             print loginlist[debug]
 
