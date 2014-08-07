@@ -21,10 +21,10 @@ import os
 from random import randint
 
 # Project-specific modules # TODO: Make module loading dynamic | TODO: Migrate modules to subdir modules/
-#import samba            # for server-side samba functionality
+import modules.samba as samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-
+debug = """
 def getmodules():
     mod_dir = "modules/"
     curdir = os.getcwd()
@@ -47,7 +47,7 @@ def loadmodules(modlist):
 
 modules = getmodules()
 loadmodules(modules)
-
+"""
 ircbacklog = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
@@ -183,7 +183,7 @@ def commands(usernick, msg, chan):
     # Help calls
     if ircmsg.find(cfg.cmdsym() + "help") != -1:
         help(ircmsg, usernick)
-debug = """
+#debug = """
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
@@ -200,12 +200,12 @@ debug = """
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
-"""
+#"""
 
 
 def modulecommands(usrnick, msg, chan, modlist):
     for i in range(len(modules)):
-        getattr(object(modlist[i]), 'modcommands')(usrnick, msg, chan)
+        getattr(modlist[i], 'modcommands')(usrnick, msg, chan)
 
 
 def triggers(usernick, msg, chan, raw):

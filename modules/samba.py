@@ -82,7 +82,7 @@ def getlogins():
 
     return sambausers
 
-
+debug = """
 def modcommands(usrnick, msg, chan):
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
@@ -99,7 +99,7 @@ def modcommands(usrnick, msg, chan):
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(help())):
                 sendmsg(str(help()[item]))
-
+"""
 
 def help():
     cmdlist = list()
