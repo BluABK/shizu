@@ -79,17 +79,18 @@ def getlogins(msg):
             if not ' ' in test:
                 splitline.append(test)
         sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
-
+        loginlist = list()
         matches = re.search(r"samba logins (\w+)", msg)
         try:
             for item in xrange(len(sambausers)):
                 if sambausers[item].name == matches.group(1):
                     #if excluded user
-                    return "%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
+                    loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
         except AttributeError:
                 for item in xrange(len(sambausers)):
-                    return "%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
- #   return sambausers
+                    loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
+
+        return loginlist
 
 
 def help():
