@@ -169,7 +169,7 @@ def commands(usernick, msg, chan):
 
     # Help calls
     if ircmsg.find(cfg.cmdsym() + "help") != -1:
-        help(ircmsg, usernick)
+        helpcmd(ircmsg, usernick)
 
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
@@ -177,8 +177,8 @@ def commands(usernick, msg, chan):
             sendmsg(samba.getlogins(msg))
 
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
-            for item in xrange(len(samba.help())):
-                sendmsg(str(samba.help()[item]))
+            for item in xrange(len(samba.helpcmd())):
+                sendmsg(str(samba.helpcmd()[item]))
 
     # Debug commands
     if msg.find(cfg.cmdsym() + "debug") != -1:
@@ -199,7 +199,7 @@ def triggers(usernick, msg, chan, raw):
         return
 
 
-def help(user, msg):
+def helpcmd(user, msg):
         sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
         sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
 

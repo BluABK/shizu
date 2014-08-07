@@ -16,8 +16,6 @@ from subprocess import check_output
 
 regex = re.compile(" +")
 
-print check_output("sudo smbstatus -b | grep ipv", shell=True)
-
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
@@ -64,9 +62,10 @@ class SambaUser:
 def getplaying():
     return True
 
+
 def getlogins(msg):
+    global cfg
     cfg.loadconfig
-    print("Loaded config: " + os.getcwd() + '/' + "config.ini")
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
     sambausers = list()
@@ -92,25 +91,8 @@ def getlogins(msg):
 
     return loginlist
 
-otherfunc = """
-def getlogins(msg):
-    cfg.loadconfig
-    print("Loaded config: " + os.getcwd() + '/' + "config.ini")
-    loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
-    loginhandles = loginhandlesraw.splitlines()
-    sambausers = list()
 
-    for index, line in enumerate(loginhandles):
-        tmpline = regex.split(line)
-        splitline = list()
-        for test in tmpline:
-            if not ' ' in test:
-                splitline.append(test)
-        sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
-
-    return sambausers
-"""
-def help():
+def helpcmd():
     cmdlist = list()
     cmdlist.append("Syntax: samba command arg1..argN")
     cmdlist.append("Available commands: logins* (* command contains sub-commands)")
