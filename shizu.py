@@ -268,7 +268,7 @@ if __name__ == "__main__":
                 if channel[0] != '#':
                     channel = tmpusernick
                 message = ircparts[3].lstrip(":")
-                commands(tmpusernick, message, channel)
+                commands(tmpusernick, message, channel, modules)
                 triggers(tmpusernick, message, channel, ircraw)
                 modulecommands(tmpusernick, message, channel)
 
