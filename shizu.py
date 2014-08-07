@@ -189,8 +189,6 @@ def commands(usernick, msg, chan):
             for i in range(len(dbg)):
                 debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
                 debug(dbg[i])
-                debug("Printing last item in list by force")
-                debug(dbg[len(dbg)])
 
 
 def triggers(usernick, msg, chan, raw):
