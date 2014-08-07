@@ -41,9 +41,9 @@ def getmodules():
 
 
 def loadmodules(modlist):
-    for i in range(len(modules)):
-        print modules[i]
-        __import__('modules.' + str(modules[i]))
+    for i in range(len(modlist)):
+        print modlist[i]
+        __import__('modules.' + str(modlist[i]))
 
 modules = getmodules()
 loadmodules(modules)
@@ -205,7 +205,7 @@ debug = """
 
 def modulecommands(usrnick, msg, chan, modlist):
     for i in range(len(modules)):
-        getattr(modlist[i], 'modcommands')(usrnick, msg, chan)
+        getattr(object(modlist[i]), 'modcommands')(usrnick, msg, chan)
 
 
 def triggers(usernick, msg, chan, raw):

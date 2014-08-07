@@ -83,7 +83,7 @@ def getlogins():
     return sambausers
 
 
-def modcommands(msg):
+def modcommands(usrnick, msg, chan):
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
             smblogins = getlogins()
