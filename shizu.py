@@ -37,7 +37,7 @@ def getmodules():
     for mod in modlist:
         print(mod[:-3])
         if mod[:-3] != "__init__":
-            modulelist.append(mod[:-3] + ' ')
+            modulelist.append(mod[:-3])
     os.chdir(curdir)
     return modulelist
 
