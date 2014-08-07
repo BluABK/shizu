@@ -268,9 +268,9 @@ if __name__ == "__main__":
                 if channel[0] != '#':
                     channel = tmpusernick
                 message = ircparts[3].lstrip(":")
-                commands(tmpusernick, message, channel, modules)
+                commands(tmpusernick, message, channel)
                 triggers(tmpusernick, message, channel, ircraw)
-                modulecommands(tmpusernick, message, channel)
+                modulecommands(tmpusernick, message, channel, modules)
 
         except IndexError:
             sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):")
