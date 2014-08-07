@@ -86,11 +86,11 @@ def getlogins(msg):
             for item in xrange(len(sambausers)):
                 if sambausers[item].name == matches.group(1):
                     #if excluded user
-                    print "DEBUGZ-A:  %%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
+                    print "DEBUGZ-A:  %s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
                     loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
         except AttributeError:
                 for item in xrange(len(sambausers)):
-                    print "DEBUGZ-B:  %%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
+                    print "DEBUGZ-B:  %s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
                     loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
 
         for debug in range(len(loginlist)):
