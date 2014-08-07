@@ -64,7 +64,7 @@ class SambaUser:
 def getplaying():
     return True
 
-
+newlogins = """
 def getlogins(msg):
     cfg.loadconfig
     print("Loaded config: " + os.getcwd() + '/' + "config.ini")
@@ -97,7 +97,24 @@ def getlogins(msg):
             print loginlist[debug]
 
         return loginlist
+"""
 
+def getlogins():
+    cfg.loadconfig
+    print("Loaded config: " + os.getcwd() + '/' + "config.ini")
+    loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
+    loginhandles = loginhandlesraw.splitlines()
+    sambausers = list()
+
+    for index, line in enumerate(loginhandles):
+        tmpline = regex.split(line)
+        splitline = list()
+        for test in tmpline:
+            if not ' ' in test:
+                splitline.append(test)
+        sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+
+    return sambausers
 
 def help():
     cmdlist = list()
