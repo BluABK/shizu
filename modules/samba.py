@@ -99,7 +99,7 @@ def getlogins(msg):
         return loginlist
 """
 
-def getlogins():
+def getlogins(msg):
     cfg.loadconfig
     print("Loaded config: " + os.getcwd() + '/' + "config.ini")
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
