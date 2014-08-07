@@ -79,6 +79,9 @@ def getlogins(msg):
                 splitline.append(test)
         sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
 
+        for smbusers in range(len(sambausers)):
+            print sambausers[smbusers]
+
         loginlist = list()
         matches = re.search(r"samba logins (\w+)", msg)
         try:
