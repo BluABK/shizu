@@ -79,29 +79,18 @@ def getlogins(msg):
                 splitline.append(test)
         sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
 
-        for smbusers in range(len(sambausers)):
-            print sambausers[smbusers]
+    loginlist = list()
+    matches = re.search(r"samba logins (\w+)", msg)
+    try:
+        for item in xrange(len(sambausers)):
+            if sambausers[item].name == matches.group(1):
+                #if excluded user
+                loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
+    except AttributeError:
+        for item in xrange(len(sambausers)):
+            loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
 
-        loginlist = list()
-        matches = re.search(r"samba logins (\w+)", msg)
-        try:
-            for item in xrange(len(sambausers)):
-                if sambausers[item].name == matches.group(1):
-                    #if excluded user
-                    print "DEBUGZ-A:  %s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
-                    loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
-        except AttributeError:
-                for item in xrange(len(sambausers)):
-                    print "DEBUGZ-B:  %s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid)
-                    loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
-
-        for smbusers in range(len(sambausers)):
-            print sambausers[smbusers]
-
-        for debug in range(len(loginlist)):
-            print loginlist[debug]
-
-        return loginlist
+    return loginlist
 
 otherfunc = """
 def getlogins(msg):
