@@ -99,6 +99,7 @@ def sendmsg(msg):
             ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Hey... Are you trying to kill me?!"))
     elif all(isinstance(item, basestring) for item in msg):  # check iterable string type of all items.
         for lines in range(len(msg)):
+            debug("Line %s" % str(lines))
             ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg[lines]))
     else:
         print("Item not iterable, raising TypeError")
