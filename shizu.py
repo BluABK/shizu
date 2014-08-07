@@ -24,7 +24,9 @@ from random import randint
 #import samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
-meh = """
+#debug2348435276342 = """
+
+
 def getmodules():
     mod_dir = "modules/"
     curdir = os.getcwd()
@@ -34,12 +36,12 @@ def getmodules():
     os.chdir(mod_dir)
     for mod in modlist:
         print(mod[:-3])
-        modulelist.append(__import__(mod[:-3]))
+        modulelist.append(__import__(str(mod[:-3])))
     os.chdir(curdir)
     return modulelist
 
 modules = getmodules()
-"""
+#"""
 ircbacklog = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
