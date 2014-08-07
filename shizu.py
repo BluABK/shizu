@@ -42,7 +42,10 @@ def getmodules():
     return modulelist
 
 modules = getmodules()
-__import__(str(modules.index(0)))
+
+for i in range(len(modules)):
+    print modules[i]
+    __import__(str(modules[i]))
 #"""
 ircbacklog = list()
 running = True
