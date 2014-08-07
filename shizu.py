@@ -181,6 +181,15 @@ def commands(usernick, msg, chan):
             for item in xrange(len(samba.help())):
                 sendmsg(str(samba.help()[item]))
 
+    # Debug commands
+    if msg.find(cfg.cmdsym() + "debug") != -1:
+        if msg.find(cfg.cmdsym() + "debug logins") != -1:
+            dbg = samba.getlogins(msg)
+            debug("Passed variable of length:" + str(len(dbg)))
+            for i in range(len(dbg)):
+                debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
+                debug(dbg[i])
+
 
 def triggers(usernick, msg, chan, raw):
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
