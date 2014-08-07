@@ -45,7 +45,7 @@ modules = getmodules()
 
 for i in range(len(modules)):
     print modules[i]
-    __import__(str(modules[i]))
+    __import__('modules.' + str(modules[i]))
 #"""
 ircbacklog = list()
 running = True
