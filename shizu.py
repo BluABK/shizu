@@ -176,7 +176,7 @@ def commands(usernick, msg, chan):
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
 #            sendmsg(samba.getlogins(msg))
-            smblogins = samba.getlogins()
+            smblogins = samba.getlogins(msg)
             matches = re.search(r"samba logins (\w+)", msg)
             try:
                 for item in xrange(len(smblogins)):
