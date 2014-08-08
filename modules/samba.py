@@ -6,7 +6,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement path exemption
 # TODO: Add try and SomeReasonableExceptionHandler across code
 # TODO: Implement support for checking that samba installation is sane and contains all required binaries and libraries
-
+# TODO: Implement nowplaying() that fetches BATCH media files from smbstatus for SambaUsers, ex: !np Heretic121
 import ConfigParser
 import os
 import re
