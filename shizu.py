@@ -17,7 +17,6 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
-import os
 from random import randint
 
 # Project-specific modules
@@ -168,9 +167,9 @@ def commands(usernick, msg, chan):
         matches = re.search(r"join (.+)", msg)
         newchan = matches.group(1)
         if newchan[0] == '#':
-            ircsock.send("JOIN " + newchan)
+            ircsock.send("JOIN %s\r\n" % newchan)
         else:
-            ircsock.send("JOIN #" + newchan)
+            ircsock.send("JOIN #%s\r\n" % newchan)
     elif msg.find(cfg.cmdsym() + "quit%s" % cfg.quitpro()) != -1:
         ircquit()
 
@@ -226,6 +225,8 @@ if __name__ == "__main__":
 
     while running:
         ircraw = ircsock.recv(512)             # Receive data from the server
+        if ircraw == '':
+            continue
         if len(ircbacklog) > maxbacklog:
             del ircbacklog[-1]                 # Remove oldest entry
         ircbacklog.insert(0, ircraw)
