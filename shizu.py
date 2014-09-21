@@ -90,16 +90,16 @@ def ping():
     ircsock.send("PONG :Pong\n")
 
 
-def sendmsg(msg):
+def sendmsg(msg, chan):
     if isinstance(msg, basestring):
         try:
-            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg))
+            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
         except ValueError:
-            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Oi! That's not a string OwO Are you trying to kill me?!"))
-            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), "Hey... Are you trying to kill me?!"))
+            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
+            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Hey... Are you trying to kill me?!"))
     elif all(isinstance(item, basestring) for item in msg):  # check iterable string type of all items.
         for lines in range(len(msg)):
-            ircsock.send("PRIVMSG %s :%s\r\n" % (cfg.chan(), msg[lines]))
+            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg[lines]))
     else:
         print("Item not iterable, raising TypeError")
         raise TypeError
@@ -132,9 +132,9 @@ def getgreeting(greeter):
     return "%s %s~" % (greeting,  greeter)
 
 
-def replay(lines):
+def replay(lines, chan):
     for i in range(0, lines):
-        sendmsg(ircbacklog[i])
+        sendmsg(ircbacklog[i], chan)
 
 
 def ircquit():
@@ -145,40 +145,47 @@ def ircquit():
 def commands(usernick, msg, chan):
     # General commands
     if msg.find(cfg.cmdsym() + "awesome") != -1:
-        sendmsg("Everything is awesome!")
+        sendmsg("Everything is awesome!", chan)
     elif msg.find(cfg.cmdsym() + "nyaa") != -1:
-        sendmsg("Nyaa~")
+        sendmsg("Nyaa~", chan)
     elif msg.find(cfg.cmdsym() + "replay") != -1:
         matches = re.search(r"replay (\d+)", msg)
         try:
             arg = matches.group(1)
             if ian(arg) and int(arg) <= maxbacklog:
-                replay(int(arg))
+                replay(int(arg), chan)
             else:
-                replay(0)
+                replay(0, chan)
         except AttributeError:
-            replay(0)
+            replay(0, chan)
     elif msg.find(cfg.cmdsym() + "say") != -1:
         matches = re.search(r"say (.+)", msg)
-        sendmsg(matches.group(1))
+        sendmsg(matches.group(1), chan)
     elif msg.find(cfg.cmdsym() + "act") != -1:
         action = re.search(r"act (.+)", msg)
         ircsock.send(u"PRIVMSG %s :\x01ACTION %s\x01\r\n" % (chan, action.group(1)))
+    elif msg.find(cfg.cmdsym() + "join") != -1:
+        matches = re.search(r"join (.+)", msg)
+        newchan = matches.group(1)
+        if newchan[0] == '#':
+            ircsock.send("JOIN " + newchan)
+        else:
+            ircsock.send("JOIN #" + newchan)
     elif msg.find(cfg.cmdsym() + "quit%s" % cfg.quitpro()) != -1:
         ircquit()
 
     # Help calls
-    if ircmsg.find(cfg.cmdsym() + "help") != -1:
-        helpcmd(ircmsg, usernick)
+    if msg.find(cfg.cmdsym() + "help") != -1:
+        helpcmd(usernick)
 
     # Module: samba
     if msg.find(cfg.cmdsym() + "samba") != -1:
         if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            sendmsg(samba.getlogins(msg))
+            sendmsg(samba.getlogins(msg), chan)
 
         elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
             for item in xrange(len(samba.helpcmd())):
-                sendmsg(str(samba.helpcmd()[item]))
+                sendmsg(str(samba.helpcmd()[item]), chan)
 
     # Debug commands
     if msg.find(cfg.cmdsym() + "debug") != -1:
@@ -190,18 +197,18 @@ def commands(usernick, msg, chan):
                 debug(dbg[i])
 
 
-def triggers(usernick, msg, chan, raw):
+def triggers(usernick, msg, chan):
     matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
-            sendmsg((getgreeting(usernick)))
+            sendmsg((getgreeting(usernick)), chan)
     except AttributeError:
         return
 
 
-def helpcmd(user, msg):
-        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()))
-        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail))
+def helpcmd(user):
+        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), cfg.chan())
+        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), cfg.chan())
 
 # TODO: NOT-A-TODO/Shortcut: Main()
 if __name__ == "__main__":
@@ -251,11 +258,11 @@ if __name__ == "__main__":
                     channel = tmpusernick
                 message = ircparts[3].lstrip(":")
                 commands(tmpusernick, message, channel)
-                triggers(tmpusernick, message, channel, ircraw)
+                triggers(tmpusernick, message, channel)
 
         except IndexError:
-            sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):")
-            sendmsg(IndexError.message)
+            sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):", cfg.chan())
+            sendmsg(IndexError.message, cfg.chan())
         i += 1
 
     # See ya!
