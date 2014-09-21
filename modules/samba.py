@@ -71,22 +71,27 @@ def getlogins(msg):
     sambausers = list()
 
     for index, line in enumerate(loginhandles):
+        # throw out empty lines
+        if not len(line):
+            continue
+
         tmpline = regex.split(line)
         splitline = list()
+
         for test in tmpline:
             if not ' ' in test:
                 splitline.append(test)
-        sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+
+        if len(splitline) < 4:
+            # TODO investigate
+            print "samba/getlogins: splitline has not enough items, are you root?"
+        else:
+            sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
 
     loginlist = list()
-    matches = re.search(r"samba logins (\w+)", msg)
-    try:
-        for item in xrange(len(sambausers)):
-            if sambausers[item].name == matches.group(1):
-                #if excluded user
-                loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
-    except AttributeError:
-        for item in xrange(len(sambausers)):
+    for item in xrange(len(sambausers)):
+        if not len(msg) or sambausers[item].name in msg:
+            #if excluded user
             loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
 
     return loginlist

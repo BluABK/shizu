@@ -30,7 +30,6 @@ modulesavail = "samba*"
 
 # TODO: NOT-A-TODO/Shortcut: Classes
 
-
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
 
@@ -72,7 +71,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
 # TODO: NOT-A-TODO/Shortcut: Variables declared by config file
 cfg = Config()
-maxbacklog = cfg.backlog()
+maxbacklog = int(cfg.backlog())
 
 # TODO: NOT-A-TODO/Shortcut: Functions
 
@@ -96,13 +95,10 @@ def sendmsg(msg, chan):
         except ValueError:
             ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
             ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Hey... Are you trying to kill me?!"))
-    elif all(isinstance(item, basestring) for item in msg):  # check iterable string type of all items.
-        for lines in range(len(msg)):
-            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg[lines]))
     else:
-        print("Item not iterable, raising TypeError")
-        raise TypeError
-
+        # Don't check, errors from here are raised
+        for item in msg:
+            sendmsg(item, chan)
 
 def debug(msg):
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
@@ -132,8 +128,9 @@ def getgreeting(greeter):
 
 
 def replay(lines, chan):
-    for i in range(0, lines):
-        sendmsg(ircbacklog[i], chan)
+    tosend = ircbacklog[-lines:]
+    for i in tosend:
+        sendmsg(i, chan)
 
 
 def ircquit():
@@ -142,54 +139,63 @@ def ircquit():
 
 
 def commands(usernick, msg, chan):
-    # General commands
-    if msg.find(cfg.cmdsym() + "awesome") != -1:
-        sendmsg("Everything is awesome!", chan)
-    elif msg.find(cfg.cmdsym() + "nyaa") != -1:
-        sendmsg("Nyaa~", chan)
-    elif msg.find(cfg.cmdsym() + "replay") != -1:
-        matches = re.search(r"replay (\d+)", msg)
-        try:
-            arg = matches.group(1)
-            if ian(arg) and int(arg) <= maxbacklog:
-                replay(int(arg), chan)
-            else:
-                replay(0, chan)
-        except AttributeError:
-            replay(0, chan)
-    elif msg.find(cfg.cmdsym() + "say") != -1:
-        matches = re.search(r"say (.+)", msg)
-        sendmsg(matches.group(1), chan)
-    elif msg.find(cfg.cmdsym() + "act") != -1:
-        action = re.search(r"act (.+)", msg)
-        ircsock.send(u"PRIVMSG %s :\x01ACTION %s\x01\r\n" % (chan, action.group(1)))
-    elif msg.find(cfg.cmdsym() + "join") != -1:
-        matches = re.search(r"join (.+)", msg)
-        newchan = matches.group(1)
-        if newchan[0] == '#':
-            ircsock.send("JOIN %s\r\n" % newchan)
+    # First of all, check if it is a command
+    if chan[0] == "#":
+        # If message starts in trigger
+        if msg[:len(cfg.cmdsym())] == cfg.cmdsym():
+            # Strip trigger
+            msg = msg[len(cfg.cmdsym()):]
+        # else it is not a command
         else:
-            ircsock.send("JOIN #%s\r\n" % newchan)
-    elif msg.find(cfg.cmdsym() + "quit%s" % cfg.quitpro()) != -1:
+            return
+
+    cmd = msg.split(' ')
+
+    # General commands
+    if cmd[0] == "awesome":
+        sendmsg("Everything is awesome!", chan)
+    elif cmd[0] == "nyaa":
+        sendmsg("Nyaa~", chan)
+    elif cmd[0] == "replay":
+        # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
+        if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
+            replay(int(cmd[1]), chan)
+        else:
+            replay(maxbacklog, chan)
+    elif cmd[0] == "say":
+        # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
+        sendmsg(" ".join(cmd[1:]), chan)
+    elif cmd[0] == "act":
+        sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
+    elif cmd[0] == "join":
+        # Ability to join multiple channels
+        newchans = cmd[1:]
+        for newchan in newchans:
+            if newchan[0] == '#':
+                ircsock.send("JOIN %s\r\n" % newchan)
+            else:
+                ircsock.send("JOIN #%s\r\n" % newchan)
+    elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
         ircquit()
 
     # Help calls
-    if msg.find(cfg.cmdsym() + "help") != -1:
+    if cmd[0] == "help":
         helpcmd(usernick)
 
     # Module: samba
-    if msg.find(cfg.cmdsym() + "samba") != -1:
-        if msg.find(cfg.cmdsym() + "samba logins") != -1:
-            sendmsg(samba.getlogins(msg), chan)
+    if cmd[0] == "samba":
+        # Split and don't die
 
-        elif msg.find(cfg.cmdsym() + "samba" or cfg.cmdsym() + "samba help") != -1:
+        if len(cmd) < 2 or cmd[1] == "help":
             for item in xrange(len(samba.helpcmd())):
                 sendmsg(str(samba.helpcmd()[item]), chan)
+        elif cmd[1] == "logins":
+            sendmsg(samba.getlogins(cmd[2:]), chan)
 
     # Debug commands
-    if msg.find(cfg.cmdsym() + "debug") != -1:
-        if msg.find(cfg.cmdsym() + "debug logins") != -1:
-            dbg = samba.getlogins(msg)
+    if cmd == "debug":
+        if len(cmd) >= 2 and cmd[1] == "logins":
+            dbg = samba.getlogins(cmd[2:])
             debug("Passed variable of length:" + str(len(dbg)))
             for i in range(len(dbg)):
                 debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
@@ -223,13 +229,19 @@ if __name__ == "__main__":
 
     i = 1
 
-    while running:
-        ircraw = ircsock.recv(512)             # Receive data from the server
+    for ircraw in ircsock.makefile():
+        if not running:
+            break
+
         if ircraw == '':
             continue
+
+        ircbacklog.append(ircraw)
+
         if len(ircbacklog) > maxbacklog:
-            del ircbacklog[-1]                 # Remove oldest entry
-        ircbacklog.insert(0, ircraw)
+            # Delete first entry
+            ircbacklog = ircbacklog[1:]
+
         ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print("%s: %s" % (i, ircmsg))                           # print received data
@@ -251,19 +263,16 @@ if __name__ == "__main__":
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(cfg.chan())
 
-        try:
-            if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
-                tmpusernick = ircparts[0].split('!')[0]
-                channel = ircparts[2]
-                if channel[0] != '#':
-                    channel = tmpusernick
-                message = ircparts[3].lstrip(":")
-                commands(tmpusernick, message, channel)
-                triggers(tmpusernick, message, channel)
+        if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
+            tmpusernick = ircparts[0].split('!')[0]
+            channel = ircparts[2]
+            if channel[0] != '#':
+                channel = tmpusernick
+            message = ircparts[3].lstrip(":")
 
-        except IndexError:
-            sendmsg("channel = ircparts[2] failed (GLHF interacting with the bot at all):", cfg.chan())
-            sendmsg(IndexError.message, cfg.chan())
+            commands(tmpusernick, message, channel)
+            triggers(tmpusernick, message, channel)
+
         i += 1
 
     # See ya!
