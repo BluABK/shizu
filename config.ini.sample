@@ -1,0 +1,25 @@
+[irc]
+
+backlog-limit = <integer number of lines to remember>
+
+server = <hostname or ip, no quotes>
+
+port = <port>
+
+password = <optional password>
+
+nickname = <nickname>
+
+real name = <realname>
+
+channel = <channel>
+
+cmdsymbol = <trigger char, typically . or @ or !>
+
+quit-message = <message to send on quit>
+
+quit-protection = <string to append to quit for the bot to actually quit: quit-protection = aaaa -> !quitaaaa>
+
+[nickserv]
+
+password = <optional>
