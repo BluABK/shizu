@@ -193,7 +193,7 @@ def commands(usernick, msg, chan):
             sendmsg(samba.getlogins(cmd[2:]), chan)
 
     # Debug commands
-    if cmd == "debug":
+    if cmd[0] == "debug":
         if len(cmd) >= 2 and cmd[1] == "logins":
             dbg = samba.getlogins(cmd[2:])
             debug("Passed variable of length:" + str(len(dbg)))
