@@ -156,6 +156,9 @@ def commands(usernick, msg, chan):
         sendmsg("Everything is awesome!", chan)
     elif cmd[0] == "nyaa":
         sendmsg("Nyaa~", chan)
+# Mess with the best, die like the rest ~
+    elif cmd[0] == "punishtec":
+	ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
     elif cmd[0] == "replay":
         # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
         if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
