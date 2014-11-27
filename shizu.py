@@ -171,7 +171,7 @@ def commands(usernick, msg, chan):
         elif cmd[0] == "nyaa":
             sendmsg("Nyaa~", chan)
         elif cmd[0] == "kick":
-            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick);
+            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick, chan);
         # Mess with the best, die like the rest ~
         elif cmd[0] == "punishtec":
             sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
