@@ -171,10 +171,10 @@ def commands(usernick, msg, chan):
         elif cmd[0] == "nyaa":
             sendmsg("Nyaa~", chan)
         elif cmd[0] == "kick":
-            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick, chan);
+            sendraw("KICK #blu " + usernick + " Backfired, oh the irony! ~\r\n", chan)
         # Mess with the best, die like the rest ~
         elif cmd[0] == "punishtec":
-            sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
+            sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n")
         elif cmd[0] == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
             if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
