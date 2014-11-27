@@ -25,8 +25,9 @@ global running
 
 ircbacklog = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit, triggers, replay"
+commandsavail = "awesome, nyaa, help, quit, triggers, replay*, punishtec, say, act"
 modulesavail = "samba*"
+triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
 
 # Shortcut: Classes
 
@@ -185,30 +186,35 @@ def commands(usernick, msg, chan):
 
         # Help calls
         if cmd[0] == "help":
-            helpcmd(usernick)
+            if cmd[1] == "":
+                helpcmd(usernick, chan)
 
-        # Module: samba
-        if cmd[0] == "samba":
-            # Split and don't die
+            elif cmd[1] == "triggers":
+                sendmsg("%s: Syntax: <trigger> %s" % usernick, cfg.nick(), chan)
+                sendmsg("%s: Available triggers: %s " % usernick, triggersavail, chan);
 
-            if len(cmd) < 2 or cmd[1] == "help":
-                for item in xrange(len(samba.helpcmd())):
-                    sendmsg(str(samba.helpcmd()[item]), chan)
-            elif cmd[1] == "logins":
-                sendmsg(samba.getlogins(cmd[2:]), chan)
+            # Module: samba
+            elif cmd[1] == "samba":
+                # Split and don't die
+
+                if len(cmd) < 2 or cmd[1] == "help":
+                    for item in xrange(len(samba.helpcmd())):
+                        sendmsg(str(samba.helpcmd()[item]), chan)
+                elif cmd[2] == "logins":
+                    sendmsg(samba.getlogins(cmd[2:]), chan)
 
         # Debug commands
         if cmd[0] == "debug":
             if len(cmd) >= 2 and cmd[1] == "logins":
                 dbg = samba.getlogins(cmd[2:])
                 debug("Passed variable of length:" + str(len(dbg)))
-                for i in range(len(dbg)):
-                    debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
-                    debug(dbg[i])
+                for itr in range(len(dbg)):
+                    debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
+                    debug(dbg[itr])
 
 
 def triggers(usernick, msg, chan):
-    matches = re.match("(Hello|O?hi|Ohay|Hey) " + cfg.nick(), msg, flags=re.IGNORECASE)
+    matches = re.match("(Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day) " + cfg.nick(), msg, flags=re.IGNORECASE) # TODO: make it use triggers var
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
             sendmsg((getgreeting(usernick)), chan)
@@ -216,9 +222,9 @@ def triggers(usernick, msg, chan):
         return
 
 
-def helpcmd(user):
-    sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), cfg.chan())
-    sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), cfg.chan())
+def helpcmd(user, chan):
+    sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
+    sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), chan)
 
 # Shortcut: Main()
 if __name__ == "__main__":
