@@ -27,7 +27,7 @@ ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, punishtec, say, act, kick*"
+commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*"
 modulesavail = "samba*"
 triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
 
@@ -164,7 +164,7 @@ def commands(usernick, msg, chan):
             return
 
     cmd = msg.split(' ')
-    if usernick != "SpyBot":			# TODO: make nick-exclusions in config.ini
+    if usernick != "HoloBot":			# TODO: make nick-exclusions in config.ini
         # General commands
         if cmd[0] == "awesome":
             sendmsg("Everything is awesome!", chan)
@@ -172,9 +172,6 @@ def commands(usernick, msg, chan):
             sendmsg("Nyaa~", chan)
         elif cmd[0] == "kick":
             sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
-        # Mess with the best, die like the rest ~
-        elif cmd[0] == "punishtec":
-            sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n")
         elif cmd[0] == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
             if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
@@ -191,7 +188,7 @@ def commands(usernick, msg, chan):
             else:
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
-            if cmd[1] != "kick":
+            if cmd[1] != "!":
                 sendmsg(" ".join(cmd[1:]), chan)
         elif cmd[0] == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
