@@ -150,59 +150,59 @@ def commands(usernick, msg, chan):
             return
 
     cmd = msg.split(' ')
+    if usernick != "SpyBot":			# TODO: make nick-exclusions in config.ini
+	    # General commands
+	    if cmd[0] == "awesome":
+	        sendmsg("Everything is awesome!", chan)
+	    elif cmd[0] == "nyaa":
+	        sendmsg("Nyaa~", chan)
+		# Mess with the best, die like the rest ~
+	    elif cmd[0] == "punishtec":
+		ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
+	    elif cmd[0] == "replay":
+	        # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
+	        if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
+	            replay(int(cmd[1]), chan)
+	        else:
+	            replay(maxbacklog, chan)
+	    elif cmd[0] == "say":
+	        # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
+	        sendmsg(" ".join(cmd[1:]), chan)
+	    elif cmd[0] == "act":
+	        sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
+	    elif cmd[0] == "join":
+	        # Ability to join multiple channels
+	        newchans = cmd[1:]
+	        for newchan in newchans:
+	            if newchan[0] == '#':
+	                ircsock.send("JOIN %s\r\n" % newchan)
+	            else:
+	                ircsock.send("JOIN #%s\r\n" % newchan)
+	    elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
+	        ircquit()
 
-    # General commands
-    if cmd[0] == "awesome":
-        sendmsg("Everything is awesome!", chan)
-    elif cmd[0] == "nyaa":
-        sendmsg("Nyaa~", chan)
-# Mess with the best, die like the rest ~
-    elif cmd[0] == "punishtec":
-	ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
-    elif cmd[0] == "replay":
-        # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
-        if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
-            replay(int(cmd[1]), chan)
-        else:
-            replay(maxbacklog, chan)
-    elif cmd[0] == "say":
-        # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
-        sendmsg(" ".join(cmd[1:]), chan)
-    elif cmd[0] == "act":
-        sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
-    elif cmd[0] == "join":
-        # Ability to join multiple channels
-        newchans = cmd[1:]
-        for newchan in newchans:
-            if newchan[0] == '#':
-                ircsock.send("JOIN %s\r\n" % newchan)
-            else:
-                ircsock.send("JOIN #%s\r\n" % newchan)
-    elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
-        ircquit()
+	    # Help calls
+	    if cmd[0] == "help":
+	        helpcmd(usernick)
 
-    # Help calls
-    if cmd[0] == "help":
-        helpcmd(usernick)
+	    # Module: samba
+	    if cmd[0] == "samba":
+	        # Split and don't die
 
-    # Module: samba
-    if cmd[0] == "samba":
-        # Split and don't die
+	        if len(cmd) < 2 or cmd[1] == "help":
+	            for item in xrange(len(samba.helpcmd())):
+	                sendmsg(str(samba.helpcmd()[item]), chan)
+	        elif cmd[1] == "logins":
+	            sendmsg(samba.getlogins(cmd[2:]), chan)
 
-        if len(cmd) < 2 or cmd[1] == "help":
-            for item in xrange(len(samba.helpcmd())):
-                sendmsg(str(samba.helpcmd()[item]), chan)
-        elif cmd[1] == "logins":
-            sendmsg(samba.getlogins(cmd[2:]), chan)
-
-    # Debug commands
-    if cmd[0] == "debug":
-        if len(cmd) >= 2 and cmd[1] == "logins":
-            dbg = samba.getlogins(cmd[2:])
-            debug("Passed variable of length:" + str(len(dbg)))
-            for i in range(len(dbg)):
-                debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
-                debug(dbg[i])
+	    # Debug commands
+	    if cmd[0] == "debug":
+	        if len(cmd) >= 2 and cmd[1] == "logins":
+	            dbg = samba.getlogins(cmd[2:])
+	            debug("Passed variable of length:" + str(len(dbg)))
+	            for i in range(len(dbg)):
+	                debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
+	                debug(dbg[i])
 
 
 def triggers(usernick, msg, chan):
