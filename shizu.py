@@ -171,7 +171,7 @@ def commands(usernick, msg, chan):
         elif cmd[0] == "nyaa":
             sendmsg("Nyaa~", chan)
         elif cmd[0] == "kick":
-            sendraw("KICK #blu " + usernick + " Backfired, oh the irony! ~\r\n", chan)
+            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
         # Mess with the best, die like the rest ~
         elif cmd[0] == "punishtec":
             sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n")
@@ -191,7 +191,6 @@ def commands(usernick, msg, chan):
             else:
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
-            # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
             if cmd[1] != "kick":
                 sendmsg(" ".join(cmd[1:]), chan)
         elif cmd[0] == "act":
