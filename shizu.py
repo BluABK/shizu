@@ -27,7 +27,7 @@ ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, punishtec, say, act"
+commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, punishtec, say, act, kick*"
 modulesavail = "samba*"
 triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
 
@@ -170,6 +170,8 @@ def commands(usernick, msg, chan):
             sendmsg("Everything is awesome!", chan)
         elif cmd[0] == "nyaa":
             sendmsg("Nyaa~", chan)
+        elif cmd[0] == "kick":
+            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick);
         # Mess with the best, die like the rest ~
         elif cmd[0] == "punishtec":
             sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
@@ -213,6 +215,8 @@ def commands(usernick, msg, chan):
                 elif cmd[1] == "replay":
                     sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
                     sendmsg("Available commands: recv, send, duplex", chan)
+                elif cmd[1] == "kick":
+                    sendmsg("%s: Syntax: %kick <user>" % (usernick, cfg.cmdsym()), chan)
                 # Module: samba
                 elif cmd[1] == "samba":
                 # Split and don't die
