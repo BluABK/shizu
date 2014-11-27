@@ -25,7 +25,7 @@ global running
 
 ircbacklog = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit, triggers, replay*, punishtec, say, act"
+commandsavail = "awesome, nyaa, help, quit [protection], triggers, replay*, punishtec, say, act"
 modulesavail = "samba*"
 triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
 
@@ -181,7 +181,7 @@ def commands(usernick, msg, chan):
                     ircsock.send("JOIN %s\r\n" % newchan)
                 else:
                     ircsock.send("JOIN #%s\r\n" % newchan)
-        elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
+        elif cmd[0] == ("quit%s" % cfg.quitpro()):
             ircquit()
 
         # Help calls
