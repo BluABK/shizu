@@ -20,10 +20,10 @@ import modules.samba as samba            # for server-side samba functionality
 
 # Global variables
 #global re # TODO: redeclared
-global ircbacklog
-global running
+#global ircbacklog, ircbacklog_in, ircbacklog_out
+#global running
 
-ircbacklog = list()
+ircbacklog, ircbacklog_in, ircbacklog_out = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit [protection], triggers, replay*, punishtec, say, act"
 modulesavail = "samba*"
@@ -130,7 +130,15 @@ def getgreeting(greeter):
     return "%s %s~" % (greeting,  greeter)
 
 
-def replay(lines, chan):
+def replay(lines, chan, duplex):
+#    if duplex:
+#        for item in xrange(len(lines)):
+#        sendmsg(ircbacklog[-lines:], chan)
+#        sendmsg(ircbacklog_in[-lines:])
+#        for m in tosend_in:
+#            sendmsg(m_in, chan)
+#            sendmsg()
+#    else:
     tosend = ircbacklog[-lines:]
     for m in tosend:
         sendmsg(m, chan)
@@ -226,6 +234,23 @@ def helpcmd(user, chan):
     sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
     sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), chan)
 
+
+# ircsock send relay
+def sendraw(buf):
+    global ircbacklog, ircbacklog_out
+
+    sent = ircsock.sendall(buf)
+
+    ircbacklog.append(sent)
+    if len(ircbacklog) > maxbacklog:
+            # Delete first entry
+            ircbacklog = ircbacklog[1:]
+
+    ircbacklog_in.append(sent)
+    if len(ircbacklog_out) > maxbacklog:
+            # Delete first entry
+            ircbacklog_out = ircbacklog_out[1:]
+
 # Shortcut: Main()
 if __name__ == "__main__":
     # Connect to the the server
@@ -233,27 +258,33 @@ if __name__ == "__main__":
     ircsock.connect((cfg.server(), cfg.port()))
     # Send password before registration [RFC2812 section-3.1.1 Password message]
     if cfg.spass() != "":
-        ircsock.send("PASS " + cfg.spass() + "\n")
+        sendraw("PASS " + cfg.spass() + "\n")
     # Register with the server [RFC2812 section-3.1 Connection Registration]
-    ircsock.send("NICK " + cfg.nick() + "\n")
-    ircsock.send("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()))
+    sendraw("NICK " + cfg.nick() + "\n")
+    sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()))
 
     i = 1
 
-    for ircraw in ircsock.makefile():
+    for recvraw in ircsock.makefile():
         if not running:
             break
 
-        if ircraw == '':
+        if recvraw == '':
             continue
 
-        ircbacklog.append(ircraw)
+        ircbacklog.append(recvraw)
 
         if len(ircbacklog) > maxbacklog:
             # Delete first entry
             ircbacklog = ircbacklog[1:]
 
-        ircmsg = ircraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
+        ircbacklog_in.append(recvraw)
+
+        if len(ircbacklog_in) > maxbacklog:
+            # Delete first entry
+            ircbacklog_in = ircbacklog_in[1:]
+
+        ircmsg = recvraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
         print("%s: %s" % (i, ircmsg))                           # print received data
 
@@ -262,14 +293,14 @@ if __name__ == "__main__":
         if ircparts[0] == '':
             continue
 
-        if ircraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
-            ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")
+        if recvraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
+            sendraw("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")
 
         if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
 
         if ircmsg.find("NOTICE %s :This nickname is registered" % cfg.nick()) != -1:
-            ircsock.send("PRIVMSG NickServ :identify %s\r\n" % cfg.nspass())
+            sendraw("PRIVMSG NickServ :identify %s\r\n" % cfg.nspass())
 
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(cfg.chan())
@@ -287,5 +318,5 @@ if __name__ == "__main__":
         i += 1
 
     # See ya!
-    ircsock.send("QUIT %s\r\n" % cfg.quitmsg())
+    sendraw("QUIT %s\r\n" % cfg.quitmsg())
     ircsock.close()
