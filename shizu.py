@@ -23,7 +23,9 @@ import modules.samba as samba            # for server-side samba functionality
 #global ircbacklog, ircbacklog_in, ircbacklog_out
 #global running
 
-ircbacklog, ircbacklog_in, ircbacklog_out = list()
+ircbacklog = list()
+ircbacklog_in = list()
+ircbacklog_out = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, punishtec, say, act"
 modulesavail = "samba*"
