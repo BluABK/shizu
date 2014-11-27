@@ -188,8 +188,8 @@ def commands(usernick, msg, chan):
         if cmd[0] == "help":
             try:
                 if cmd[1] == "triggers":
-                    sendmsg("%s: Syntax: <trigger> %s" % usernick, cfg.nick(), chan)
-                    sendmsg("%s: Available triggers: %s " % usernick, triggersavail, chan)
+                    sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
+                    sendmsg("%s: Available triggers: %s " % (usernick, triggersavail), chan)
 
                 # Module: samba
                 elif cmd[1] == "samba":
