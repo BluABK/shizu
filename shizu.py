@@ -212,7 +212,7 @@ def commands(usernick, msg, chan):
                     sendmsg("Available triggers: %s " % triggersavail, chan)
                 elif cmd[1] == "replay":
                     sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
-                    sendmsg("Available commands: recv, send, duplex" % chan)
+                    sendmsg("Available commands: recv, send, duplex", chan)
                 # Module: samba
                 elif cmd[1] == "samba":
                 # Split and don't die
