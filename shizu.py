@@ -181,8 +181,7 @@ def commands(usernick, msg, chan):
                     ircsock.send("JOIN %s\r\n" % newchan)
                 else:
                     ircsock.send("JOIN #%s\r\n" % newchan)
-        elif cmd[0] == "quit":
-            if cmd[1] == cfg.quitpro():
+        elif cmd[0] == "quit" and cmd[1] == cfg.quitpro():
                 ircquit()
 
         # Help calls
