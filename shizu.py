@@ -186,22 +186,22 @@ def commands(usernick, msg, chan):
 
         # Help calls
         if cmd[0] == "help":
-            if cmd[1] and cmd[1] == "":
-                helpcmd(usernick, chan)
+            try:
+                if cmd[1] == "triggers":
+                    sendmsg("%s: Syntax: <trigger> %s" % usernick, cfg.nick(), chan)
+                    sendmsg("%s: Available triggers: %s " % usernick, triggersavail, chan);
 
-            elif cmd[1] == "triggers":
-                sendmsg("%s: Syntax: <trigger> %s" % usernick, cfg.nick(), chan)
-                sendmsg("%s: Available triggers: %s " % usernick, triggersavail, chan);
-
-            # Module: samba
-            elif cmd[1] == "samba":
+                # Module: samba
+                elif cmd[1] == "samba":
                 # Split and don't die
 
-                if len(cmd) < 2 or cmd[1] == "help":
-                    for item in xrange(len(samba.helpcmd())):
-                        sendmsg(str(samba.helpcmd()[item]), chan)
-                elif cmd[2] == "logins":
-                    sendmsg(samba.getlogins(cmd[2:]), chan)
+                    if len(cmd) < 2 or cmd[1] == "help":
+                        for item in xrange(len(samba.helpcmd())):
+                            sendmsg(str(samba.helpcmd()[item]), chan)
+                    elif cmd[2] == "logins":
+                        sendmsg(samba.getlogins(cmd[2:]), chan)
+            except IndexError:
+                helpcmd(usernick, chan)
 
         # Debug commands
         if cmd[0] == "debug":
