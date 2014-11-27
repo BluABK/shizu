@@ -192,7 +192,8 @@ def commands(usernick, msg, chan):
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
             # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
-            sendmsg(" ".join(cmd[1:]), chan)
+            if cmd[1] != "kick":
+                sendmsg(" ".join(cmd[1:]), chan)
         elif cmd[0] == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
         elif cmd[0] == "join":
