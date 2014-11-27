@@ -7,11 +7,6 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement command to trigger server-side permission-sentinel.sh - and assign this to a server-side features mod
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
-# Global variables
-global re
-global ircbacklog
-global running
-
 # Import necessary modules
 import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
@@ -23,12 +18,18 @@ from random import randint
 import modules.samba as samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
+# Global variables
+#global re # TODO: redeclared
+global ircbacklog
+global running
+
 ircbacklog = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit, triggers, replay"
 modulesavail = "samba*"
 
-# TODO: NOT-A-TODO/Shortcut: Classes
+# Shortcut: Classes
+
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
@@ -69,11 +70,11 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def backlog(self):
         return str(self.config.getint('irc', 'backlog-limit'))
 
-# TODO: NOT-A-TODO/Shortcut: Variables declared by config file
+# Shortcut: Variables declared by config file
 cfg = Config()
 maxbacklog = int(cfg.backlog())
 
-# TODO: NOT-A-TODO/Shortcut: Functions
+# Shortcut: Functions
 
 
 def ian(s):  # is a number
@@ -99,6 +100,7 @@ def sendmsg(msg, chan):
         # Don't check, errors from here are raised
         for item in msg:
             sendmsg(item, chan)
+
 
 def debug(msg):
     ircsock.send("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
@@ -129,8 +131,8 @@ def getgreeting(greeter):
 
 def replay(lines, chan):
     tosend = ircbacklog[-lines:]
-    for i in tosend:
-        sendmsg(i, chan)
+    for m in tosend:
+        sendmsg(m, chan)
 
 
 def ircquit():
@@ -151,58 +153,58 @@ def commands(usernick, msg, chan):
 
     cmd = msg.split(' ')
     if usernick != "SpyBot":			# TODO: make nick-exclusions in config.ini
-	    # General commands
-	    if cmd[0] == "awesome":
-	        sendmsg("Everything is awesome!", chan)
-	    elif cmd[0] == "nyaa":
-	        sendmsg("Nyaa~", chan)
-		# Mess with the best, die like the rest ~
-	    elif cmd[0] == "punishtec":
-		ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
-	    elif cmd[0] == "replay":
-	        # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
-	        if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
-	            replay(int(cmd[1]), chan)
-	        else:
-	            replay(maxbacklog, chan)
-	    elif cmd[0] == "say":
-	        # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
-	        sendmsg(" ".join(cmd[1:]), chan)
-	    elif cmd[0] == "act":
-	        sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
-	    elif cmd[0] == "join":
-	        # Ability to join multiple channels
-	        newchans = cmd[1:]
-	        for newchan in newchans:
-	            if newchan[0] == '#':
-	                ircsock.send("JOIN %s\r\n" % newchan)
-	            else:
-	                ircsock.send("JOIN #%s\r\n" % newchan)
-	    elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
-	        ircquit()
+        # General commands
+        if cmd[0] == "awesome":
+            sendmsg("Everything is awesome!", chan)
+        elif cmd[0] == "nyaa":
+            sendmsg("Nyaa~", chan)
+        # Mess with the best, die like the rest ~
+        elif cmd[0] == "punishtec":
+            ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
+        elif cmd[0] == "replay":
+            # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
+            if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
+                replay(int(cmd[1]), chan)
+            else:
+                replay(maxbacklog, chan)
+        elif cmd[0] == "say":
+            # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
+            sendmsg(" ".join(cmd[1:]), chan)
+        elif cmd[0] == "act":
+            sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
+        elif cmd[0] == "join":
+            # Ability to join multiple channels
+            newchans = cmd[1:]
+            for newchan in newchans:
+                if newchan[0] == '#':
+                    ircsock.send("JOIN %s\r\n" % newchan)
+                else:
+                    ircsock.send("JOIN #%s\r\n" % newchan)
+        elif " ".join(cmd) == ("quit%s" % cfg.quitpro()):
+            ircquit()
 
-	    # Help calls
-	    if cmd[0] == "help":
-	        helpcmd(usernick)
+        # Help calls
+        if cmd[0] == "help":
+            helpcmd(usernick)
 
-	    # Module: samba
-	    if cmd[0] == "samba":
-	        # Split and don't die
+        # Module: samba
+        if cmd[0] == "samba":
+            # Split and don't die
 
-	        if len(cmd) < 2 or cmd[1] == "help":
-	            for item in xrange(len(samba.helpcmd())):
-	                sendmsg(str(samba.helpcmd()[item]), chan)
-	        elif cmd[1] == "logins":
-	            sendmsg(samba.getlogins(cmd[2:]), chan)
+            if len(cmd) < 2 or cmd[1] == "help":
+                for item in xrange(len(samba.helpcmd())):
+                    sendmsg(str(samba.helpcmd()[item]), chan)
+            elif cmd[1] == "logins":
+                sendmsg(samba.getlogins(cmd[2:]), chan)
 
-	    # Debug commands
-	    if cmd[0] == "debug":
-	        if len(cmd) >= 2 and cmd[1] == "logins":
-	            dbg = samba.getlogins(cmd[2:])
-	            debug("Passed variable of length:" + str(len(dbg)))
-	            for i in range(len(dbg)):
-	                debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
-	                debug(dbg[i])
+        # Debug commands
+        if cmd[0] == "debug":
+            if len(cmd) >= 2 and cmd[1] == "logins":
+                dbg = samba.getlogins(cmd[2:])
+                debug("Passed variable of length:" + str(len(dbg)))
+                for i in range(len(dbg)):
+                    debug("Iteration: %s/%s" % (str(i), str(len(dbg))))
+                    debug(dbg[i])
 
 
 def triggers(usernick, msg, chan):
@@ -215,10 +217,10 @@ def triggers(usernick, msg, chan):
 
 
 def helpcmd(user):
-        sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), cfg.chan())
-        sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), cfg.chan())
+    sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), cfg.chan())
+    sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), cfg.chan())
 
-# TODO: NOT-A-TODO/Shortcut: Main()
+# Shortcut: Main()
 if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -255,7 +257,7 @@ if __name__ == "__main__":
             continue
 
         if ircraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
-                ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")
+            ircsock.send("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")
 
         if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
             ping()
