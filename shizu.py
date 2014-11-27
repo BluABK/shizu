@@ -25,7 +25,7 @@ import modules.samba as samba            # for server-side samba functionality
 
 ircbacklog, ircbacklog_in, ircbacklog_out = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit [protection], triggers, replay*, punishtec, say, act"
+commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, punishtec, say, act"
 modulesavail = "samba*"
 triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
 
@@ -127,19 +127,20 @@ def getgreeting(greeter):
         debug("Time returned had no valid integer value.")
         greeting = "ohi"
 
-    return "%s %s~" % (greeting,  greeter)
+    return "%s %s~" % (greeting, greeter)
 
 
-def replay(lines, chan, duplex):
-#    if duplex:
-#        for item in xrange(len(lines)):
-#        sendmsg(ircbacklog[-lines:], chan)
-#        sendmsg(ircbacklog_in[-lines:])
-#        for m in tosend_in:
-#            sendmsg(m_in, chan)
-#            sendmsg()
-#    else:
-    tosend = ircbacklog[-lines:]
+def replay(lines, chan, direction):
+    if direction == 0:
+        tosend = ircbacklog[-lines:]
+    elif direction == 1:
+        tosend = ircbacklog_in[-lines:]
+    elif direction == 2:
+        tosend = ircbacklog_out[-lines:]
+    else:
+        tosend = ircbacklog[-lines:]
+        sendmsg("DERP invalid direction! Defaulting to duplex", chan)
+
     for m in tosend:
         sendmsg(m, chan)
 
@@ -169,13 +170,22 @@ def commands(usernick, msg, chan):
             sendmsg("Nyaa~", chan)
         # Mess with the best, die like the rest ~
         elif cmd[0] == "punishtec":
-            ircsock.send("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
+            sendraw("KICK #blu SpyBot Mess with the best, die like the rest ~\r\n");
         elif cmd[0] == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
-            if len(cmd) > 1 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
-                replay(int(cmd[1]), chan)
+            if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
+                try:
+                    if cmd[2] == "duplex":
+                        replay(int(cmd[1]), chan, 0)
+                    elif cmd[2] == "recv":
+                        replay(int(cmd[1]), chan, 1)
+                    elif cmd[2] == "send":
+                        replay(int(cmd[1]), chan, 2)
+                except IndexError:
+                    sendmsg("WHOA! IndexError in cmd[2] o_0", chan)
+                    replay(int(cmd[1]), chan, 0)
             else:
-                replay(maxbacklog, chan)
+                replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
             # join: " ".join(('say', 'a', 'b', 'c')[1:]) -> " ".join('a', 'b', 'c') => 'a b c'
             sendmsg(" ".join(cmd[1:]), chan)
@@ -197,8 +207,10 @@ def commands(usernick, msg, chan):
             try:
                 if cmd[1] == "triggers":
                     sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                    sendmsg("%s: Available triggers: %s " % (usernick, triggersavail), chan)
-
+                    sendmsg("Available triggers: %s " % triggersavail, chan)
+                elif cmd[1] == "replay":
+                    sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
+                    sendmsg("Available commands: recv, send, duplex" % chan)
                 # Module: samba
                 elif cmd[1] == "samba":
                 # Split and don't die
