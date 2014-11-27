@@ -217,7 +217,7 @@ def commands(usernick, msg, chan):
                     sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
                     sendmsg("Available commands: recv, send, duplex", chan)
                 elif cmd[1] == "kick":
-                    sendmsg("%s: Syntax: %kick <user>" % (usernick, cfg.cmdsym()), chan)
+                    sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
                 # Module: samba
                 elif cmd[1] == "samba":
                 # Split and don't die
