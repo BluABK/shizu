@@ -186,7 +186,7 @@ def commands(usernick, msg, chan):
 
         # Help calls
         if cmd[0] == "help":
-            if cmd[1] == "":
+            if cmd[1] and cmd[1] == "":
                 helpcmd(usernick, chan)
 
             elif cmd[1] == "triggers":
