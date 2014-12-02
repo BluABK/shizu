@@ -13,9 +13,8 @@ import re
 from subprocess import check_output
 
 # Define variables
-
 regex = re.compile(" +")
-
+sambausers = list()
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
@@ -45,7 +44,8 @@ class SambaUser:
     name = ''
     uid = 0
     host = ''
-    playing = ''
+    #playing = ''
+    playing = list()
 
     def __init__(self, uid, name, host):
         self.name = name
@@ -60,15 +60,48 @@ class SambaUser:
 
 
 def getplaying():
+#    global cfg
+    global sambausers
+#    cfg.loadconfig
+
+    logins = getlogins("")
+    playing = list();
+    playing = check_output("sudo smbstatus -Lv 2>/dev/null | grep ^[0-9] | grep \"EXCLUSIVE+BATCH\"",
+                           shell=True).splitlines()
+    for index, line in enumerate(playing):
+        # throw out empty lines
+        if not len(line):
+            continue
+
+        tmpline = regex.split(line)
+        splitline = list()
+
+        for test in tmpline:
+            if not ' ' in test:
+                splitline.append(test)
+
+        if len(splitline) < 4:
+            # TODO investigate
+            print "samba/getPlaying: splitline has not enough items, are you root?"
+        else:
+            sambausers.playing.insert(index, SambaUser(splitline[7]))
+
+    loginlist = list()
+    for item in xrange(len(sambausers)):
+        if not len(msg) or sambausers[item].name in msg:
+            #if excluded user
+            loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
+
+    return loginlist
     return True
 
 
 def getlogins(msg):
     global cfg
+    global sambausers
     cfg.loadconfig
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
-    sambausers = list()
 
     for index, line in enumerate(loginhandles):
         # throw out empty lines
