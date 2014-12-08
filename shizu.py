@@ -189,7 +189,7 @@ def commands(usernick, msg, chan):
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
             # Secure outgoing message
-            if (re.match(r"^\x01[^\s]*",cmd[1]) == None) or (re.match(r"^![^\s]+",cmd[1]) == None):
+            if (re.match(r"^\x01[^\s]*",cmd[1]) == None) and (re.match(r"^![^\s]+",cmd[1]) == None):
                 sendmsg(" ".join(cmd[1:]), chan)
         elif cmd[0] == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
