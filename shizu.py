@@ -215,20 +215,26 @@ def commands(usernick, msg, chan):
                     sendmsg("Available commands: recv, send, duplex", chan)
                 elif cmd[1] == "kick":
                     sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
-                # Module: samba
                 elif cmd[1] == "samba":
                 # Split and don't die
-
-                    if len(cmd) < 2 or cmd[1] == "help":
-                        for item in xrange(len(samba.helpcmd())):
+            #        if len(cmd) < 2:
+            		for item in xrange(len(samba.helpcmd())):
                             sendmsg(str(samba.helpcmd()[item]), chan)
-                    elif cmd[2] == "logins":
-                        sendmsg(samba.getlogins(cmd[2:]), chan)
             except IndexError:
+		sendmsg("Ouch! IndexError exception =/", chan)
                 helpcmd(usernick, chan)
+	
+	# Module: samba
+	elif cmd[0] == "samba":
+		if len(cmd) > 1:
+			if cmd[1] == "logins":
+				sendmsg(samba.getlogins(cmd[2:]), chan)
+		else:
+			for item in xrange(len(samba.helpcmd())):
+				sendmsg(str(samba.helpcmd()[item]), chan)
 
         # Debug commands
-        if cmd[0] == "debug":
+        elif cmd[0] == "debug":
             if len(cmd) >= 2 and cmd[1] == "logins":
                 dbg = samba.getlogins(cmd[2:])
                 debug("Passed variable of length:" + str(len(dbg)))
