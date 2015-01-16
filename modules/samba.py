@@ -69,6 +69,7 @@ def getlogins(msg):
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
     sambausers = list()
+    indent = 4
 
     for index, line in enumerate(loginhandles):
         # throw out empty lines
@@ -89,10 +90,16 @@ def getlogins(msg):
             sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
 
     loginlist = list()
+
+    longestname =''
+    for item in xrange(len(sambausers)):
+        if not len(msg) or sambausers[item].name in msg:
+            if (len(sambausers[item].name) > longestname): longestname = sambausers[item].name
+
     for item in xrange(len(sambausers)):
         if not len(msg) or sambausers[item].name in msg:
             #if excluded user
-            loginlist.append("%s@%s        [ID: %s]" % (sambausers[item].name, sambausers[item].host, sambausers[item].uid))
+            loginlist.append("%s@%s%s[ID: %s]" % (sambausers[item].name, sambausers[item].host, (longestname+indent), sambausers[item].uid))
 
     return loginlist
 
