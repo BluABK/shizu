@@ -1,3 +1,7 @@
 # Created by .gitignore support plugin (hsz.mobi)
 config.ini
 *.pyc
+
+# Pycharm
+.idea/
+.idea/inspectionProfiles/profiles_settings.xml
