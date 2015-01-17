@@ -93,21 +93,15 @@ def getlogins(msg):
     loginlist = list()
 
     longestname = 0
-    maxspacing = ""
-    spacing = ""
     try:
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
                 if len(sambausers[item].name) > longestname: longestname = len(sambausers[item].name)
-        for i in range(0, longestname+indent):
-            maxspacing += " "
-        loginlist.append("user@host%sID" % maxspacing)
+        loginlist.append("[ID] user@host")
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
                 #if excluded user
-                for i in range(0, len(maxspacing) - len(sambausers[item].name)):
-                    spacing += " "
-                loginlist.append("%s@%s%s[ID: %s]" % (sambausers[item].name, sambausers[item].host, spacing, sambausers[item].uid))
+                loginlist.append("[ID: %s] %s@%s" % (sambausers[item].uid, sambausers[item].name, sambausers[item].host))
     except:
         loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
 #        loginlist.append("Exception:")
