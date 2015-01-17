@@ -97,7 +97,7 @@ def getlogins(msg):
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
                 if len(sambausers[item].name) > longestname: longestname = len(sambausers[item].name)
-        loginlist.append("[ID]       user@host")
+        loginlist.append("[ID]        user@host")
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
                 #if excluded user
