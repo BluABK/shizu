@@ -110,9 +110,9 @@ def getlogins(msg):
                 loginlist.append("%s@%s%s[ID: %s]" % (sambausers[item].name, sambausers[item].host, spacing, sambausers[item].uid))
     except:
         loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
-        loginlist.append("Exception:")
-        for err in xrange(len(exc_info())):
-            loginlist.append(exc_info()[err])
+#        loginlist.append("Exception:")
+#        for err in xrange(len(exc_info())):
+#            loginlist.append(exc_info()[err])
         raise
     return loginlist
 
