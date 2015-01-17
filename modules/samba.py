@@ -10,6 +10,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 import ConfigParser
 import os
 import re
+from sys import exc_info
 from subprocess import check_output
 
 # Define variables
@@ -108,8 +109,8 @@ def getlogins(msg):
                     spacing += " "
                 loginlist.append("%s@%s%s[ID: %s]" % (sambausers[item].name, sambausers[item].host, spacing, sambausers[item].uid))
     except:
-        loginlist.append("Ouch, some sort of exception occurred, have fun devs!")
-  #      loginlist.append("Exception: %s" % ex.message);
+        loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
+        loginlist.append("Exception: %s" % exc_info()[0]);
     return loginlist
 
 
