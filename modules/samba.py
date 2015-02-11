@@ -10,7 +10,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 import ConfigParser
 import os
 import re
-from sys import exc_info
+#from sys import exc_info
 from subprocess import check_output
 
 # Define variables
@@ -66,11 +66,11 @@ def getplaying():
 
 def getlogins(msg):
     global cfg
+    #TODO: cfg.loadconfig seems to have no effect according to PyCharm o0
     cfg.loadconfig
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
     sambausers = list()
-    indent = 4
 
     for index, line in enumerate(loginhandles):
         # throw out empty lines
@@ -96,12 +96,14 @@ def getlogins(msg):
     try:
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
-                if len(sambausers[item].name) > longestname: longestname = len(sambausers[item].name)
+                if len(sambausers[item].name) > longestname:
+                    longestname = len(sambausers[item].name)
         loginlist.append("[ID]        user@host")
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
                 #if excluded user
-                loginlist.append("[ID: %s] %s@%s" % ((sambausers[item].uid).zfill(5), sambausers[item].name, sambausers[item].host))
+                loginlist.append("[ID: %s] %s@%s" % (sambausers[item].uid.zfill(5), sambausers[item].name,
+                                                     sambausers[item].host))
     except:
         loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
 #        loginlist.append("Exception:")

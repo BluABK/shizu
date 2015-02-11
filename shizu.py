@@ -19,9 +19,6 @@ import modules.samba as samba            # for server-side samba functionality
 #import db               # for server-side file search and lookup
 
 # Global variables
-#global re # TODO: redeclared
-#global ircbacklog, ircbacklog_in, ircbacklog_out
-#global running
 
 ircbacklog = list()
 ircbacklog_in = list()
@@ -189,7 +186,7 @@ def commands(usernick, msg, chan):
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
             # Secure outgoing message
-            if (re.match(r"^\x01[^\s]*",cmd[1]) == None) and (re.match(r"^![^\s]+",cmd[1]) == None):
+            if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
                 sendmsg(" ".join(cmd[1:]), chan)
         elif cmd[0] == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
@@ -217,34 +214,35 @@ def commands(usernick, msg, chan):
                     sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
                 elif cmd[1] == "samba":
                 # Split and don't die
-            #        if len(cmd) < 2:
-            		for item in xrange(len(samba.helpcmd())):
+                # if len(cmd) < 2:
+                    for item in xrange(len(samba.helpcmd())):
                             sendmsg(str(samba.helpcmd()[item]), chan)
             except IndexError:
-		sendmsg("Ouch! IndexError exception =/", chan)
+                sendmsg("Ouch! IndexError exception =/", chan)
                 helpcmd(usernick, chan)
-	
-	# Module: samba
-	elif cmd[0] == "samba":
-		if len(cmd) > 1:
-			if cmd[1] == "logins":
-				sendmsg(samba.getlogins(cmd[2:]), chan)
-		else:
-			for item in xrange(len(samba.helpcmd())):
-				sendmsg(str(samba.helpcmd()[item]), chan)
+
+    # Module: samba
+    elif cmd[0] == "samba":
+        if len(cmd) > 1:
+            if cmd[1] == "logins":
+                sendmsg(samba.getlogins(cmd[2:]), chan)
+        else:
+            for item in xrange(len(samba.helpcmd())):
+                sendmsg(str(samba.helpcmd()[item]), chan)
 
         # Debug commands
-        elif cmd[0] == "debug":
-            if len(cmd) >= 2 and cmd[1] == "logins":
-                dbg = samba.getlogins(cmd[2:])
-                debug("Passed variable of length:" + str(len(dbg)))
-                for itr in range(len(dbg)):
-                    debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
-                    debug(dbg[itr])
+    elif cmd[0] == "debug":
+        if len(cmd) >= 2 and cmd[1] == "logins":
+            dbg = samba.getlogins(cmd[2:])
+            debug("Passed variable of length:" + str(len(dbg)))
+            for itr in range(len(dbg)):
+                debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
+                debug(dbg[itr])
 
 
 def triggers(usernick, msg, chan):
-    matches = re.match("(Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day) " + cfg.nick(), msg, flags=re.IGNORECASE) # TODO: make it use triggers var
+    # TODO: make it use triggers var
+    matches = re.match("(Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
             sendmsg((getgreeting(usernick)), chan)
