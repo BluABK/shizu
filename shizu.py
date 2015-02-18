@@ -221,23 +221,23 @@ def commands(usernick, msg, chan):
                 sendmsg("Ouch! IndexError exception =/", chan)
                 helpcmd(usernick, chan)
 
-    # Module: samba
-    elif cmd[0] == "samba":
-        if len(cmd) > 1:
-            if cmd[1] == "logins":
-                sendmsg(samba.getlogins(cmd[2:]), chan)
-        else:
-            for item in xrange(len(samba.helpcmd())):
-                sendmsg(str(samba.helpcmd()[item]), chan)
+        # Module: samba
+        elif cmd[0] == "samba":
+            if len(cmd) > 1:
+                if cmd[1] == "logins":
+                    sendmsg(samba.getlogins(cmd[2:]), chan)
+            else:
+                for item in xrange(len(samba.helpcmd())):
+                    sendmsg(str(samba.helpcmd()[item]), chan)
 
-        # Debug commands
-    elif cmd[0] == "debug":
-        if len(cmd) >= 2 and cmd[1] == "logins":
-            dbg = samba.getlogins(cmd[2:])
-            debug("Passed variable of length:" + str(len(dbg)))
-            for itr in range(len(dbg)):
-                debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
-                debug(dbg[itr])
+            # Debug commands
+        elif cmd[0] == "debug":
+            if len(cmd) >= 2 and cmd[1] == "logins":
+                dbg = samba.getlogins(cmd[2:])
+                debug("Passed variable of length:" + str(len(dbg)))
+                for itr in range(len(dbg)):
+                    debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
+                    debug(dbg[itr])
 
 
 def triggers(usernick, msg, chan):
