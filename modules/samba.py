@@ -44,13 +44,13 @@ cfg = Config()
 
 class SambaUser:
     name = ''
-    uid = 0
+    pid = 0
     host = ''
     playing = ''
 
     def __init__(self, uid, name, host):
         self.name = name
-        self.uid = uid
+        self.pid = uid
         self.host = host
 
         def setplaying(media):
