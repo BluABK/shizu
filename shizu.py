@@ -164,7 +164,8 @@ def ircquit():
 def ignored_nick(section, usernick, chan):
     if section == "commands":
         sendmsg("DEBUG: %s" % cfg.commands_ignorednicks(), chan)
-        matches = re.match((cfg.commands_ignorednicks()) + usernick, flags=re.IGNORECASE)
+        pattern = re.compile(cfg.commands_ignorednicks())
+        matches = re.match(pattern + usernick, flags=re.IGNORECASE)
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
