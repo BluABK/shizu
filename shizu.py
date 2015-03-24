@@ -166,6 +166,9 @@ def ignored_nick(section, usernick, chan):
         sendmsg("DEBUG: %s" % cfg.commands_ignorednicks(), chan)
         pattern = re.compile(cfg.commands_ignorednicks(), flags=re.IGNORECASE)
         matches = re.match(pattern, usernick)
+        sendmsg("DEBUG: G1 %s", matches.group(0))
+        sendmsg("DEBUG: G2 %s", matches.group(1))
+        sendmsg("DEBUG: A  %s", matches)
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
@@ -220,7 +223,7 @@ def commands(usernick, msg, chan):
             if ignored_nick("commands", usernick, chan) is False:
                 sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
             elif usernick == "BluABK":
-                sendraw("KICK #blu %s %s\r" % usernick, ddate())
+                sendraw("KICK #blu %s %s\r\n" % usernick, ddate())
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
