@@ -165,7 +165,7 @@ def ignored_nick(section, usernick, chan):
     if section == "commands":
         sendmsg("DEBUG: %s" % cfg.commands_ignorednicks(), chan)
         pattern = re.compile(cfg.commands_ignorednicks())
-        matches = re.match(pattern + usernick, flags=re.IGNORECASE)
+        matches = re.match(pattern, usernick, flags=re.IGNORECASE)
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
@@ -294,6 +294,7 @@ def commands(usernick, msg, chan):
 
 
 def triggers(usernick, msg, chan):
+    # TODO: This will fail
     matches = re.match("(cfg.triggers_words()) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
