@@ -299,17 +299,13 @@ def commands(usernick, msg, chan):
 
 
 def triggers(usernick, msg, chan):
-    # TODO: Simplify pattern objects
     words_pat = re.compile((cfg.triggers_words() + " " + cfg.nick()), flags=re.IGNORECASE)
-    # TODO: BUG: Triggers dies silently after matches part
     matches = re.match(words_pat, msg)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
-            sendmsg("DEBUG: matched string", chan)
             sendmsg((getgreeting(usernick)), chan)
     except AttributeError:
         return
-    sendmsg("DEBUG: Reached end of triggers()", chan)
 
 
 def helpcmd(user, chan):
