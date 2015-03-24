@@ -303,9 +303,11 @@ def triggers(usernick, msg, chan):
     matches = re.match(words_pat, (cfg.nick() + msg))
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
+            sendmsg("DEBUG: matched string", chan)
             sendmsg((getgreeting(usernick)), chan)
     except AttributeError:
         return
+    sendmsg("DEBUG: Reached end of triggers()", chan)
 
 
 def helpcmd(user, chan):
