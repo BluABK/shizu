@@ -26,7 +26,8 @@ ircbacklog_out = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*"
 modulesavail = "samba*"
-triggersavail = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
+triggersavail_words = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
+#triggersavail_badwords =
 
 # Shortcut: Classes
 
@@ -69,6 +70,12 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def backlog(self):
         return str(self.config.getint('irc', 'backlog-limit'))
+
+    def triggers_words(self):
+        return str(self.config.get('triggers', 'words'))
+
+    def triggers_badwords(self):
+        return str(self.config.get('triggers', 'badwords'))
 
 # Shortcut: Variables declared by config file
 cfg = Config()
@@ -206,7 +213,7 @@ def commands(usernick, msg, chan):
             try:
                 if cmd[1] == "triggers":
                     sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                    sendmsg("Available triggers: %s " % triggersavail, chan)
+                    sendmsg("Available triggers: %s " % triggersavail_words, chan)
                 elif cmd[1] == "replay":
                     sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
                     sendmsg("Available commands: recv, send, duplex", chan)
@@ -304,9 +311,9 @@ if __name__ == "__main__":
             # Delete first entry
             ircbacklog_in = ircbacklog_in[1:]
 
-        ircmsg = recvraw.strip("\n\r")           # Remove protocol junk (linebreaks and return carriage)
+        ircmsg = recvraw.strip("\n\r")          # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print("%s: %s" % (i, ircmsg))                           # print received data
+        print("%s: %s" % (i, ircmsg))           # Print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
