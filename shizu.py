@@ -25,7 +25,7 @@ ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
-commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*"
+commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate"
 modulesavail = "samba*"
 
 # Shortcut: Classes
