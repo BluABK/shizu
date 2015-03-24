@@ -297,7 +297,6 @@ def commands(usernick, msg, chan):
 def triggers(usernick, msg, chan):
     # TODO: Simplify pattern objects
     words_pat = re.compile(cfg.triggers_words(), flags=re.IGNORECASE)
-    sendmsg("DEBUG: triggers triggered", chan)
     matches = re.match(words_pat, (cfg.nick() + msg))
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
