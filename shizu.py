@@ -13,6 +13,7 @@ import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
 from random import randint
+from subprocess import check_output
 
 # Project-specific modules
 import modules.samba as samba            # for server-side samba functionality
@@ -26,8 +27,6 @@ ircbacklog_out = list()
 running = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*"
 modulesavail = "samba*"
-triggersavail_words = "Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day"
-#triggersavail_badwords =
 
 # Shortcut: Classes
 
@@ -76,6 +75,12 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def triggers_badwords(self):
         return str(self.config.get('triggers', 'badwords'))
+
+    def triggers_ignorednicks(self):
+        return str(self.config.get('triggers', 'ignored-nicks'))
+
+    def commands_ignorednicks(self):
+        return str(self.config.get('commands', 'ignored-nicks'))
 
 # Shortcut: Variables declared by config file
 cfg = Config()
@@ -156,6 +161,36 @@ def ircquit():
     running = False
 
 
+def ignored_nick(section, usernick, chan):
+    if section == "commands":
+        matches = re.match(cfg.commands_ignorednicks() + usernick, flags=re.IGNORECASE)
+        try:
+            if matches.group(0) != "":  # If the usernick is in ignorelist
+                return True
+        except AttributeError:
+            sendmsg("Attribute Error o_0", chan)
+            return
+        return False
+
+    elif section == "triggers":
+        matches = re.match(cfg.triggers_ignorednicks() + usernick, flags=re.IGNORECASE)
+        try:
+            if matches.group(0) != "":  # If the usernick is in ignorelist
+                return True
+        except AttributeError:
+            sendmsg("Attribute Error o_0", chan)
+            return
+        return False
+
+
+def date():
+    return check_output("date", shell=True)
+
+
+def ddate():
+    return check_output("ddate", shell=False)
+
+
 def commands(usernick, msg, chan):
     # First of all, check if it is a command
     if chan[0] == "#":
@@ -174,8 +209,17 @@ def commands(usernick, msg, chan):
             sendmsg("Everything is awesome!", chan)
         elif cmd[0] == "nyaa":
             sendmsg("Nyaa~", chan)
+        elif cmd[0] == "date":
+            sendmsg(date(), chan)
+        elif cmd[0] == "ddate":
+            sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
+            if ignored_nick("commands", usernick, chan) is False:
+                sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
+            elif usernick == "BluABK":
+                sendraw("KICK #blu %s %s\r" % usernick, ddate())
+            else:
+                sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
             if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
@@ -213,7 +257,7 @@ def commands(usernick, msg, chan):
             try:
                 if cmd[1] == "triggers":
                     sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                    sendmsg("Available triggers: %s " % triggersavail_words, chan)
+                    sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
                 elif cmd[1] == "replay":
                     sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
                     sendmsg("Available commands: recv, send, duplex", chan)
@@ -248,8 +292,7 @@ def commands(usernick, msg, chan):
 
 
 def triggers(usernick, msg, chan):
-    # TODO: make it use triggers var
-    matches = re.match("(Hello|O?hi|Ohay|Hey|Hiya|Heya|Ohayou|g\'day) " + cfg.nick(), msg, flags=re.IGNORECASE)
+    matches = re.match("(cfg.triggers_words()) " + cfg.nick(), msg, flags=re.IGNORECASE)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
             sendmsg((getgreeting(usernick)), chan)
