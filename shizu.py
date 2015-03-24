@@ -171,17 +171,18 @@ def ignored_nick(section, usernick, chan):
                 return True
         except AttributeError:
             sendmsg("Attribute Error o_0", chan)
-            return
+            return True
         return False
 
     elif section == "triggers":
-        matches = re.match(cfg.triggers_ignorednicks() + usernick, flags=re.IGNORECASE)
+        pattern = re.compile(cfg.triggers_ignorednicks(), flags=re.IGNORECASE)
+        matches = re.match(pattern, usernick)
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
         except AttributeError:
             sendmsg("Attribute Error o_0", chan)
-            return
+            return True
         return False
 
 
@@ -294,8 +295,11 @@ def commands(usernick, msg, chan):
 
 
 def triggers(usernick, msg, chan):
-    # TODO: This will fail
-    matches = re.match("(cfg.triggers_words()) " + cfg.nick(), msg, flags=re.IGNORECASE)
+    # TODO: Simplify pattern objects
+    words_pat = re.compile(cfg.triggers_words(), flags=re.IGNORECASE)
+    msg_pat = re.compile(msg, flags=re.IGNORECASE)
+    nick_pat = re.compile(cfg.nick(), flags=re.IGNORECASE)
+    matches = re.match(words_pat, nick_pat, msg_pat)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
             sendmsg((getgreeting(usernick)), chan)
