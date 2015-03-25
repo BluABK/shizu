@@ -12,6 +12,7 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
+import traceback
 from random import randint
 from subprocess import check_output
 
@@ -228,7 +229,9 @@ def commands(usernick, msg, chan):
                 except IndexError:
                     return
                 except:
-                    sendmsg("A mysterious unexpected error occured", chan)
+                    derp = traceback.format_exc()
+                    sendmsg("A mysterious unexpected error occured" % chan)
+                    sendmsg("%s" % derp, chan)
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
