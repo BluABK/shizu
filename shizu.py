@@ -223,7 +223,7 @@ def commands(usernick, msg, chan):
             if ignored_nick("commands", usernick, chan) is False:
                 sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
             elif usernick == "BluABK":
-                sendraw("KICK #blu %s %s\r\n" % usernick, ddate())
+                sendraw("KICK #blu %s *shove*\r\n" % usernick)
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
