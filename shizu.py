@@ -166,16 +166,17 @@ def ignored_nick(section, usernick, chan):
     if section == "commands":
         pattern = re.compile(cfg.commands_ignorednicks(), flags=re.IGNORECASE)
         matches = re.match(pattern, usernick)
-        try:
-            if matches.group(0) != "":  # If the usernick is in ignorelist
-                return True
+#        try:
+        if matches.group(0) != "":  # If the usernick is in ignorelist
+            return True
 
 #        except AttributeError:
 #            sendmsg("Attribute Error o_0", chan)
 #            return True
 #        return False
-        except:
-            sendmsg("ignored_nick(): An unexpected error occured", chan)
+
+#        except:
+#            sendmsg("ignored_nick(): An unexpected error occured", chan)
 
     elif section == "triggers":
         pattern = re.compile(cfg.triggers_ignorednicks(), flags=re.IGNORECASE)
