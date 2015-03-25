@@ -221,9 +221,14 @@ def commands(usernick, msg, chan):
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
             if ignored_nick("commands", usernick, chan) is False:
-                sendraw("KICK #blu %s Backfired, oh the irony! ~\r\n" % usernick)
+                sendraw("KICK %s %s Backfired, oh the irony! ~\r\n" % chan, usernick)
             elif usernick == "BluABK":
-                sendraw("KICK #blu %s *shove*\r\n" % usernick)
+                try:
+                    sendraw("KICK %s %s *shove*\r\n" % chan, cmd[1])
+                except IndexError:
+                    return
+                except:
+                    sendmsg("A mysterious unexpected error occured", chan)
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
