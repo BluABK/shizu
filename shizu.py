@@ -173,9 +173,9 @@ def ignored_nick(section, usernick, chan):
                 sendmsg("I FAILED!!!!! T_T", chan)
             else:
                 sendmsg("Whoa!", chan)
-        except AttributeError:
-            sendmsg("Attribute Error o_0", chan)
-            return True
+#        except AttributeError:
+#            sendmsg("Attribute Error o_0", chan)
+#            return True
         return False
 
     elif section == "triggers":
