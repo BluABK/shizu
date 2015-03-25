@@ -229,7 +229,7 @@ def commands(usernick, msg, chan):
                 except IndexError:
                     return
                 except:
-                    derp = str(traceback.print_exc())
+                    derp = str(traceback.format_list(traceback.extract_stack()))
                     sendmsg("A mysterious unexpected error occured" % chan)
                     sendmsg("%s" % derp, chan)
             else:
