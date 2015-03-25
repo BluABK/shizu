@@ -228,11 +228,11 @@ def commands(usernick, msg, chan):
                     sendraw("KICK %s %s *shove*\r\n" % chan, cmd[1])
                 except IndexError:
                     return
-                except:
-                    sendmsg("A mysterious unexpected error occured" % chan)
-                    stack = traceback.format_list(traceback.extract_stack())
-                    for line in xrange(len(stack)):
-                        sendmsg("%s" % stack[line], chan)
+#                except:
+#                    sendmsg("A mysterious unexpected error occured" % chan)
+#                    stack = traceback.format_list(traceback.extract_stack())
+#                    for line in xrange(len(stack)):
+#                        sendmsg("%s" % stack[line], chan)
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
