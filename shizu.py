@@ -166,7 +166,6 @@ def ignored_nick(section, usernick, chan):
         pattern = re.compile(cfg.commands_ignorednicks(), flags=re.IGNORECASE)
         matches = re.match(pattern, usernick)
         try:
-            sendmsg("TRYING!!!", chan)
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
             elif matches.group(0) == "":
