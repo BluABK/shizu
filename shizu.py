@@ -229,9 +229,10 @@ def commands(usernick, msg, chan):
                 except IndexError:
                     return
                 except:
-                    derp = str(traceback.format_list(traceback.extract_stack()))
                     sendmsg("A mysterious unexpected error occured" % chan)
-                    sendmsg("%s" % derp, chan)
+                    stack = traceback.format_list(traceback.extract_stack())
+                    for line in xrange(len(stack)):
+                        sendmsg("%s" % stack[line], chan)
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
