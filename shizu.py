@@ -169,14 +169,13 @@ def ignored_nick(section, usernick, chan):
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
-            elif matches.group(0) == "":
-                sendmsg("I FAILED!!!!! T_T", chan)
-            else:
-                sendmsg("Whoa!", chan)
+
 #        except AttributeError:
 #            sendmsg("Attribute Error o_0", chan)
 #            return True
-        return False
+#        return False
+        except:
+            sendmsg("ignored_nick(): An unexpected error occured")
 
     elif section == "triggers":
         pattern = re.compile(cfg.triggers_ignorednicks(), flags=re.IGNORECASE)
