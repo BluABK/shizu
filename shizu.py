@@ -169,7 +169,7 @@ def ignored_nick(section, usernick, chan):
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
-# TODO: ignored_nick() AttributeError fails silently
+# TODO: ignored_nick() AttributeError fails silently - Caused by no such nick?
         except AttributeError:
 #            sendmsg("Attribute Error o_0", chan)
             return True
