@@ -1,6 +1,5 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
-# TODO: Load smbstatus on demand
 # TODO: Load smbstatus' BATCHes into separate command
 # TODO: Implement user exemption
 # TODO: Implement path exemption
