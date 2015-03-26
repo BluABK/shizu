@@ -12,7 +12,6 @@ import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
-import traceback
 from random import randint
 from subprocess import check_output
 
