@@ -261,23 +261,25 @@ def commands(usernick, msg, chan):
 
         # Help calls
         if cmd[0] == "help":
-            try:
-                if cmd[1] == "triggers":
-                    sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                    sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
-                elif cmd[1] == "replay":
-                    sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
-                    sendmsg("Available commands: recv, send, duplex", chan)
-                elif cmd[1] == "kick":
-                    sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
-                elif cmd[1] == "samba":
-                # Split and don't die
-                # if len(cmd) < 2:
-                    for item in xrange(len(samba.helpcmd())):
-                            sendmsg(str(samba.helpcmd()[item]), chan)
-            except IndexError:
-                sendmsg("Ouch! IndexError exception =/", chan)
+            if not cmd[1]:
                 helpcmd(usernick, chan)
+            else:
+                try:
+                    if cmd[1] == "triggers":
+                        sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
+                        sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
+                    elif cmd[1] == "replay":
+                        sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
+                        sendmsg("Available commands: recv, send, duplex", chan)
+                    elif cmd[1] == "kick":
+                        sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
+                    elif cmd[1] == "samba":
+                    # Split and don't die
+                    # if len(cmd) < 2:
+                        for item in xrange(len(samba.helpcmd())):
+                                sendmsg(str(samba.helpcmd()[item]), chan)
+                except IndexError:
+                    sendmsg("Ouch! IndexError exception in Help call =/", chan)
 
         # Module: samba
         elif cmd[0] == "samba":
