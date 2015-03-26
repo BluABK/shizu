@@ -173,9 +173,6 @@ def ignored_nick(section, usernick, chan):
             return False
         return False
 
-#        except:
-#            sendmsg("ignored_nick(): An unexpected error occured", chan)
-
     elif section == "triggers":
         pattern = re.compile(cfg.triggers_ignorednicks(), flags=re.IGNORECASE)
         matches = re.match(pattern, usernick)
