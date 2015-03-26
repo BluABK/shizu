@@ -28,8 +28,6 @@ running = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate"
 modulesavail = "samba*"
 
-# Shortcut: Classes
-
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
@@ -82,11 +80,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def commands_ignorednicks(self):
         return str(self.config.get('commands', 'ignored-nicks'))
 
-# Shortcut: Variables declared by config file
+# Variables declared by config file
 cfg = Config()
 maxbacklog = int(cfg.backlog())
-
-# Shortcut: Functions
 
 
 def ian(s):  # is a number
@@ -324,7 +320,7 @@ def sendraw(buf):
             # Delete first entry
             ircbacklog_out = ircbacklog_out[1:]
 
-# Shortcut: Main()
+# Main()
 if __name__ == "__main__":
     # Connect to the the server
     ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
