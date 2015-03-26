@@ -10,3 +10,6 @@ Stats and such
 ========
 
 https://www.bluabk.net/dev/git/shizubot/commitmap.png
+
+#todo
+- [ ] this is a check box
