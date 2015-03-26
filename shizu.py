@@ -168,12 +168,9 @@ def ignored_nick(section, usernick, chan):
         matches = re.match(pattern, usernick)
         try:
             if matches.group(0) != "":  # If the usernick is in ignorelist
-                sendmsg("Regexp Match successful", chan)
                 return True
-# TODO: ignored_nick() AttributeError fails silently - Caused by no such nick?
         except AttributeError:
-            sendmsg("Attribute Error o_0", chan)
-            return True
+            return False
         return False
 
 #        except:
@@ -186,8 +183,7 @@ def ignored_nick(section, usernick, chan):
             if matches.group(0) != "":  # If the usernick is in ignorelist
                 return True
         except AttributeError:
-            sendmsg("Attribute Error o_0", chan)
-            return True
+            return False
         return False
 
 
