@@ -218,18 +218,13 @@ def commands(usernick, msg, chan):
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            if ignored_nick("commands", usernick, chan) is False:
-                sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
-            elif usernick == "BluABK":
+            if usernick == "BluABK":
                 try:
                     sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
                 except IndexError:
                     return
-#                except:
-#                    sendmsg("A mysterious unexpected error occured" % chan)
-#                    stack = traceback.format_list(traceback.extract_stack())
-#                    for line in xrange(len(stack)):
-#                        sendmsg("%s" % stack[line], chan)
+            elif ignored_nick("commands", usernick, chan) is False:
+                sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
         elif cmd[0] == "replay":
