@@ -242,7 +242,9 @@ def whois(user, selection):
 # Verify identity of user
 def check_id(user, facility, chan):
     # Check if user is identified with nickserv
+    sendmsg("DEBUG: SpyTec", chan)
     if facility == "nickserv":
+        sendmsg("DEBUG: SpyTec was the one who--", chan)
         chk = whois(user, "identified")
         if len(chk) > 0:
             if chk.find("is logged in as") != -1:
@@ -250,8 +252,10 @@ def check_id(user, facility, chan):
             if chk.find(user) != -1:
                 sendmsg("DEBUG: user detected in WHOIS", chan)
             if chk.find("is logged in as") != -1 and chk.find(user) != -1:
+                sendmsg("DEBUG: TRUE", chan)
                 return True
             else:
+                sendmsg("DEBUG: FALSE", chan)
                 return False
 
 
