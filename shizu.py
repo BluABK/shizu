@@ -196,7 +196,7 @@ def whois(user, selection):
     for n in xrange(len(ircbacklog)):
         # As long as current msg isn't end of /WHOIS
         if ircbacklog[n].find("318 * %s %s" % (cfg.nick(), user)) == -1:
-            if ircbacklog[n].find("311 * %s %s" % (cfg.nick(), user)) != -1:
+            if str(ircbacklog[n]).find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = ircbacklog[n]
                 data.append(host)
             elif ircbacklog[n].find("319 * %s %s" % (cfg.nick(), user)) != -1:
