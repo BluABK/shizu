@@ -157,7 +157,7 @@ def ircquit():
     running = False
 
 
-def ignored_nick(section, usernick, chan):
+def ignored_nick(section, usernick):
     if section == "commands":
         pattern = re.compile(cfg.commands_ignorednicks(), flags=re.IGNORECASE)
         matches = re.match(pattern, usernick)
