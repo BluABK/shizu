@@ -187,6 +187,68 @@ def ddate():
     return check_output("ddate", shell=False)
 
 
+def whois(user, selection):
+    global ircbacklog, ircbacklog_out
+    sendraw("WHOIS %s\n" % user)
+    data = list()
+    for n in ircbacklog:
+        # As long as current msg isn't end of /WHOIS
+        if ircbacklog[n].find("318 * %s %s" % (cfg.nick(), user)) == -1:
+            if ircbacklog[n].find("311 * %s %s" % (cfg.nick(), user)) != -1:
+                host = ircbacklog[n]
+                data.append(host)
+            elif ircbacklog[n].find("319 * %s %s" % (cfg.nick(), user)) != -1:
+                channels = ircbacklog[n]
+                data.append(channels)
+            elif ircbacklog[n].find("312 * %s %s" % (cfg.nick(), user)) != -1:
+                server = ircbacklog[n]
+                data.append(server)
+            elif ircbacklog[n].find("313 * %s %s" % (cfg.nick(), user)) != -1:
+                oper = ircbacklog[n]
+                data.append(oper)
+            elif ircbacklog[n].find("330 * %s %s" % (cfg.nick(), user)) != -1:
+                identified = ircbacklog[n]
+                data.append(identified)
+            elif ircbacklog[n].find("671 * %s %s" % (cfg.nick(), user)) != -1:
+                connection = ircbacklog[n]
+                data.append(connection)
+            elif ircbacklog[n].find("317 * %s %s" % (cfg.nick(), user)) != -1:
+                idle = ircbacklog[n]
+                data.append(idle)
+        else:
+            break
+
+    try:
+        if selection == "host":
+            return host
+        elif selection == "channels":
+            return channels
+        elif selection == "server":
+            return server
+        elif selection == "oper":
+            return oper
+        elif selection == "identified":
+            return identified
+        elif selection == "connection":
+            return connection
+        elif selection == "idle":
+            return idle
+    except NameError:
+        return data
+
+
+# Verify identity of user
+def check_id(user, facility):
+    # Check if user is identified with nickserv
+    if facility == "nickserv":
+        chk = whois(user, "identified")
+        if len(chk) > 0:
+            if chk.find("is logged in as") != -1 and chk.find(user) != -1:
+                return True
+            else:
+                return False
+
+
 def commands(usernick, msg, chan):
     # First of all, check if it is a command
     if chan[0] == "#":
@@ -215,7 +277,7 @@ def commands(usernick, msg, chan):
                     sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
                 except IndexError:
                     return
-            elif ignored_nick("commands", usernick, chan) is False:
+            elif ignored_nick("commands", usernick) is False:
                 sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
             else:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
