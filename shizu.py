@@ -441,11 +441,14 @@ if __name__ == "__main__":
         # Rejoin on kick
         # TODO: Make optional and abbreviate into methods
         if ircmsg.find("KICK #") != -1:
-            for num in channel:
-                print "DEBUG: %s" % num
-                if ircmsg.find("KICK %s" % channel[num]):
-                    join(channel[num])
-                    sendmsg("Oi, That was mean! T_T", channel[num])
+        # TODO: HACK: Rejoin all channels
+            join(cfg.chan())
+        #    for num in channel:
+        #        print "DEBUG: %s" % num
+        #        if ircmsg.find("KICK %s" % channel[num]):
+        #            join(channel[num])
+        #    sendmsg("Oi, That was mean! T_T")
+        #    sendmsg("Oi, That was mean! T_T", channel[num])
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
