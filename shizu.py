@@ -244,7 +244,7 @@ def check_id(user, facility, chan):
     # Check if user is identified with nickserv
     sendmsg("SpyTec", chan)
     if facility == "identified":
-        sendmsg("SpyTec ???? with ???? in ????? at ?????" % user, chan)
+        sendmsg("SpyTec ???? with ???? in ????? at ?????", chan)
         chk = whois(user, "identified")
         sendmsg(chk, chan)
         if len(chk) > 0:
