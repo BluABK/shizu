@@ -278,7 +278,7 @@ def commands(usernick, msg, chan):
                 except IndexError:
                     return
             elif usernick == "BluABK":
-                sendmsg("ಠ_ಠ", chan)
+                sendmsg("\xe0_\xe0", chan)
             elif ignored_nick("commands", usernick) is False:
                 sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
             else:
