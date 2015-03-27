@@ -189,35 +189,44 @@ def ddate():
     return check_output("ddate", shell=False)
 
 
-def whois(user, selection):
+def whois(user, selection, chan):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
     data = list()
     for n in xrange(len(ircbacklog)):
+        sendmsg("n = %s" % n, chan)
         nyaa = str(ircbacklog[n])
+        sendmsg("nyaa = %s" % nyaa, chan)
         # As long as current msg isn't end of /WHOIS
         if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
             if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = ircbacklog[n]
                 data.append(host)
+                sendmsg(str(host), chan)
             elif nyaa.find("319 * %s %s" % (cfg.nick(), user)) != -1:
                 channels = ircbacklog[n]
                 data.append(channels)
+                sendmsg(str(channels), chan)
             elif nyaa.find("312 * %s %s" % (cfg.nick(), user)) != -1:
                 server = ircbacklog[n]
                 data.append(server)
+                sendmsg(str(server), chan)
             elif nyaa.find("313 * %s %s" % (cfg.nick(), user)) != -1:
                 oper = ircbacklog[n]
                 data.append(oper)
+                sendmsg(str(oper), chan)
             elif nyaa.find("330 * %s %s" % (cfg.nick(), user)) != -1:
                 identified = ircbacklog[n]
                 data.append(identified)
+                sendmsg(str(identified), chan)
             elif nyaa.find("671 * %s %s" % (cfg.nick(), user)) != -1:
                 connection = ircbacklog[n]
                 data.append(connection)
+                sendmsg(str(connection), chan)
             elif nyaa.find("317 * %s %s" % (cfg.nick(), user)) != -1:
                 idle = ircbacklog[n]
                 data.append(idle)
+                sendmsg(str(idle), chan)
         else:
             break
 
