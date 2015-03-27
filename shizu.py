@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
@@ -278,7 +280,7 @@ def commands(usernick, msg, chan):
                 except IndexError:
                     return
             elif usernick == "BluABK":
-                sendmsg("\xe0_\xe0", chan)
+                sendmsg("\x3230_\x3230", chan)
             elif ignored_nick("commands", usernick) is False:
                 sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
             else:
