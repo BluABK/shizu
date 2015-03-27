@@ -194,27 +194,28 @@ def whois(user, selection):
     sendraw("WHOIS %s\n" % user)
     data = list()
     for n in xrange(len(ircbacklog)):
+        nyaa = str(ircbacklog[n])
         # As long as current msg isn't end of /WHOIS
-        if str(ircbacklog[n]).find("318 * %s %s" % (cfg.nick(), user)) == -1:
-            if str(ircbacklog[n]).find("311 * %s %s" % (cfg.nick(), user)) != -1:
+        if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
+            if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = ircbacklog[n]
                 data.append(host)
-            elif str(ircbacklog[n]).find("319 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("319 * %s %s" % (cfg.nick(), user)) != -1:
                 channels = ircbacklog[n]
                 data.append(channels)
-            elif str(ircbacklog[n]).find("312 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("312 * %s %s" % (cfg.nick(), user)) != -1:
                 server = ircbacklog[n]
                 data.append(server)
-            elif str(ircbacklog[n]).find("313 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("313 * %s %s" % (cfg.nick(), user)) != -1:
                 oper = ircbacklog[n]
                 data.append(oper)
-            elif str(ircbacklog[n]).find("330 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("330 * %s %s" % (cfg.nick(), user)) != -1:
                 identified = ircbacklog[n]
                 data.append(identified)
-            elif str(ircbacklog[n]).find("671 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("671 * %s %s" % (cfg.nick(), user)) != -1:
                 connection = ircbacklog[n]
                 data.append(connection)
-            elif str(ircbacklog[n]).find("317 * %s %s" % (cfg.nick(), user)) != -1:
+            elif nyaa.find("317 * %s %s" % (cfg.nick(), user)) != -1:
                 idle = ircbacklog[n]
                 data.append(idle)
         else:
@@ -242,9 +243,9 @@ def whois(user, selection):
 # Verify identity of user
 def check_id(user, facility, chan):
     # Check if user is identified with nickserv
-    sendmsg("Lewd things", chan)
+    sendmsg("Checking ID...", chan)
     if facility == "identified":
-        sendmsg("SpyTec ???? with ???? in ????? at ????? while ????? was ?????????????!!!", chan)
+        sendmsg("facility = id", chan)
         chk = whois(user, "identified")
         sendmsg(chk, chan)
         if len(chk) > 0:
