@@ -384,6 +384,18 @@ if __name__ == "__main__":
             commands(tmpusernick, message, channel)
             triggers(tmpusernick, message, channel)
 
+            # Run some checks
+
+            # Rejoin on kick
+            if ircmsg.find("KICK #") != -1:
+                for num in channel:
+                    if ircmsg.find("KICK %s" % channel[num]):
+                        join(channel[num])
+                        sendmsg("Oi, That was mean! T_T", channel[num])
+
+
+
+
         i += 1
 
     # See ya!
