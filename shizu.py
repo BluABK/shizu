@@ -387,13 +387,12 @@ if __name__ == "__main__":
             # Run some checks
 
             # Rejoin on kick
+            # TODO: Make optional and abbreviate into methods
             if ircmsg.find("KICK #") != -1:
                 for num in channel:
                     if ircmsg.find("KICK %s" % channel[num]):
                         join(channel[num])
                         sendmsg("Oi, That was mean! T_T", channel[num])
-
-
 
 
         i += 1
