@@ -199,22 +199,22 @@ def whois(user, selection):
             if str(ircbacklog[n]).find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = ircbacklog[n]
                 data.append(host)
-            elif ircbacklog[n].find("319 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("319 * %s %s" % (cfg.nick(), user)) != -1:
                 channels = ircbacklog[n]
                 data.append(channels)
-            elif ircbacklog[n].find("312 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("312 * %s %s" % (cfg.nick(), user)) != -1:
                 server = ircbacklog[n]
                 data.append(server)
-            elif ircbacklog[n].find("313 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("313 * %s %s" % (cfg.nick(), user)) != -1:
                 oper = ircbacklog[n]
                 data.append(oper)
-            elif ircbacklog[n].find("330 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("330 * %s %s" % (cfg.nick(), user)) != -1:
                 identified = ircbacklog[n]
                 data.append(identified)
-            elif ircbacklog[n].find("671 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("671 * %s %s" % (cfg.nick(), user)) != -1:
                 connection = ircbacklog[n]
                 data.append(connection)
-            elif ircbacklog[n].find("317 * %s %s" % (cfg.nick(), user)) != -1:
+            elif str(ircbacklog[n]).find("317 * %s %s" % (cfg.nick(), user)) != -1:
                 idle = ircbacklog[n]
                 data.append(idle)
         else:
