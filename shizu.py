@@ -193,11 +193,13 @@ def whois(user, selection, raw_in, chan):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
     data = list()
+    iteration = 0
+    stagger = 2000
     while str(raw_in).find("318"):
 #    for n in xrange(len(ircbacklog)):
 #        nyaa = str(ircbacklog[n])
         nyaa = str(raw_in)
-        sendmsg("nyaa = %s" % nyaa, chan)
+#        sendmsg("nyaa = %s" % nyaa, chan)
         # As long as current msg isn't end of /WHOIS
 #        if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
         if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
@@ -228,6 +230,11 @@ def whois(user, selection, raw_in, chan):
             idle = nyaa
             data.append(idle)
             sendmsg(str(idle), chan)
+
+        iteration += 1
+        if iteration >= stagger:
+            stagger = iteration + iteration
+            sendmsg("Warning: Loop has passed %s iterations (inf. loop?)" % iteration, chan)
 #        else:
 #            break
 
