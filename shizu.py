@@ -195,7 +195,7 @@ def whois(user, selection):
     data = list()
     for n in xrange(len(ircbacklog)):
         # As long as current msg isn't end of /WHOIS
-        if ircbacklog[n].find("318 * %s %s" % (cfg.nick(), user)) == -1:
+        if str(ircbacklog[n]).find("318 * %s %s" % (cfg.nick(), user)) == -1:
             if str(ircbacklog[n]).find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = ircbacklog[n]
                 data.append(host)
@@ -244,7 +244,7 @@ def check_id(user, facility, chan):
     # Check if user is identified with nickserv
     sendmsg("SpyTec", chan)
     if facility == "identified":
-        sendmsg("SpyTec was the one who--", chan)
+        sendmsg("SpyTec did WHAT to %s????" % user, chan)
         chk = whois(user, "identified")
         if len(chk) > 0:
             if chk.find("is logged in as") != -1:
