@@ -255,7 +255,7 @@ def check_id(user, facility, chan):
     sendmsg("Checking ID...", chan)
     if facility == "identified":
         sendmsg("facility = id", chan)
-        chk = whois(user, "identified")
+        chk = whois(user, "identified", chan)
         sendmsg(chk, chan)
         if len(chk) > 0:
             if chk.find("is logged in as") != -1:
