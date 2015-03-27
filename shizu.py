@@ -436,6 +436,17 @@ if __name__ == "__main__":
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
             join(cfg.chan())
 
+        # Run some checks
+
+        # Rejoin on kick
+        # TODO: Make optional and abbreviate into methods
+        if ircmsg.find("KICK #") != -1:
+            for num in channel:
+                print "DEBUG: %s" % num
+                if ircmsg.find("KICK %s" % channel[num]):
+                    join(channel[num])
+                    sendmsg("Oi, That was mean! T_T", channel[num])
+
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
             channel = ircparts[2]
@@ -445,18 +456,6 @@ if __name__ == "__main__":
 
             commands(tmpusernick, message, channel)
             triggers(tmpusernick, message, channel)
-
-            # Run some checks
-
-            # Rejoin on kick
-            # TODO: Make optional and abbreviate into methods
-            if ircmsg.find("KICK #") != -1:
-                for num in channel:
-                    print "DEBUG: %s" % num
-                    if ircmsg.find("KICK %s" % channel[num]):
-                        join(channel[num])
-                        sendmsg("Oi, That was mean! T_T", channel[num])
-
 
         i += 1
 
