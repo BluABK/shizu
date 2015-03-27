@@ -243,7 +243,7 @@ def whois(user, selection):
 def check_id(user, facility, chan):
     # Check if user is identified with nickserv
     sendmsg("SpyTec", chan)
-    if facility == "nickserv":
+    if facility == "identified":
         sendmsg("SpyTec was the one who--", chan)
         chk = whois(user, "identified")
         if len(chk) > 0:
