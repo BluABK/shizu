@@ -240,11 +240,15 @@ def whois(user, selection):
 
 
 # Verify identity of user
-def check_id(user, facility):
+def check_id(user, facility, chan):
     # Check if user is identified with nickserv
     if facility == "nickserv":
         chk = whois(user, "identified")
         if len(chk) > 0:
+            if chk.find("is logged in as") != -1:
+                sendmsg("DEBUG: logged in detected in WHOIS", chan)
+            if chk.find(user) != -1:
+                sendmsg("DEBUG: user detected in WHOIS", chan)
             if chk.find("is logged in as") != -1 and chk.find(user) != -1:
                 return True
             else:
@@ -274,7 +278,7 @@ def commands(usernick, msg, chan):
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            if usernick == "BluABK" and check_id("BluABK", "identified"):
+            if usernick == "BluABK" and check_id("BluABK", "identified", chan):
                 try:
                     sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
                 except IndexError:
