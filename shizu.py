@@ -312,7 +312,7 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            if usernick == "BluABK" and check_id("BluABK", "identified", raw_in, chan):
+            if usernick == "BluABK" and check_id("BluABK", "identified", raw_in):
                 try:
                     sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
                 except IndexError:
