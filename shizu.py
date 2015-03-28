@@ -192,8 +192,8 @@ def ddate():
 def whois(user, selection, raw_in):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
-    sendraw("NICK shizu|testing\n")
-    sendraw("NICK " + cfg.nick() + "\n")
+#    sendraw("NICK shizu|testing\n")
+#    sendraw("NICK " + cfg.nick() + "\n")
     data = list()
 
     prevmsg = ""
@@ -271,7 +271,7 @@ def check_id(user, facility, raw_in):
     if facility == "identified":
 #        sendmsg("facility = id", chan)
         chk = whois(user, "identified", raw_in)
-        print(chk + "\n")
+        print(chk)
         if len(chk) > 0:
             if chk.find("is logged in as") != -1:
                 print("logged in detected in WHOIS\n")
