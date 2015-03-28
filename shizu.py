@@ -193,50 +193,43 @@ def whois(user, selection, raw_in, chan):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
     data = list()
-    iteration = 0
-    stagger = 2000
-    while str(raw_in).find("318"):
-#    for n in xrange(len(ircbacklog)):
-#        nyaa = str(ircbacklog[n])
-        nyaa = str(raw_in)
-#        sendmsg("nyaa = %s" % nyaa, chan)
-        # As long as current msg isn't end of /WHOIS
-#        if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
-        if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
-            host = nyaa
-            data.append(host)
-            sendmsg(str(host), chan)
-        elif nyaa.find("319 * %s %s" % (cfg.nick(), user)) != -1:
-            channels = nyaa
-            data.append(channels)
-            sendmsg(str(channels), chan)
-        elif nyaa.find("312 * %s %s" % (cfg.nick(), user)) != -1:
-            server = nyaa
-            data.append(server)
-            sendmsg(str(server), chan)
-        elif nyaa.find("313 * %s %s" % (cfg.nick(), user)) != -1:
-            oper = nyaa
-            data.append(oper)
-            sendmsg(str(oper), chan)
-        elif nyaa.find("330 * %s %s" % (cfg.nick(), user)) != -1:
-            identified = nyaa
-            data.append(identified)
-            sendmsg(str(identified), chan)
-        elif nyaa.find("671 * %s %s" % (cfg.nick(), user)) != -1:
-            connection = nyaa
-            data.append(connection)
-            sendmsg(str(connection), chan)
-        elif nyaa.find("317 * %s %s" % (cfg.nick(), user)) != -1:
-            idle = nyaa
-            data.append(idle)
-            sendmsg(str(idle), chan)
 
-        iteration += 1
-        if iteration >= stagger:
-            stagger = iteration + iteration
-            sendmsg("Warning: Loop has passed %s iterations (inf. loop?)" % iteration, chan)
-#        else:
-#            break
+    for n in xrange(len(ircbacklog)):
+        #nyaa = str(ircbacklog[n])
+        nyaa = str(raw_in)
+        sendmsg("RAW: %s" % nyaa, chan)
+        # As long as current msg isn't end of /WHOIS
+        if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
+            if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
+                host = nyaa
+                data.append(host)
+                sendmsg(str(host), chan)
+            elif nyaa.find("319 * %s %s" % (cfg.nick(), user)) != -1:
+                channels = nyaa
+                data.append(channels)
+                sendmsg(str(channels), chan)
+            elif nyaa.find("312 * %s %s" % (cfg.nick(), user)) != -1:
+                server = nyaa
+                data.append(server)
+                sendmsg(str(server), chan)
+            elif nyaa.find("313 * %s %s" % (cfg.nick(), user)) != -1:
+                oper = nyaa
+                data.append(oper)
+                sendmsg(str(oper), chan)
+            elif nyaa.find("330 * %s %s" % (cfg.nick(), user)) != -1:
+                identified = nyaa
+                data.append(identified)
+                sendmsg(str(identified), chan)
+            elif nyaa.find("671 * %s %s" % (cfg.nick(), user)) != -1:
+                connection = nyaa
+                data.append(connection)
+                sendmsg(str(connection), chan)
+            elif nyaa.find("317 * %s %s" % (cfg.nick(), user)) != -1:
+                idle = nyaa
+                data.append(idle)
+                sendmsg(str(idle), chan)
+        else:
+            break
 
     try:
         if selection == "host":
@@ -305,13 +298,13 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            if usernick == "BluABK": #and check_id("BluABK", "identified", raw_in, chan):
+            if usernick == "BluABK" and check_id("BluABK", "identified", raw_in, chan):
                 try:
                     sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
                 except IndexError:
                     return
-#            elif usernick == "BluABK":
-#                sendmsg("ಠ_ಠ", chan)
+            elif usernick == "BluABK":
+                sendmsg("ಠ_ಠ", chan)
             elif ignored_nick("commands", usernick) is False:
                 sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
             else:
