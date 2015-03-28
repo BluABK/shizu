@@ -269,7 +269,7 @@ def check_id(user, facility, raw_in, chan):
     # Check if user is identified with nickserv
     sendmsg("Checking ID...", chan)
     if facility == "identified":
-        sendmsg("facility = id", chan)
+#        sendmsg("facility = id", chan)
         chk = whois(user, "identified", raw_in, chan)
         sendmsg(chk, chan)
         if len(chk) > 0:
