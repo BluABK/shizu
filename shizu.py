@@ -189,7 +189,7 @@ def ddate():
     return check_output("ddate", shell=False)
 
 
-def whois(user, selection, raw_in, chan):
+def whois(user, selection, raw_in):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
     sendraw("NICK shizu|testing\n")
@@ -203,7 +203,7 @@ def whois(user, selection, raw_in, chan):
         nyaa = str(raw_in)
 
         if nyaa != prevmsg:
-            sendmsg("RAW: %s" % nyaa, chan)
+            print("RAW: %s\n" % nyaa)
         else:
             msgcount += 1
 
@@ -214,36 +214,36 @@ def whois(user, selection, raw_in, chan):
             if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
                 host = nyaa
                 data.append(host)
-                sendmsg(str(host), chan)
+                print(str(host) + "\n")
             elif nyaa.find("319 * %s %s" % (cfg.nick(), user)) != -1:
                 channels = nyaa
                 data.append(channels)
-                sendmsg(str(channels), chan)
+                print(str(channels) + "\n")
             elif nyaa.find("312 * %s %s" % (cfg.nick(), user)) != -1:
                 server = nyaa
                 data.append(server)
-                sendmsg(str(server), chan)
+                print(str(server) + "\n")
             elif nyaa.find("313 * %s %s" % (cfg.nick(), user)) != -1:
                 oper = nyaa
                 data.append(oper)
-                sendmsg(str(oper), chan)
+                print(str(oper) + "\n")
             elif nyaa.find("330 * %s %s" % (cfg.nick(), user)) != -1:
                 identified = nyaa
                 data.append(identified)
-                sendmsg(str(identified), chan)
+                print(str(identified) + "\n")
             elif nyaa.find("671 * %s %s" % (cfg.nick(), user)) != -1:
                 connection = nyaa
                 data.append(connection)
-                sendmsg(str(connection), chan)
+                print(str(connection) + "\n")
             elif nyaa.find("317 * %s %s" % (cfg.nick(), user)) != -1:
                 idle = nyaa
                 data.append(idle)
-                sendmsg(str(idle), chan)
+                print(str(idle) + "\n")
         else:
             break
 
     if msgcount > 0:
-        sendmsg("Previous message repeated %s times" % msgcount, chan)
+        print("Previous message repeated %s times\n" % msgcount)
 
     try:
         if selection == "host":
@@ -265,28 +265,28 @@ def whois(user, selection, raw_in, chan):
 
 
 # Verify identity of user
-def check_id(user, facility, raw_in, chan):
+def check_id(user, facility, raw_in):
     # Check if user is identified with nickserv
-    sendmsg("Checking ID...", chan)
+    print("Checking ID...\n")
     if facility == "identified":
 #        sendmsg("facility = id", chan)
-        chk = whois(user, "identified", raw_in, chan)
-        sendmsg(chk, chan)
+        chk = whois(user, "identified", raw_in)
+        print(chk + "\n")
         if len(chk) > 0:
             if chk.find("is logged in as") != -1:
-                sendmsg("DEBUG: logged in detected in WHOIS", chan)
+                print("logged in detected in WHOIS\n")
             if chk.find(user) != -1:
-                sendmsg("DEBUG: user detected in WHOIS", chan)
+                print("user detected in WHOIS\n")
             if chk.find("is logged in as") != -1 and chk.find(user) != -1:
-                sendmsg("DEBUG: TRUE", chan)
+                print("TRUE\n")
                 return True
             else:
-                sendmsg("DEBUG: FALSE", chan)
+                print("DEBUG: FALSE\n")
                 return False
         else:
-            sendmsg("Oh dear, that response seem rather empty...", chan)
+            print("Oh dear, that response seem rather empty...\n")
     else:
-        sendmsg("Whoa whoa whoa, calm down.", chan)
+        print("Whoa whoa whoa, calm down.\n")
 
 
 def commands(usernick, msg, raw_in, chan):
