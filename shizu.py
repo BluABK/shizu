@@ -194,10 +194,19 @@ def whois(user, selection, raw_in, chan):
     sendraw("WHOIS %s\n" % user)
     data = list()
 
+    prevmsg = ""
+    msgcount = 0
     for n in xrange(len(ircbacklog)):
         #nyaa = str(ircbacklog[n])
         nyaa = str(raw_in)
-        sendmsg("RAW: %s" % nyaa, chan)
+
+        if nyaa != prevmsg:
+            sendmsg("RAW: %s" % nyaa, chan)
+        else:
+            msgcount += 1
+
+        prevmsg = nyaa
+
         # As long as current msg isn't end of /WHOIS
         if nyaa.find("318 * %s %s" % (cfg.nick(), user)) == -1:
             if nyaa.find("311 * %s %s" % (cfg.nick(), user)) != -1:
@@ -230,6 +239,9 @@ def whois(user, selection, raw_in, chan):
                 sendmsg(str(idle), chan)
         else:
             break
+
+    if msgcount > 0:
+        sendmsg("Previous message repeated %s times" % msgcount, chan)
 
     try:
         if selection == "host":
