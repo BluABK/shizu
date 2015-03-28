@@ -192,6 +192,8 @@ def ddate():
 def whois(user, selection, raw_in, chan):
     global ircbacklog, ircbacklog_out
     sendraw("WHOIS %s\n" % user)
+    sendraw("NICK shizu|testing\n")
+    sendraw("NICK " + cfg.nick() + "\n")
     data = list()
 
     prevmsg = ""
