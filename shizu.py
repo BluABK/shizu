@@ -339,9 +339,11 @@ def commands(usernick, msg, raw_in, chan):
                         try:
                             # KICK <user> <reason>
                             sendraw("KICK %s %s %s\n" % (chan, cmd[1], cmd[2]))
+                            return
                         except IndexError:
                             # KICK <user> <static reason> (fallback if no reason given)
                             sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
+                            return
                     except IndexError:
                         print("IndexError in authorisation check")
                         return
