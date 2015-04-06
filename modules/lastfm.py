@@ -64,3 +64,10 @@ def now_playing(user):
             return err
         else:
             return network.get_user(u).get_now_playing()
+
+
+def recently_played(user, num):
+    try:
+        return network.get_user(user).get_recent_tracks(limit=num)
+    except:
+        return "recently_played() failure"
