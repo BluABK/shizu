@@ -415,7 +415,7 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] == "npt":
             try:
-                sendmsg("%s is currently playing; %s" % lastfm.now_playing(cmd[1]), chan)
+                sendmsg("%s is currently playing; %s" % (usernick, lastfm.now_playing(cmd[1])), chan)
             except IndexError:
                 sendmsg("Index derp", chan)
 
