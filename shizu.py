@@ -413,6 +413,12 @@ def commands(usernick, msg, raw_in, chan):
                 else:
                     sendmsg("%s is currently playing: %s" % (usernick, unp), chan)
 
+        elif cmd[0] == "npt":
+            try:
+                sendmsg("%s is currently playing; %s" % lastfm.now_playing(cmd[1]), chan)
+            except IndexError:
+                sendmsg("Index derp", chan)
+
         # Module: samba
         elif cmd[0] == "samba":
             if len(cmd) > 1:

@@ -46,6 +46,9 @@ cfg = Config()
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
 
+def test_playing(user):
+    return network.get_user(user).get_now_playing()
+
 
 def now_playing(user):
     u = cfg.test_alias(user)
