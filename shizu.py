@@ -312,6 +312,13 @@ def commands(usernick, msg, raw_in, chan):
             sendmsg(date(), chan)
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
+        elif cmd[0] == "dump":
+            try:
+                if cmd[1] == "cmd":
+                    if cmd[2] == "ignorednicks":
+                        sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
+            except IndexError:
+                sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0] == "kick":
             #if usernick == "BluABK": #and check_id("BluABK", "identified", raw_in):
             #elif usernick == "BluABK":
