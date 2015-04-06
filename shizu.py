@@ -402,7 +402,15 @@ def commands(usernick, msg, raw_in, chan):
 
         # Module: lastfm
         elif cmd[0] == "np":
-            sendmsg("%s is currently playing: %s" % (usernick, lastfm.now_playing(usernick)), chan)
+            try:
+                unp = lastfm.now_playing(cmd[1])
+                if unp == "No such user":
+                    sendmsg("%s: %s =/" % (unp, cmd[1]), chan)
+            except IndexError:
+                unp = lastfm.now_playing(usernick)
+                if unp == "No such user":
+                    sendmsg("%s: %s If please !lastfm set alias <lastfmuser>" % (usernick, unp), chan)
+            sendmsg("%s is currently playing: %s" % (usernick, unp), chan)
 
         # Module: samba
         elif cmd[0] == "samba":

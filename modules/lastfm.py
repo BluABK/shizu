@@ -37,7 +37,10 @@ class Config:  # Shizu's config class
         if str(self.config.get('lastfm', 'username')) == user:
             return str(self.config.get('lastfm', 'username'))
         else:
-            return str(self.config.get('lastfm-alias', user))
+            try:
+                return str(self.config.get('lastfm-alias', user))
+            except ConfigParser.NoOptionError:
+                return "No such user"
 
 cfg = Config()
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
@@ -45,4 +48,8 @@ network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(
 
 
 def now_playing(user):
-    return network.get_user(cfg.test_alias(user)).get_now_playing()
+    u = cfg.test_alias(user)
+    if u == "No such user":
+        return u
+    else:
+        return network.get_user(u).get_now_playing()
