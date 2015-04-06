@@ -317,6 +317,8 @@ def commands(usernick, msg, raw_in, chan):
                 if cmd[1] == "cmd":
                     if cmd[2] == "ignorednicks":
                         sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
+                elif cmd[1] == "trg":
+                        sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0] == "kick":
