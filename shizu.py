@@ -423,7 +423,7 @@ def triggers(usernick, msg, chan):
     greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
     greet_match = re.match(greet_pat, msg)
     nick_match = False
-
+# TODO: Actually regex match against msg having exactly triggers_words() + cfg.nick()
     for s in msg.split(" "):
         if s == cfg.nick():
             nick_match = True
