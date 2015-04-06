@@ -424,7 +424,7 @@ def triggers(usernick, msg, chan):
     print cfg.triggers_words() + " " + cfg.nick()
     matches = re.match(words_pat, msg)
     print matches
-    print words_pat + " " + msg
+   # print words_pat + " " + msg
 
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
