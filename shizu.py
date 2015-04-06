@@ -64,6 +64,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def quitpro(self):
         return str(self.config.get('irc', 'quit-protection'))
 
+    def su(self):
+        return str(self.config.get('users', 'superusers'))
+
     def nspass(self):
         return str(self.config.get('nickserv', 'password'))
 
@@ -310,17 +313,32 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "ddate":
             sendmsg(ddate(), chan)
         elif cmd[0] == "kick":
-            if usernick == "BluABK" and check_id("BluABK", "identified", raw_in):
-                try:
-                    sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
-                except IndexError:
-                    return
-            elif usernick == "BluABK":
-                sendmsg("ಠ_ಠ", chan)
-            elif ignored_nick("commands", usernick) is False:
-                sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
-            else:
+            #if usernick == "BluABK": #and check_id("BluABK", "identified", raw_in):
+            #elif usernick == "BluABK":
+            #   sendmsg("ಠ_ಠ", chan)
+
+            # Make sure that it is an actual user
+            if ignored_nick("commands", usernick) is True:
                 sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
+                return
+
+            # Check if user is authorised to do so
+            for u in cfg.su().split(","):
+                if usernick.lower() == cfg.su()[u].lower():
+                    try:
+                        try:
+                            # KICK <user> <reason>
+                            sendraw("KICK %s %s %s\n" % (chan, cmd[1], cmd[2]))
+                        except IndexError:
+                            # KICK <user> <static reason> (fallback if no reason given)
+                            sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
+                    except IndexError:
+                        print("IndexError in authorisation check")
+                        return
+
+            # If all else fails, user was probably not authorised and must be punished for abuse
+            sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
+
         elif cmd[0] == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
             if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
