@@ -19,6 +19,7 @@ from subprocess import check_output
 
 # Project-specific modules
 import modules.samba as samba            # for server-side samba functionality
+import modules.lastfm as lastfm
 #import db               # for server-side file search and lookup
 
 # Global variables
@@ -398,6 +399,10 @@ def commands(usernick, msg, raw_in, chan):
                             sendmsg(str(samba.helpcmd()[item]), chan)
             except IndexError:
                 helpcmd(usernick, chan)
+
+        # Module: lastfm
+        elif cmd[0] == "np":
+            sendmsg("%s is currently playing: %s" % (usernick, lastfm.now_playing(usernick)), chan)
 
         # Module: samba
         elif cmd[0] == "samba":
