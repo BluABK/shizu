@@ -404,12 +404,18 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "np":
             try:
                 unp = lastfm.now_playing(cmd[1])
-                if unp == "No such user":
+                if unp == "No user with that name was found":
                     sendmsg("%s: %s =/" % (unp, cmd[1]), chan)
+                elif unp == "None":
+                    sendmsg("%s is not currently playing anything" % cmd[1], chan)
+                else:
+                    sendmsg("%s is currently playing: %s" % (cmd[1], unp), chan)
             except IndexError:
                 unp = lastfm.now_playing(usernick)
-                if unp == "No such user":
-                    sendmsg("%s: %s If please !lastfm set alias <lastfmuser>" % (usernick, unp), chan)
+                if unp == "No user with that name was found":
+                    sendmsg("%s: %s you can set an alias with !lastfm set alias <lastfmuser>" % (usernick, unp), chan)
+                elif unp == "None":
+                    sendmsg("%s is not currently playing anything" % usernick, chan)
                 else:
                     sendmsg("%s is currently playing: %s" % (usernick, unp), chan)
 

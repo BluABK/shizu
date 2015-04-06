@@ -46,13 +46,21 @@ cfg = Config()
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
 
+
 def test_playing(user):
-    return network.get_user(user).get_now_playing()
+    try:
+        return network.get_user(user).get_now_playing()
+    except pylast.WSError:
+        return "No user with that name was found"
 
 
 def now_playing(user):
-    u = cfg.test_alias(user)
-    if u == "No such user":
-        return u
-    else:
-        return network.get_user(u).get_now_playing()
+    try:
+        return network.get_user(user).get_now_playing()
+    except pylast.WSError:
+        err = "No user with that name was found"
+        u = cfg.test_alias(user)
+        if u == "No such user":
+            return err
+        else:
+            return network.get_user(u).get_now_playing()
