@@ -323,8 +323,9 @@ def commands(usernick, msg, raw_in, chan):
                 return
 
             # Check if user is authorised to do so
-            for u in cfg.su().split(","):
-                if usernick.lower() == cfg.su()[u].lower():
+            print cfg.su().lower().split(",")
+            for u in cfg.su().lower().split(","):
+                if usernick.lower() == u: #cfg.su().split(",")[u].lower():
                     try:
                         try:
                             # KICK <user> <reason>
