@@ -420,16 +420,18 @@ def commands(usernick, msg, raw_in, chan):
 
 
 def triggers(usernick, msg, chan):
-    words_pat = re.compile((cfg.triggers_words() + " " + cfg.nick()), flags=re.IGNORECASE)
-    print cfg.triggers_words() + " " + cfg.nick()
-    matches = re.match(words_pat, msg)
-    print matches
+    greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
+    greet_match = re.match(greet_pat, msg)
+    nick_match = False
+
+    for s in msg.split(" "):
+        if s == cfg.nick():
+            nick_match = True
 
     try:
         #if matches.group(0) != "":  # If someone greets me, I will greet back.
-        if matches:
+        if greet_match and nick_match:
             sendmsg((getgreeting(usernick)), chan)
-            sendmsg(matches.groups(), chan)
     except AttributeError:
         return
 
