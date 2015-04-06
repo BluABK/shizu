@@ -323,18 +323,15 @@ def commands(usernick, msg, raw_in, chan):
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0] == "kick":
-            #if usernick == "BluABK": #and check_id("BluABK", "identified", raw_in):
-            #elif usernick == "BluABK":
-            #   sendmsg("ಠ_ಠ", chan)
 
             # Make sure that it is an actual user
             if ignored_nick("commands", usernick) is True:
-                sendmsg("%s: Abuse by proxy? Nice try..." % usernick, chan)
+                sendmsg("%s: Abuse by proxy? Nice try... ಠ_ಠ" % usernick, chan)
                 return
 
             # Check if user is authorised to do so
             for u in cfg.su().lower().split(","):
-                if usernick.lower() == u: #cfg.su().split(",")[u].lower():
+                if usernick.lower() == u:
                     try:
                         try:
                             # KICK <user> <reason>
@@ -425,7 +422,7 @@ def triggers(usernick, msg, chan):
     greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
     greet_match = re.match(greet_pat, msg)
     nick_match = False
-# TODO: Actually regex match against msg having exactly triggers_words() + cfg.nick()
+# TODO: HACK: Actually regex match against msg having exactly triggers_words() + cfg.nick()
     for s in msg.split(" "):
         if s == cfg.nick():
             nick_match = True
