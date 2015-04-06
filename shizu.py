@@ -421,6 +421,7 @@ def commands(usernick, msg, raw_in, chan):
 
 def triggers(usernick, msg, chan):
     words_pat = re.compile((cfg.triggers_words() + " " + cfg.nick()), flags=re.IGNORECASE)
+    print words_pat
     matches = re.match(words_pat, msg)
     try:
         if matches.group(0) != "":  # If someone greets me, I will greet back.
