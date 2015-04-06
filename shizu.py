@@ -410,7 +410,8 @@ def commands(usernick, msg, raw_in, chan):
                 unp = lastfm.now_playing(usernick)
                 if unp == "No such user":
                     sendmsg("%s: %s If please !lastfm set alias <lastfmuser>" % (usernick, unp), chan)
-            sendmsg("%s is currently playing: %s" % (usernick, unp), chan)
+                else:
+                    sendmsg("%s is currently playing: %s" % (usernick, unp), chan)
 
         # Module: samba
         elif cmd[0] == "samba":
