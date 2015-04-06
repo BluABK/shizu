@@ -421,6 +421,7 @@ def commands(usernick, msg, raw_in, chan):
 
 def triggers(usernick, msg, chan):
     words_pat = re.compile((cfg.triggers_words() + " " + cfg.nick()), flags=re.IGNORECASE)
+    print cfg.triggers_words() + " " + cfg.nick()
     print words_pat
     matches = re.match(words_pat, msg)
     try:
