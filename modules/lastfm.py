@@ -82,6 +82,8 @@ def now_playing(user):
 def recently_played(user, num):
     try:
         rplist = network.get_user(user).get_recent_tracks(limit=num)
+    except pylast.WSError.details == "Rate limit exceeded":
+        return "Rate limit exceeded o0"
     except pylast.WSError:
         err = "No user with that name was found"
         u = cfg.test_alias(user)
