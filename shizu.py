@@ -393,14 +393,16 @@ def commands(usernick, msg, raw_in, chan):
                 elif cmd[1] == "kick":
                     sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
                 elif cmd[1] == "samba":
-                # Split and don't die
-                # if len(cmd) < 2:
-                    for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
+                    if len(cmd) > 2:
+                        if cmd[2] == "logins":
+                            sendmsg("%s: Syntax: %ssamba logins <user>" % (usernick, cfg.cmdsym()), chan)
+                    else:
+                        for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
                             sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
                 elif cmd[1] == "lastfm":
                     if len(cmd) > 2:
                         if cmd[2] == "recent":
-                            sendmsg("%s: Syntax: %srecent <user> <num>" % (usernick, cfg.cmdsym()), chan)
+                            sendmsg("%s: Syntax: %slastfm recent <user> <num>" % (usernick, cfg.cmdsym()), chan)
                     else:
                         for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                             sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
