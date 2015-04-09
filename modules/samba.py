@@ -112,8 +112,8 @@ def getlogins(msg):
     return loginlist
 
 
-def helpcmd():
+def helpcmd(cmdsym):
     cmdlist = list()
-    cmdlist.append("Syntax: samba command arg1..argN")
+    cmdlist.append("Syntax: %ssamba command arg1..argN" % cmdsym)
     cmdlist.append("Available commands: logins* (* command contains sub-commands)")
     return cmdlist
