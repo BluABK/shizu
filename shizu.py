@@ -400,7 +400,12 @@ def commands(usernick, msg, raw_in, chan):
             except IndexError:
                 helpcmd(usernick, chan)
 
-        # Module: lastfm
+        # module lastfm
+        elif cmd[0] == "lastfm":
+            for item in xrange(len(lastfm.helpcmd())):
+                    sendmsg(str(lastfm.helpcmd()[item]), chan)
+
+        # Module: lastfm - shortcuts
         elif cmd[0] == "np":
             try:
                 unp = lastfm.now_playing(cmd[1])
