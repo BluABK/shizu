@@ -410,6 +410,28 @@ def commands(usernick, msg, raw_in, chan):
             if len(cmd) > 1:
                 if cmd[1] == "imaginary":
                     sendmsg(lastfm.imaginary(), chan)
+                elif cmd[1] == "recent":
+                    default_num = 3
+                    # !lastfm recent nick num
+                    if len(cmd) > 3:
+                            num = cmd[3]
+                            nick = cmd[2]
+                            # !lastfm recent nick num
+                            try:
+                                if num > 0 and num <= 10:
+                                    lastfm.recently_played(nick, num)
+                                # !lastfm recent nick 3 (num was out of bounds)
+                                else:
+                                    lastfm.recently_played(nick, default_num)
+                            except TypeError:
+                                lastfm.recently_played(nick, default_num)
+                    elif len(cmd) > 2:
+                        num = cmd[2]
+                        # !lastfm recent num
+                        lastfm.recently_played(usernick, num)
+                    else:
+                        # !lastfm recent
+                        lastfm.recently_played(usernick, default_num)
             else:
                 for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
