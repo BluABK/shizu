@@ -5,7 +5,6 @@ import pylast
 import ConfigParser
 import os
 
-
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
@@ -43,8 +42,14 @@ class Config:  # Shizu's config class
                 return "No such user"
 
 cfg = Config()
+commandsavail_short = "np, npt"
+commandsavail = "imaginary"
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
+
+
+def imaginary():
+    return "Imagine that!"
 
 
 def test_playing(user):
@@ -71,3 +76,12 @@ def recently_played(user, num):
         return network.get_user(user).get_recent_tracks(limit=num)
     except:
         return "recently_played() failure"
+
+
+def helpcmd(cmdsym):
+    cmdlist = list()
+    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
+    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail_short)
+    cmdlist.append("Syntax: %slastfm help arg1..argN" % cmdsym)
+    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
+    return cmdlist
