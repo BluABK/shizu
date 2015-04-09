@@ -60,6 +60,24 @@ def test_playing(user):
 
 
 def format_basic(li):
+    name = "track"
+    index = 0
+    nodes = li.getElementsByTagName(name)
+    string = nodes[index].firstChild.data.strip()
+
+    mapping = pylast.htmlentitydefs.name2codepoint
+    for key in mapping:
+        string = string.replace("&%s;" % key, unichr(mapping[key]))
+
+    if len(nodes):
+        if nodes[index].firstChild:
+            return string
+    else:
+        return None
+
+#    for attrib in xrange(len(li)):
+ #       if
+
     return pylast.extract_items(li)
 
 
