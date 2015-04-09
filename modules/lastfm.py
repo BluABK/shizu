@@ -43,7 +43,7 @@ class Config:  # Shizu's config class
 
 cfg = Config()
 commandsavail_short = "np, npt"
-commandsavail = "imaginary"
+commandsavail = "imaginary, recent"
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
 
@@ -74,8 +74,13 @@ def now_playing(user):
 def recently_played(user, num):
     try:
         return network.get_user(user).get_recent_tracks(limit=num)
-    except:
-        return "recently_played() failure"
+    except pylast.WSError:
+        err = "No user with that name was found"
+        u = cfg.test_alias(user)
+        if u == "No such user":
+            return err
+        else:
+            return network.get_user(u).get_recent_tracks(limit=num)
 
 
 def helpcmd(cmdsym):
