@@ -78,7 +78,7 @@ def format_basic(li):
 #    for attrib in xrange(len(li)):
  #       if
 
-    return pylast.extract_items(li)
+    #return pylast.extract_items(li)
 
 
 def now_playing(user):
