@@ -418,20 +418,33 @@ def commands(usernick, msg, raw_in, chan):
                             nick = cmd[2]
                             # !lastfm recent nick num
                             try:
-                                if num > 0 and num <= 10:
-                                    lastfm.recently_played(nick, num)
+                                if 0 > num <= 10:
+                                    test = lastfm.recently_played(nick, num)
                                 # !lastfm recent nick 3 (num was out of bounds)
                                 else:
-                                    lastfm.recently_played(nick, default_num)
+                                    test = lastfm.recently_played(nick, default_num)
                             except TypeError:
-                                lastfm.recently_played(nick, default_num)
+                                test = lastfm.recently_played(nick, default_num)
+                    # !lastfm recent num
                     elif len(cmd) > 2:
                         num = cmd[2]
-                        # !lastfm recent num
-                        lastfm.recently_played(usernick, num)
+                        nick = usernick
+                        test = lastfm.recently_played(nick, num)
+                    # !lastfm recent
                     else:
-                        # !lastfm recent
-                        lastfm.recently_played(usernick, default_num)
+                        nick = usernick
+                        test = lastfm.recently_played(nick, default_num)
+
+                    # Test returned data integrity
+                    if test == "No user with that name was found":
+                        sendmsg("%s: %s =/" % (test, nick), chan)
+                    elif test == "None":
+                        sendmsg("%s has not played anything in the given period" % nick, chan)
+                    else:
+                        sendmsg("%s has recently played:" % nick, chan)
+                        for item in xrange(len(test)):
+                            sendmsg(str(test[item]), chan)
+            # Print help
             else:
                 for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
