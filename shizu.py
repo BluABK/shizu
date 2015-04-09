@@ -412,8 +412,9 @@ def commands(usernick, msg, raw_in, chan):
         # module lastfm
         elif cmd[0] == "lastfm":
             if len(cmd) > 1:
-                if cmd[1] == "imaginary":
-                    sendmsg(lastfm.imaginary(), chan)
+                if cmd[1] == "bio":
+                    if len(cmd) > 2:
+                        sendmsg(lastfm.artist_bio(cmd[2]), chan)
                 elif cmd[1] == "recent":
                     default_num = 3
                     # !lastfm recent nick num

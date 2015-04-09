@@ -48,10 +48,6 @@ network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(
                                username=cfg.username(), password_hash=cfg.password_hash())
 
 
-def imaginary():
-    return "Imagine that!"
-
-
 def test_playing(user):
     try:
         return network.get_user(user).get_now_playing()
@@ -98,7 +94,8 @@ def recently_played(user, num):
 
 
 def artist_bio(name):
-    print network.get_artist().get_bio_summary()
+    print network.get_artist(name).get_bio_summary()
+    return network.get_artist(name).get_bio_summary()
 
 
 def helpcmd(cmdsym):
