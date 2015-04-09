@@ -59,6 +59,10 @@ def test_playing(user):
         return "No user with that name was found"
 
 
+def format_basic(li):
+    return pylast.extract_items(li)
+
+
 def now_playing(user):
     try:
         return network.get_user(user).get_now_playing()
@@ -73,14 +77,16 @@ def now_playing(user):
 
 def recently_played(user, num):
     try:
-        return network.get_user(user).get_recent_tracks(limit=num)
+        rplist = network.get_user(user).get_recent_tracks(limit=num)
     except pylast.WSError:
         err = "No user with that name was found"
         u = cfg.test_alias(user)
         if u == "No such user":
-            return err
+            rplist = err
         else:
-            return network.get_user(u).get_recent_tracks(limit=num)
+            rplist = network.get_user(u).get_recent_tracks(limit=num)
+
+    return format_basic(rplist)
 
 
 def helpcmd(cmdsym):
