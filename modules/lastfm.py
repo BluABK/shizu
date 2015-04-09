@@ -97,6 +97,10 @@ def recently_played(user, num):
     return format_basic(rplist)
 
 
+def artist_bio(name):
+    print network.get_artist().get_bio_summary()
+
+
 def helpcmd(cmdsym):
     cmdlist = list()
     cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
