@@ -64,6 +64,7 @@ def format_basic(li):
     for track in li:
         unicode_track = unicode(str(track.track), 'utf8')
         f_li.append((track.playback_date + "\t" + unicode_track).encode('utf-8'))
+        # Debug print
         print (track.playback_date + "\t" + unicode_track).encode('utf-8')
     return f_li
 
