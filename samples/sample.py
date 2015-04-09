@@ -25,8 +25,8 @@ cfg = Config()
 # Functions
 
 
-def help():
+def helpcmd(cmdsym):
     cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cfg.cmdsym())
+    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
     cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
     return cmdlist
