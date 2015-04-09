@@ -91,9 +91,11 @@ def format_basic_old(li):
 
 
 def format_basic(li):
+    f_li = list()
     for track in li:
-        print_track(track)
-    return len(recent_tracks)
+        unicode_track = unicode(str(track.track), 'utf8')
+        f_li.append((track.playback_date + "\t" + unicode_track).encode('utf-8'))
+    return f_li
 
 
 def now_playing(user):
