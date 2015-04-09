@@ -398,9 +398,11 @@ def commands(usernick, msg, raw_in, chan):
                     for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
                             sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
                 elif cmd[1] == "lastfm":
-                # Split and don't die
-                # if len(cmd) < 2:
-                    for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
+                    if len(cmd) > 2:
+                        if cmd[2] == "recent":
+                            sendmsg("%s: Syntax: %srecent <user> <num>" % (usernick, cfg.cmdsym()), chan)
+                    else:
+                        for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                             sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
             except IndexError:
                 helpcmd(usernick, chan)
