@@ -414,9 +414,7 @@ def commands(usernick, msg, raw_in, chan):
             if len(cmd) > 1:
                 if cmd[1] == "bio":
                     if len(cmd) > 2:
-                        test = lastfm.artist_bio(cmd[2])
-                        for item in xrange(len(test)):
-                            sendmsg(test[item], chan)
+                        sendmsg(str(lastfm.artist_bio(cmd[2])), chan)
                 elif cmd[1] == "recent":
                     default_num = 3
                     # !lastfm recent nick num
