@@ -59,37 +59,6 @@ def test_playing(user):
         return "No user with that name was found"
 
 
-def print_it(text):
-    print text.encode('utf-8')
-
-
-def print_track(track):
-    unicode_track = unicode(str(track.track), 'utf8')
-    print_it(track.playback_date + "\t" + unicode_track)
-
-
-def format_basic_old(li):
-    name = "track"
-    index = 0
-    nodes = li.getElementsByTagName(name)
-    string = nodes[index].firstChild.data.strip()
-
-    mapping = pylast.htmlentitydefs.name2codepoint
-    for key in mapping:
-        string = string.replace("&%s;" % key, unichr(mapping[key]))
-
-    if len(nodes):
-        if nodes[index].firstChild:
-            return string
-    else:
-        return None
-
-#    for attrib in xrange(len(li)):
- #       if
-
-    #return pylast.extract_items(li)
-
-
 def format_basic(li):
     f_li = list()
     for track in li:
