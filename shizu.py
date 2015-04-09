@@ -395,15 +395,19 @@ def commands(usernick, msg, raw_in, chan):
                 elif cmd[1] == "samba":
                 # Split and don't die
                 # if len(cmd) < 2:
-                    for item in xrange(len(samba.helpcmd())):
-                            sendmsg(str(samba.helpcmd()[item]), chan)
+                    for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
+                            sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
             except IndexError:
                 helpcmd(usernick, chan)
 
         # module lastfm
         elif cmd[0] == "lastfm":
-            for item in xrange(len(lastfm.helpcmd())):
-                    sendmsg(str(lastfm.helpcmd()[item]), chan)
+            if len(cmd) > 1:
+                if cmd[1] == "imaginary":
+                    sendmsg(lastfm.imaginary(), chan)
+            else:
+                for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
+                    sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
 
         # Module: lastfm - shortcuts
         elif cmd[0] == "np":
@@ -436,8 +440,8 @@ def commands(usernick, msg, raw_in, chan):
                 if cmd[1] == "logins":
                     sendmsg(samba.getlogins(cmd[2:]), chan)
             else:
-                for item in xrange(len(samba.helpcmd())):
-                    sendmsg(str(samba.helpcmd()[item]), chan)
+                for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
+                    sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
 
             # Debug commands
         elif cmd[0] == "debug":
