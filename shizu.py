@@ -415,7 +415,7 @@ def commands(usernick, msg, raw_in, chan):
                 if cmd[1] == "imaginary":
                     sendmsg(lastfm.imaginary(), chan)
                 elif cmd[1] == "recent":
-                    default_num = 3
+                    default_num = 4
                     # !lastfm recent nick num
                     if len(cmd) > 3:
                             num = cmd[3]
