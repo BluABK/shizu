@@ -59,7 +59,16 @@ def test_playing(user):
         return "No user with that name was found"
 
 
-def format_basic(li):
+def print_it(text):
+    print text.encode('utf-8')
+
+
+def print_track(track):
+    unicode_track = unicode(str(track.track), 'utf8')
+    print_it(track.playback_date + "\t" + unicode_track)
+
+
+def format_basic_old(li):
     name = "track"
     index = 0
     nodes = li.getElementsByTagName(name)
@@ -79,6 +88,12 @@ def format_basic(li):
  #       if
 
     #return pylast.extract_items(li)
+
+
+def format_basic(li):
+    for track in li:
+        print_track(track)
+    return len(recent_tracks)
 
 
 def now_playing(user):
