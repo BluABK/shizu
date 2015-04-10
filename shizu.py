@@ -352,7 +352,7 @@ def add_custom_cmd(name, function, usernick):
         for item in commandsavail:
             if item == name:
                 collision = True
-                break
+
         print "collision is %s" % collision
         if collision is False and cfg.chk_command(name) is False:
             test = cfg.add_command(name, function)
