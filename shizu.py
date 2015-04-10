@@ -585,7 +585,11 @@ def commands(usernick, msg, raw_in, chan):
         # Custom commands
         elif cmd[0] == "addcommand":
             if len(cmd) > 1:
-                ret = add_custom_cmd(str(cmd[1]), str(cmd[2]), usernick)
+                arg = ""
+                for item in xrange(len(cmd)):
+                    if item > 2:
+                        arg += cmd[item]
+                ret = add_custom_cmd(str(cmd[1]), arg, usernick)
                 sendmsg(ret, chan)
 
         elif cmd[0] == "removecommand":
