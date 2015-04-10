@@ -290,12 +290,6 @@ def check_id(user, facility, raw_in):
     else:
         print("Whoa whoa whoa, calm down.\n")
 
-def format_ircmsg(string):
-    maxlen = 255
-    for char in string:
-
-    return string
-
 
 def commands(usernick, msg, raw_in, chan):
     # First of all, check if it is a command
