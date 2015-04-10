@@ -591,8 +591,9 @@ def commands(usernick, msg, raw_in, chan):
                 arg = ""
                 for item in xrange(len(cmd)):
                     if item > 2:
-                        arg += cmd[item]
-                        print arg
+                        if item != "\n":
+                            arg += cmd[item]
+                            print "arg = %s" % arg
                 ret = add_custom_cmd(str(cmd[1]), arg, usernick)
                 sendmsg(ret, chan)
 
