@@ -122,7 +122,11 @@ def recently_played(user, num):
 
 
 def artist_bio(name):
-    data = network.get_artist(name).get_bio_summary()
+    try:
+        data = network.get_artist(name).get_bio_summary()
+    except pylast.WSError:
+        data = "There was an error or some shit, happy now SpyTec?"
+        return data
     data = strip_html(data).encode('utf-8')
     data = strip_biojunk(data)
     print data
