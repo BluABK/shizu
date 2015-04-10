@@ -472,8 +472,9 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "host":
             if len(cmd) > 1:
                 retval = check_output("host %s" % cmd[1], shell=True)
-                for line in retval:
-                    sendmsg(line, chan)
+                #for line in retval:
+                    #sendmsg(line, chan)
+                sendmsg(retval, chan)
 
         # Help calls
         if cmd[0] == "help":
