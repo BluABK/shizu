@@ -86,6 +86,45 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def commands_ignorednicks(self):
         return str(self.config.get('commands', 'ignored-nicks'))
 
+    def add_command(self, name, function):
+        try:
+            self.config.set('custom-cmd', name, function)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
+    def del_command(self, name):
+        try:
+            return self.config.remove_option('custom-cmd', name)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
+    def get_command(self, name):
+        try:
+            return str(self.config.get('custom-cmd', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+    def chk_command(self, name):
+        try:
+            return str(self.config.has_option('custom-cmd', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+    def lst_command(self):
+        try:
+            return self.config.items('custom-cmd')
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exis"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+
 # Variables declared by config file
 cfg = Config()
 maxbacklog = int(cfg.backlog())
@@ -291,6 +330,26 @@ def check_id(user, facility, raw_in):
         print("Whoa whoa whoa, calm down.\n")
 
 
+def add_custom_cmd(name, function, usernick):
+    if usernick in cfg.su():
+        if name not in commandsavail and cfg.chk_command(name) is False:
+            test = cfg.add_command(name, function)
+            if isinstance(test, str):
+                return test
+            else:
+                return "Command %s added successfully! ^_^"
+        else:
+            return "That name collides with something =/"
+
+
+def del_custom_cmd(name, usernick):
+    if usernick in cfg.su() and cfg.chk_command(name) is True:
+        cfg.del_command(name)
+        return "Command removed"
+    else:
+        return "Unable to remove given command"
+
+
 def commands(usernick, msg, raw_in, chan):
     # First of all, check if it is a command
     if chan[0] == "#":
@@ -378,7 +437,7 @@ def commands(usernick, msg, raw_in, chan):
                     ircsock.send("JOIN %s\r\n" % newchan)
                 else:
                     ircsock.send("JOIN #%s\r\n" % newchan)
-        elif cmd[0] == "quit" and cmd[1] == cfg.quitpro():
+        elif cmd[0] == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
                 ircquit()
 
         # Help calls
@@ -488,7 +547,7 @@ def commands(usernick, msg, raw_in, chan):
                 for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
 
-            # Debug commands
+        # Debug commands
         elif cmd[0] == "debug":
             if len(cmd) >= 2 and cmd[1] == "logins":
                 dbg = samba.getlogins(cmd[2:])
@@ -496,6 +555,12 @@ def commands(usernick, msg, raw_in, chan):
                 for itr in range(len(dbg)):
                     debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
                     debug(dbg[itr])
+
+        # Custom commands
+        #elif cmd[0] in cfg.it
+        elif cmd[0] == "datlist":
+            for item in cfg.lst_command():
+                print item
 
 
 def triggers(usernick, msg, chan):
