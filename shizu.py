@@ -349,9 +349,8 @@ def add_custom_cmd(name, function, usernick):
         print cfg.chk_command(name)
         #if name not in commandsavail and cfg.chk_command(name) is False:
         collision = False
-        for item in commandsavail:
-            if item == name:
-                collision = True
+        if name in commandsavail:
+            collision = True
 
         print "collision is %s" % collision
         if collision is False and cfg.chk_command(name) is False:
