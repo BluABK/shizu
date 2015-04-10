@@ -124,7 +124,6 @@ def recently_played(user, num):
 def artist_bio(name):
     try:
         data = network.get_artist(name).get_bio_summary()
-
     except AttributeError:
         data = "Ouch, attribute error. Did you try something nasty?"
         return data
@@ -132,7 +131,11 @@ def artist_bio(name):
         data = "There was an error or some shit, happy now SpyTec?"
         return data
     data = strip_html(data).encode('utf-8')
-    data = strip_biojunk(data)
+    try:
+        data = strip_biojunk(data)
+    except AttributeError:
+        data = "Ouch, attribute error. Did you try something nasty?"
+        return data
     print data
     return data
 
