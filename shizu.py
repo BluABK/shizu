@@ -345,8 +345,16 @@ def check_id(user, facility, raw_in):
 
 def add_custom_cmd(name, function, usernick):
     if usernick in cfg.su():
+        print "Adding custom command: %s with function %s, requested by %s" % (name, function, usernick)
         print cfg.chk_command(name)
-        if name not in commandsavail and cfg.chk_command(name) is False:
+        #if name not in commandsavail and cfg.chk_command(name) is False:
+        collision = False
+        for item in commandsavail:
+            if item == name:
+                collision = True
+                break
+        print "collision is %s" % collision
+        if collision is False and cfg.chk_command(name) is False:
             test = cfg.add_command(name, function)
             if isinstance(test, str):
                 return test
