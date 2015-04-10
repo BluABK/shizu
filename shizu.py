@@ -15,7 +15,8 @@ import time             # For time-based greeting functionality
 import re               # Regex for the win.
 import ConfigParser
 from random import randint
-from subprocess import check_output
+#from subprocess import check_output
+from subprocess import *
 
 # Project-specific modules
 import modules.samba as samba            # for server-side samba functionality
@@ -471,10 +472,13 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] == "host":
             if len(cmd) > 1:
-                retval = check_output("host %s" % cmd[1], shell=True)
-                #for line in retval:
-                    #sendmsg(line, chan)
-                sendmsg(retval, chan)
+                try:
+                    retval = check_output("host %s" % cmd[1], shell=True)
+                    #for line in retval:
+                        #sendmsg(line, chan)
+                    sendmsg(retval, chan)
+                except CalledProcessError:
+                    sendmsg("Invalid argument.... (and you *know* it)", chan)
 
         # Help calls
         if cmd[0] == "help":
