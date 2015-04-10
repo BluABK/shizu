@@ -353,12 +353,13 @@ def add_custom_cmd(name, function, usernick):
             collision = True
 
         print "collision is %s" % collision
-        if collision is False and cfg.chk_command(name) is False:
+        if collision and cfg.chk_command(name) is False:
             test = cfg.add_command(name, function)
             if isinstance(test, str):
                 return test
             else:
                 return "Command %s added successfully! ^_^"
+        #if collision is True or cfg.chk_command(name):
         else:
             return "That name collides with something =/"
 
