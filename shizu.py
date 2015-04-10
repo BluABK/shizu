@@ -469,6 +469,12 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
                 ircquit()
 
+        elif cmd[0] == "host":
+            if len(cmd) > 1:
+                retval = check_output("host %s" % cmd[1], shell=True)
+                for line in retval:
+                    sendmsg(line, chan)
+
         # Help calls
         if cmd[0] == "help":
             try:
