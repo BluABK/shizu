@@ -105,7 +105,7 @@ def recently_played(user, num):
 
 
 def artist_bio(name):
-    data = network.get_artist(name).get_bio_summary()
+    data = network.get_artist(name).get_bio_conent()
     print strip_html(data)
     return strip_html(data)
 
