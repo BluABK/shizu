@@ -560,7 +560,7 @@ def commands(usernick, msg, raw_in, chan):
         #elif cmd[0] in cfg.it
         elif cmd[0] == "datlist":
             for item in cfg.lst_command():
-                print item
+                print item[0]
 
 
 def triggers(usernick, msg, chan):
