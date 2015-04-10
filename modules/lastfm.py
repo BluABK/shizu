@@ -124,6 +124,10 @@ def recently_played(user, num):
 def artist_bio(name):
     try:
         data = network.get_artist(name).get_bio_summary()
+
+    except AttributeError:
+        data = "Ouch, attribute error. Did you try something nasty?"
+        return data
     except pylast.WSError:
         data = "There was an error or some shit, happy now SpyTec?"
         return data
