@@ -66,6 +66,19 @@ def format_basic(li):
     return f_li
 
 
+def strip_biojunk(string):
+    newstring = ""
+    for char in string:
+        # "read more..." and other junk usually happens after a few newlines
+        if char == "\n":
+            newstring += "..."
+            break
+        else:
+            newstring += char
+    return newstring
+
+
+
 def strip_html(data):
     tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
@@ -107,6 +120,7 @@ def recently_played(user, num):
 def artist_bio(name):
     data = network.get_artist(name).get_bio_summary()
     data = strip_html(data).encode('utf-8')
+    data = strip_biojunk(data)
     print data
     return data
 
