@@ -4,6 +4,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 import pylast
 import ConfigParser
 import os
+import re, cgi
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
@@ -65,6 +66,16 @@ def format_basic(li):
     return f_li
 
 
+def strip_html(data):
+    tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
+
+    # Remove well-formed tags, fixing mistakes by legitimate users
+    no_tags = tag_re.sub('', data)
+
+    # Clean up anything else by escaping
+    return cgi.escape(no_tags)
+
+
 def now_playing(user):
     try:
         return network.get_user(user).get_now_playing()
@@ -94,8 +105,9 @@ def recently_played(user, num):
 
 
 def artist_bio(name):
-    print network.get_artist(name).get_bio_summary()
-    return network.get_artist(name).get_bio_summary()
+    data = network.get_artist(name).get_bio_summary()
+    print strip_html(data)
+    return strip_html(data)
 
 
 def helpcmd(cmdsym):
