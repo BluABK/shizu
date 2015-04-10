@@ -124,6 +124,19 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except:
             return "An unknown exception occured"
 
+    def lst_command_option(self):
+        try:
+            optlist = list()
+            for item in self.config.items('custom-cmd'):
+                optlist.append(item[0])
+            return optlist
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exis"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
 
 # Variables declared by config file
 cfg = Config()
@@ -350,6 +363,10 @@ def del_custom_cmd(name, usernick):
         return "Unable to remove given command"
 
 
+def custom_command(name, chan):
+    sendmsg(cfg.get_command(name), chan)
+
+
 def commands(usernick, msg, raw_in, chan):
     # First of all, check if it is a command
     if chan[0] == "#":
@@ -557,10 +574,24 @@ def commands(usernick, msg, raw_in, chan):
                     debug(dbg[itr])
 
         # Custom commands
-        #elif cmd[0] in cfg.it
-        elif cmd[0] == "datlist":
+        elif cmd[0] == "addcommand":
+            if len(cmd) > 1:
+                ret = add_custom_cmd(str(cmd[1]), str(cmd[2]), usernick)
+                sendmsg(ret, chan)
+
+        elif cmd[0] == "removecommand":
+            if len(cmd) > 1:
+                ret = del_custom_cmd(str(cmd[1]), usernick)
+                sendmsg(ret, chan)
+
+        elif cmd[0] == "listcustom":
+            lst = list()
             for item in cfg.lst_command():
-                print item[0]
+                lst += (item[0] + " ")
+            sendmsg(list, chan)
+
+        elif cmd[0] in cfg.lst_command_option():
+            custom_command(cmd[0], chan)
 
 
 def triggers(usernick, msg, chan):
