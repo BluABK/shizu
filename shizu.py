@@ -364,7 +364,7 @@ def add_custom_cmd(name, function, usernick):
             if isinstance(test, str):
                 return test
             else:
-                return "Command %s added successfully! ^_^"
+                return "Command %s added successfully! ^_^" % name
 
 
 def del_custom_cmd(name, usernick):
@@ -592,6 +592,7 @@ def commands(usernick, msg, raw_in, chan):
                 for item in xrange(len(cmd)):
                     if item > 2:
                         arg += cmd[item]
+                        print arg
                 ret = add_custom_cmd(str(cmd[1]), arg, usernick)
                 sendmsg(ret, chan)
 
