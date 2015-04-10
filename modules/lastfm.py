@@ -69,6 +69,7 @@ def format_basic(li):
 def strip_biojunk(string):
     newstring = ""
     for char in string:
+        print newstring.__sizeof__()
         # "read more..." and other junk usually happens after a few newlines
         if char == "\n":
             newstring += "..."
