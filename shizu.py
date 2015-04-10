@@ -590,7 +590,7 @@ def commands(usernick, msg, raw_in, chan):
             if len(cmd) > 1:
                 arg = list()
                 for item in xrange(len(cmd)):
-                    if item > 2:
+                    if item > 1:
                         if item != "\n":
                             arg.append(cmd[item])
                             print "arg = %s" % arg
