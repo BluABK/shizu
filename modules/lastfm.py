@@ -69,8 +69,8 @@ def format_basic(li):
 def strip_biojunk(string):
     newstring = ""
     for char in string:
-        # 512 bytes is more than enough of a summary
-        if newstring.__sizeof__() > 509:
+        # 512 bytes is more than enough of a summary (amount takes sendmsg() into account
+        if newstring.__sizeof__() > 496:
             newstring += "..."
             break
         # "read more..." and other junk usually happens after a few newlines
