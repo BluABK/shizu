@@ -585,10 +585,10 @@ def commands(usernick, msg, raw_in, chan):
                 sendmsg(ret, chan)
 
         elif cmd[0] == "listcustom":
-            lst = list()
+            string_list = ""
             for item in cfg.lst_command():
-                lst += (item[0] + " ")
-            sendmsg(list, chan)
+                string_list += (item[0] + " ")
+            sendmsg(string_list, chan)
 
         elif cmd[0] in cfg.lst_command_option():
             custom_command(cmd[0], chan)
