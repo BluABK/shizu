@@ -89,11 +89,11 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def add_command(self, name, function):
         try:
-            f = open('config.ini', 'w')
-            self.config.read('config.ini')
+    #        f = open('config.ini', 'w')
+    #        self.config.read('config.ini')
             self.config.set('custom-cmd', name, function)
-            self.config.write('config.ini')
-            f.close()
+    #        self.config.write('config.ini')
+    #        f.close()
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -227,8 +227,6 @@ def replay(lines, chan, direction):
 
 
 def ircquit():
-#    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
-#    running = False
     sendraw("QUIT %s\r\n" % cfg.quitmsg())
     ircsock.close()
 
@@ -378,8 +376,8 @@ def add_custom_cmd(name, function, usernick):
         elif cfg.chk_command(name) is True:
             return "That name collides with something =/"
         else:
-     #       test = cfg.add_command(name, function)
-            test = add_command(name, function)
+            test = cfg.add_command(name, function)
+    #        test = add_command(name, function)
             if isinstance(test, str):
                 return test
             else:
