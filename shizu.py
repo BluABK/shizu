@@ -90,10 +90,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def add_command(self, name, function):
         try:
             self.config.set('custom-cmd', name, function)
-            #cfg.config.set('custom-cmd', name, function)
-            # TODO: Crashes due to arg being interpreted as str not file? o0
-            #self.config.write('config.ini')
-            #cfg.config.write('config.ini')
+            f = open('config.ini', 'w')
+            self.config.write('config.ini')
+            f.close()
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -373,8 +372,7 @@ def add_custom_cmd(name, function, usernick):
 
 
 def del_custom_cmd(name, usernick):
-    # TODO: Fix issue with writing to file; disabling command existence check for now
-    if usernick in cfg.su(): #and cfg.chk_command(name) is True:
+    if usernick in cfg.su() and cfg.chk_command(name) is True:
         cfg.del_command(name)
         return "Command removed"
     else:
