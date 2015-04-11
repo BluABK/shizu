@@ -148,6 +148,17 @@ cfg = Config()
 maxbacklog = int(cfg.backlog())
 
 
+def add_command(self, name, function):
+    try:
+#        f = open('config.ini', 'w')
+#        cfg.config.read('config.ini')
+        cfg.config.set('custom-cmd', name, function)
+        cfg.config.write('config.ini')
+#        f.close()
+    except ConfigParser.NoSectionError:
+        return "That section does not seem to exist"
+
+
 def ian(s):  # is a number
     try:
         int(s)
@@ -367,7 +378,8 @@ def add_custom_cmd(name, function, usernick):
         elif cfg.chk_command(name) is True:
             return "That name collides with something =/"
         else:
-            test = cfg.add_command(name, function)
+     #       test = cfg.add_command(name, function)
+            test = add_command(name, function)
             if isinstance(test, str):
                 return test
             else:
