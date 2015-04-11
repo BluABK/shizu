@@ -148,7 +148,7 @@ cfg = Config()
 maxbacklog = int(cfg.backlog())
 
 
-def add_command(self, name, function):
+def add_command(name, function):
     try:
 #        f = open('config.ini', 'w')
 #        cfg.config.read('config.ini')
