@@ -373,7 +373,8 @@ def add_custom_cmd(name, function, usernick):
 
 
 def del_custom_cmd(name, usernick):
-    if usernick in cfg.su() and cfg.chk_command(name) is True:
+    # TODO: Fix issue with writing to file; disabling command existence check for now
+    if usernick in cfg.su(): #and cfg.chk_command(name) is True:
         cfg.del_command(name)
         return "Command removed"
     else:
