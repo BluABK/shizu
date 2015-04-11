@@ -385,7 +385,7 @@ def add_custom_cmd(name, function, usernick):
 
 
 def del_custom_cmd(name, usernick):
-    if usernick in cfg.su() and cfg.chk_command(name) is True:
+    if usernick in cfg.su(): #and cfg.chk_command(name) is True:
         cfg.del_command(name)
         return "Command removed"
     else:
