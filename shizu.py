@@ -215,8 +215,10 @@ def replay(lines, chan, direction):
 
 
 def ircquit():
-    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
-    running = False
+#    global running  # TODO: Figure out why this lone global refuse to be defined with the rest at the top
+#    running = False
+    sendraw("QUIT %s\r\n" % cfg.quitmsg())
+    ircsock.close()
 
 
 def ignored_nick(section, usernick):
