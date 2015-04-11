@@ -89,8 +89,10 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def add_command(self, name, function):
         try:
-            self.config.set('custom-cmd', name, function)
-            self.config.write('config.ini')
+            #self.config.set('custom-cmd', name, function)
+            cfg.config.set('custom-cmd', name, function)
+            #self.config.write('config.ini')
+            cfg.config.write('config.ini')
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
