@@ -233,6 +233,7 @@ def replay(lines, chan, direction):
 
 
 def ircquit():
+    watch.stop()
     sendraw("QUIT %s\r\n" % cfg.quitmsg())
     ircsock.close()
 
@@ -779,6 +780,7 @@ if __name__ == "__main__":
         i += 1
 
     # See ya!
-    sendraw("QUIT %s\r\n" % cfg.quitmsg())
-   # watch.stop()
-    ircsock.close()
+    #watch.stop()
+    #sendraw("QUIT %s\r\n" % cfg.quitmsg())
+    #ircsock.close()
+    ircquit()
