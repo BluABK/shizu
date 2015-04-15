@@ -23,7 +23,7 @@ class Config:  # Mandatory Config class
     def watch(self):
         try:
             print "watch: " + str(self.config.get('watch', 'dir'))
-            return str(self.config.get('watch', 'dir'))
+            return list(self.config.get('watch', 'dir'))
         except:
             print "Config not implemented"
 
