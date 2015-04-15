@@ -64,9 +64,9 @@ def msg():
     return cfg.msg()
 
 
-#def stop():
+def stop():
 #    asyncore.close_all()
-
+    notifier.stop()
 
 def helpcmd(cmdsym):
     cmdlist = list()
@@ -83,7 +83,8 @@ class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         add("New episode added: %s" % event.pathname)
 
-notifier = pyinotify.AsyncNotifier(wm, EventHandler())
+notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
+notifier.start()
 wdd = wm.add_watch(cfg.watch(), mask, rec=True)
 
-asyncore.loop()
+#asyncore.loop()

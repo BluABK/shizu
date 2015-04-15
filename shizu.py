@@ -778,4 +778,5 @@ if __name__ == "__main__":
 
     # See ya!
     sendraw("QUIT %s\r\n" % cfg.quitmsg())
+    watch.stop()
     ircsock.close()
