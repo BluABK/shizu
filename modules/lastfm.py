@@ -99,7 +99,7 @@ def now_playing(user):
             u = user
         return network.get_user(u).get_now_playing()
     except pylast.WSError:
-        return network.get_user(user).get_now_playing()
+        return "User not found"
 
 
 def recently_played(user, num):
@@ -112,7 +112,8 @@ def recently_played(user, num):
 #        return "Rate limit exceeded o0"
     except pylast.WSError:
         #err = "No user with that name was found"
-        rplist = network.get_user(user).get_recent_tracks(limit=num)
+        return "User not found"
+
     return format_basic(rplist)
 
 
