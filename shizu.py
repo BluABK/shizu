@@ -30,6 +30,7 @@ ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
+watch_enabled = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate"
 modulesavail = "samba*"
 
@@ -404,6 +405,7 @@ def custom_command(name, chan):
 
 
 def commands(usernick, msg, raw_in, chan):
+    global watch_enabled
     # First of all, check if it is a command
     if chan[0] == "#":
         # If message starts in trigger
@@ -643,6 +645,14 @@ def commands(usernick, msg, raw_in, chan):
                 string_list += (item[0] + " ")
             sendmsg(string_list, chan)
 
+        elif cmd[0] == "watch":
+            watch_enabled = True
+            sendmsg("Watch notifications enabled.", chan)
+
+        elif cmd[0] == "unwatch":
+            watch_enabled = False
+            sendmsg("Watch notifications disabled.", chan)
+
         elif cmd[0] in cfg.lst_command_option():
             custom_command(cmd[0], chan)
 
@@ -769,11 +779,12 @@ if __name__ == "__main__":
             triggers(tmpusernick, message, channel)
 
     #        try:
-            if watch.check():
-                watch_notify(watch.get(), watch.notify_chan(), watch.msg())
-                for test in watch.get():
-                    print test
-                watch.clear()
+            if watch_enabled == True:
+                if watch.check():
+                    watch_notify(watch.get(), watch.notify_chan(), watch.msg())
+                    for test in watch.get():
+                        print test
+                    watch.clear()
      #       except:
      #           print "ERROR: watch.py is not implemented or behaving odd!"
 
