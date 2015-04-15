@@ -651,7 +651,7 @@ def commands(usernick, msg, raw_in, chan):
             for item in cfg.lst_command():
                 string_list += (item[0] + " ")
             sendmsg(string_list, chan)
-
+        # Module: Watch
         elif cmd[0] == "watch":
             watch_enabled = True
             sendmsg("Watch notifications enabled.", chan)
@@ -659,6 +659,10 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0] == "unwatch":
             watch_enabled = False
             sendmsg("Watch notifications disabled.", chan)
+
+        elif cmd[0] == "watchlimit":
+            if len(cmd) > 1:
+                watch.set_notify_limit(cmd[1])
 
         elif cmd[0] in cfg.lst_command_option():
             custom_command(cmd[0], chan)
@@ -681,9 +685,11 @@ def triggers(usernick, msg, chan):
         return
 
 
-def watch_notify(files, chan, msg):
+def watch_notify(files, chan, msg, bool, cap):
     for item in files:
         sendmsg("%s %s" % (msg, item), chan)
+    if bool:
+        sendmsg("... and %s more unlisted entries" % cap, chan)
 
 
 def helpcmd(user, chan):
@@ -785,19 +791,22 @@ if __name__ == "__main__":
             commands(tmpusernick, message, recvraw, channel)
             triggers(tmpusernick, message, channel)
 
-    #        try:
             if watch.check():
                 if watch_enabled:
-                    watch_notify(watch.get(), watch.notify_chan(), watch.msg())
-                    for test in watch.get():
-                        print ("Notified: %s" % test)
-                    watch.clear()
+                    if len(watch.get()) <= watch.notify_limit():
+                        watch_notify(watch.get(), watch.notify_chan(), watch.msg(), False)
+                        for test in watch.get():
+                            print ("Notified: %s" % test)
+                    else:
+                        cap_list = list()
+                        for item in watch.get()[0:(watch.notify_limit()-1)]:
+                            cap_list.append(item)
+                        watch_notify(cap_list, watch.notify_chan(), watch.msg(), True, str(len(watch.get() - watch.notify_limit())))
                 else:
                     for test in watch.get():
                         print ("Ingored notify: %s" % test)
-                    watch.clear()
-     #       except:
-     #           print "ERROR: watch.py is not implemented or behaving odd!"
+
+                watch.clear()
 
         i += 1
 
