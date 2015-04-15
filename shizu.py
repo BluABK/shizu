@@ -770,6 +770,8 @@ if __name__ == "__main__":
     #        try:
             if watch.check():
                 watch_notify(watch.get(), watch.notify_chan(), watch.msg())
+                for test in watch.get():
+                    print test
                 watch.clear()
      #       except:
      #           print "ERROR: watch.py is not implemented or behaving odd!"

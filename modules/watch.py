@@ -81,8 +81,8 @@ mask = pyinotify.IN_CREATE  # watched events
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
-        print event.pathname
-        add("New episode added: %s" % event.pathname)
+        print event.name
+        add(event.name)
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
