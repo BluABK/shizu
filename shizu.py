@@ -21,6 +21,7 @@ from subprocess import *
 # Project-specific modules
 import modules.samba as samba            # for server-side samba functionality
 import modules.lastfm as lastfm
+import modules.watch as watch
 #import db               # for server-side file search and lookup
 
 # Global variables
@@ -662,6 +663,11 @@ def triggers(usernick, msg, chan):
         return
 
 
+def watch_notify(files, chan, msg):
+    for item in files:
+        sendmsg("%s %s" % (msg, item), chan)
+
+
 def helpcmd(user, chan):
     sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
     sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), chan)
@@ -760,6 +766,13 @@ if __name__ == "__main__":
 
             commands(tmpusernick, message, recvraw, channel)
             triggers(tmpusernick, message, channel)
+
+            try:
+                if watch.check():
+                    watch_notify(watch.get(), watch.notify_chan(), watch.msg())
+                    watch.clear()
+            except:
+                print "ERROR: watch.py is not implemented or behaving odd!"
 
         i += 1
 
