@@ -743,7 +743,7 @@ def commands(usernick, msg, raw_in, chan):
                 ret = del_custom_cmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
 
-        elif cmd[0] == "addrawcommand":
+        elif cmd[0] == "addrawcommand" and usernick.lower() == "bluabk":
             if len(cmd) > 1:
                 arg = list()
                 for item in xrange(len(cmd)):
@@ -753,6 +753,11 @@ def commands(usernick, msg, raw_in, chan):
                             print "arg = %s" % arg
                 fstr = " ".join(str(x) for x in arg)
                 ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
+                sendmsg(ret, chan)
+
+        elif cmd[0] == "removerawcommand" and usernick.lower() == "bluabk":
+            if len(cmd) > 1:
+                ret = del_custom_rawcmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
 
         elif cmd[0] == "listcustom":
@@ -780,10 +785,9 @@ def commands(usernick, msg, raw_in, chan):
             print "Executing custom command"
             custom_command(cmd[0], chan)
 
-        elif cmd[0] in cfg.lst_rawcommand_option():
+        elif cmd[0] in cfg.lst_rawcommand_option() and usernick.lower() == "bluabk":
             print "Executing custom rawcommand"
-            if usernick.lower() == "bluabk":
-                custom_rawcommand(cmd, usernick, chan)
+            custom_rawcommand(cmd, usernick, chan)
 
 
 def triggers(usernick, msg, chan):
