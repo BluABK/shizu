@@ -97,9 +97,9 @@ def now_playing(user):
         u = cfg.test_alias(user)
         if u is None:
             u = user
-        return network.get_user(user).get_now_playing()
-    except pylast.WSError:
         return network.get_user(u).get_now_playing()
+    except pylast.WSError:
+        return network.get_user(user).get_now_playing()
 
 
 def recently_played(user, num):
