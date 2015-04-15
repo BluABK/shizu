@@ -767,12 +767,12 @@ if __name__ == "__main__":
             commands(tmpusernick, message, recvraw, channel)
             triggers(tmpusernick, message, channel)
 
-            try:
-                if watch.check():
-                    watch_notify(watch.get(), watch.notify_chan(), watch.msg())
-                    watch.clear()
-            except:
-                print "ERROR: watch.py is not implemented or behaving odd!"
+    #        try:
+            if watch.check():
+                watch_notify(watch.get(), watch.notify_chan(), watch.msg())
+                watch.clear()
+     #       except:
+     #           print "ERROR: watch.py is not implemented or behaving odd!"
 
         i += 1
 
