@@ -489,12 +489,14 @@ def custom_command(name, chan):
 
 def custom_rawcommand(name, chan):
     cmd = str(cfg.get_rawcommand(name))
+    cmd = str(cmd)
     print "Read command from file:" % cmd
     if "$chan" in cmd:
         cmd.replace("$chan", chan)
         print "replaced $chan var occurence with %s" % chan
     print "Sending command as raw: %s" % cmd
-    sendraw(cmd + "\r\n")
+    cmd += "\r\n"
+    sendraw(cmd)
 
 
 def commands(usernick, msg, raw_in, chan):
