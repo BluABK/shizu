@@ -782,7 +782,8 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] in cfg.lst_rawcommand_option():
             print "Executing custom rawcommand"
-            custom_rawcommand(cmd, usernick, chan)
+            if usernick.lower() == "bluabk":
+                custom_rawcommand(cmd, usernick, chan)
 
 
 def triggers(usernick, msg, chan):
