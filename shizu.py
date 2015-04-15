@@ -539,6 +539,12 @@ def commands(usernick, msg, raw_in, chan):
                 if cmd[1] == "bio":
                     if len(cmd) > 2:
                         sendmsg(str(lastfm.artist_bio(cmd[2])), chan)
+                elif cmd[1] == "set":
+                    if len(cmd) > 2:
+                        if cmd[2] == "alias":
+                            if len(cmd) > 3:
+                                lastfm.add_alias(usernick, cmd[3])
+
                 elif cmd[1] == "recent":
                     default_num = 3
                     # !lastfm recent nick num
@@ -565,8 +571,8 @@ def commands(usernick, msg, raw_in, chan):
                         test = lastfm.recently_played(nick, default_num)
 
                     # Test returned data integrity
-                    if test == "No user with that name was found":
-                        sendmsg("%s: %s =/" % (test, nick), chan)
+                    if test is None:
+                        sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
                     elif test == "None":
                         sendmsg("%s has not played anything in the given period" % nick, chan)
                     else:

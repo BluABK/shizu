@@ -42,6 +42,20 @@ class Config:  # Shizu's config class
             except ConfigParser.NoOptionError:
                 return None
 
+    def add_alias(self, nick, user):
+        if self.config.has_option('lastfm-alias', nick) is False:
+            try:
+                config = Config.config
+                config.set('lastfm-alias', nick, user)
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                return "Alias added"
+            except:
+                return "Unable to open configuration"
+        else:
+            return "Alias already exists"
+
+
 cfg = Config()
 commandsavail_short = "np, npt"
 commandsavail = "imaginary, recent*"
@@ -134,6 +148,14 @@ def artist_bio(name):
         return data
     print data
     return data
+
+
+def add_alias(nick, user):
+    return cfg.add_alias(nick, user)
+
+
+#def del_alias(nick, user):
+
 
 
 def helpcmd(cmdsym):
