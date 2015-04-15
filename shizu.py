@@ -801,7 +801,8 @@ if __name__ == "__main__":
                         cap_list = list()
                         for item in watch.get()[0:(watch.notify_limit()-1)]:
                             cap_list.append(item)
-                        watch_notify(cap_list, watch.notify_chan(), watch.msg(), True, str(len(watch.get() - watch.notify_limit())))
+                        watch_notify(cap_list, watch.notify_chan(), watch.msg(), True,
+                                     str(len(watch.get()) - watch.notify_limit()))
                 else:
                     for test in watch.get():
                         print ("Ingored notify: %s" % test)
