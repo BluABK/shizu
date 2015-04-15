@@ -491,8 +491,8 @@ def custom_rawcommand(name, chan):
     c = str(cfg.get_rawcommand(name))
     print "Read command from file: %s" % c
     if "$chan" in c:
-        c.replace("$chan", chan)
-        print "replaced $chan var occurence with %s" % chan
+        c = c.replace("$chan", chan)
+        print "replaced $chan var occurences with %s" % chan
     print "Sending command as raw: %s" % c
     c += "\r\n"
     sendraw(c)
