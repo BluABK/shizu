@@ -94,25 +94,25 @@ def strip_html(data):
 
 def now_playing(user):
     try:
+        u = cfg.test_alias(user)
+        if u is None:
+            u = user
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
-        u = cfg.test_alias(user)
-        if u == "No such user":
-            u = user
         return network.get_user(u).get_now_playing()
 
 
 def recently_played(user, num):
     try:
-        rplist = network.get_user(user).get_recent_tracks(limit=num)
+        u = cfg.test_alias(user)
+        if u is None:
+            u = user
+        rplist = network.get_user(u).get_recent_tracks(limit=num)
 #    except pylast.WSError.details == "Rate limit exceeded":
 #        return "Rate limit exceeded o0"
     except pylast.WSError:
         #err = "No user with that name was found"
-        u = cfg.test_alias(user)
-        if u == "No such user":
-            u = user
-        rplist = network.get_user(u).get_recent_tracks(limit=num)
+        rplist = network.get_user(user).get_recent_tracks(limit=num)
     return format_basic(rplist)
 
 
