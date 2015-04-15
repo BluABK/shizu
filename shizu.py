@@ -794,7 +794,7 @@ if __name__ == "__main__":
             if watch.check():
                 if watch_enabled:
                     if len(watch.get()) <= watch.notify_limit():
-                        watch_notify(watch.get(), watch.notify_chan(), watch.msg(), False)
+                        watch_notify(watch.get(), watch.notify_chan(), watch.msg(), False, 0)
                         for test in watch.get():
                             print ("Notified: %s" % test)
                     else:
