@@ -799,7 +799,7 @@ if __name__ == "__main__":
                             print ("Notified: %s" % test)
                     else:
                         cap_list = list()
-                        for item in watch.get()[0:(watch.notify_limit()-1)]:
+                        for item in watch.get()[0:(watch.notify_limit())]:
                             cap_list.append(item)
                         watch_notify(cap_list, watch.notify_chan(), watch.msg(), True,
                                      str(len(watch.get()) - watch.notify_limit()))
