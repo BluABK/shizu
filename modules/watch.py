@@ -22,8 +22,18 @@ class Config:  # Mandatory Config class
 
     def watch(self):
         try:
+            path = ""
+            dir_l = list()
+            dir_s = str(self.config.get('watch', 'dir'))
             print "watch: " + str(self.config.get('watch', 'dir'))
-            return list(self.config.get('watch', 'dir'))
+            for char in dir_s:
+                if char == " ":
+                    print "watch: Added path: " + path
+                    dir_l.append(path)
+                    path = ""
+                else:
+                    path += char
+            return dir_l
         except:
             print "Config not implemented"
 
