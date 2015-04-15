@@ -87,13 +87,18 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def commands_ignorednicks(self):
         return str(self.config.get('commands', 'ignored-nicks'))
 
+    # TODO: May be static
     def add_command(self, name, function):
         try:
-    #        f = open('config.ini', 'w')
-    #        self.config.read('config.ini')
-            self.config.set('custom-cmd', name, function)
-    #        self.config.write('config.ini')
-    #        f.close()
+            config = Config.config
+            config.set('custom-cmd', name, function)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+    ##        f = open('config.ini', 'w')
+    ##        self.config.read('config.ini')
+    #        self.config.set('custom-cmd', name, function)
+    ##        self.config.write('config.ini')
+    ##        f.close()
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -148,15 +153,15 @@ cfg = Config()
 maxbacklog = int(cfg.backlog())
 
 
-def add_command(name, function):
-    try:
-        f = open('config.ini', 'w')
-        cfg.config.read('config.ini')
-        cfg.config.set('custom-cmd', name, function)
-        cfg.config.write('config.ini')
-        f.close()
-    except ConfigParser.NoSectionError:
-        return "That section does not seem to exist"
+#def add_command(name, function):
+#    try:
+#        f = open('config.ini', 'w')
+#        cfg.config.read('config.ini')
+#        cfg.config.set('custom-cmd', name, function)
+#        cfg.config.write('config.ini')
+#        f.close()
+#    except ConfigParser.NoSectionError:
+#        return "That section does not seem to exist"
 
 
 def ian(s):  # is a number
