@@ -785,7 +785,7 @@ def commands(usernick, msg, raw_in, chan):
             print "Executing custom command"
             custom_command(cmd[0], chan)
 
-        elif cmd[0] in cfg.lst_rawcommand_option() and usernick.lower() == "bluabk":
+        elif cmd[0] in cfg.lst_rawcommand_option() and usernick in cfg.su():
             print "Executing custom rawcommand"
             custom_rawcommand(cmd, usernick, chan)
 
