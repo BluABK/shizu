@@ -40,7 +40,7 @@ class Config:  # Shizu's config class
             try:
                 return str(self.config.get('lastfm-alias', user))
             except ConfigParser.NoOptionError:
-                return "No such user"
+                return None
 
 cfg = Config()
 commandsavail_short = "np, npt"
@@ -82,7 +82,6 @@ def strip_biojunk(string):
     return newstring
 
 
-
 def strip_html(data):
     tag_re = re.compile(r'(<!--.*?-->|<[^>]*>)')
 
@@ -97,12 +96,10 @@ def now_playing(user):
     try:
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
-        err = "No user with that name was found"
         u = cfg.test_alias(user)
         if u == "No such user":
-            return err
-        else:
-            return network.get_user(u).get_now_playing()
+            u = user
+        return network.get_user(u).get_now_playing()
 
 
 def recently_played(user, num):
@@ -111,13 +108,11 @@ def recently_played(user, num):
 #    except pylast.WSError.details == "Rate limit exceeded":
 #        return "Rate limit exceeded o0"
     except pylast.WSError:
-        err = "No user with that name was found"
+        #err = "No user with that name was found"
         u = cfg.test_alias(user)
         if u == "No such user":
-            rplist = err
-        else:
-            rplist = network.get_user(u).get_recent_tracks(limit=num)
-
+            u = user
+        rplist = network.get_user(u).get_recent_tracks(limit=num)
     return format_basic(rplist)
 
 
