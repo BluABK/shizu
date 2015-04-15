@@ -779,11 +779,15 @@ if __name__ == "__main__":
             triggers(tmpusernick, message, channel)
 
     #        try:
-            if watch_enabled == True:
-                if watch.check():
+            if watch.check():
+                if watch_enabled:
                     watch_notify(watch.get(), watch.notify_chan(), watch.msg())
                     for test in watch.get():
-                        print test
+                        print ("Notified: %s" % test)
+                    watch.clear()
+                else:
+                    for test in watch.get():
+                        print ("Ingored notify: %s" % test)
                     watch.clear()
      #       except:
      #           print "ERROR: watch.py is not implemented or behaving odd!"
