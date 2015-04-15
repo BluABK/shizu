@@ -489,9 +489,11 @@ def custom_command(name, chan):
 
 def custom_rawcommand(name, chan):
     cmd = cfg.get_rawcommand(name)
+    print "Read command from file:" % cmd
     if "$chan" in cmd:
         cmd.replace("$chan", chan)
         print "replaced $chan var occurence with %s" % chan
+    print "Sending command as raw: %s" % cmd
     sendraw(cmd + "\r\n")
 
 
@@ -771,9 +773,11 @@ def commands(usernick, msg, raw_in, chan):
                 watch.set_notify_limit(cmd[1])
 
         elif cmd[0] in cfg.lst_command_option():
+            print "Executing custom command"
             custom_command(cmd[0], chan)
 
         elif cmd[0] in cfg.lst_rawcommand_option():
+            print "Executing custom rawcommand"
             custom_rawcommand(cmd[0], chan)
 
 
