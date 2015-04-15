@@ -3,7 +3,6 @@ __author__ = 'BluABK'
 # Example: loops monitoring events forever.
 #
 import ConfigParser
-import asyncore
 import pyinotify
 
 
@@ -68,6 +67,7 @@ def stop():
 #    asyncore.close_all()
     notifier.stop()
 
+
 def helpcmd(cmdsym):
     cmdlist = list()
     cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
@@ -81,6 +81,7 @@ mask = pyinotify.IN_CREATE  # watched events
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
+        print event.pathname
         add("New episode added: %s" % event.pathname)
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
