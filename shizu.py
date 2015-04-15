@@ -491,7 +491,8 @@ def custom_rawcommand(name, chan):
     cmd = cfg.get_rawcommand(name)
     if "$chan" in cmd:
         cmd.replace("$chan", chan)
-    sendraw(cmd + "\n")
+        print "replaced $chan var occurence with %s" % chan
+    sendraw(cmd + "\r\n")
 
 
 def commands(usernick, msg, raw_in, chan):
