@@ -96,11 +96,16 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             config.set('custom-cmd', name, function)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
-    ##        f = open('config.ini', 'w')
-    ##        self.config.read('config.ini')
-    #        self.config.set('custom-cmd', name, function)
-    ##        self.config.write('config.ini')
-    ##        f.close()
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
+    # TODO: May be static
+    def add_rawcommand(self, name, function):
+        try:
+            config = Config.config
+            config.set('custom-rawcmd', name, function)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -110,9 +115,23 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
+    def del_rawcommand(self, name):
+        try:
+            return self.config.remove_option('custom-rawcmd', name)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
     def get_command(self, name):
         try:
             return str(self.config.get('custom-cmd', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+    def get_rawcommand(self, name):
+        try:
+            return str(self.config.get('custom-rawcmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
         except:
@@ -126,11 +145,29 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except:
             return "An unknown exception occured"
 
+    def chk_rawcommand(self, name):
+        try:
+            return str(self.config.has_option('custom-rawcmd', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
     def lst_command(self):
         try:
             return self.config.items('custom-cmd')
         except ConfigParser.NoSectionError:
-            return "That section does not seem to exis"
+            return "That section does not seem to exist"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+    def lst_rawcommand(self):
+        try:
+            return self.config.items('custom-rawcmd')
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
         except:
@@ -140,6 +177,19 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         try:
             optlist = list()
             for item in self.config.items('custom-cmd'):
+                optlist.append(item[0])
+            return optlist
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exis"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+        except:
+            return "An unknown exception occured"
+
+    def lst_rawcommand_option(self):
+        try:
+            optlist = list()
+            for item in self.config.items('custom-rawcmd'):
                 optlist.append(item[0])
             return optlist
         except ConfigParser.NoSectionError:
@@ -392,6 +442,31 @@ def add_custom_cmd(name, function, usernick):
                 return "Command %s added successfully! ^_^" % name
 
 
+def add_custom_rawcmd(name, function, usernick):
+    if usernick.lower() == "bluabk":
+        print str(function)
+        print "Adding custom command: %s with function %s, requested by %s" % (name, function, usernick)
+        print cfg.chk_rawcommand(name)
+        #if name not in commandsavail and cfg.chk_command(name) is False:
+        collision = False
+        if name in commandsavail:
+            collision = True
+
+        print "collision is %s" % collision
+        #if collision is False and cfg.chk_command(name) is False:
+        if collision is True:
+            return "That name collides with something =/"
+        elif cfg.chk_rawcommand(name) is True:
+            return "That name collides with something =/"
+        else:
+            test = cfg.add_rawcommand(name, function)
+    #        test = add_command(name, function)
+            if isinstance(test, str):
+                return test
+            else:
+                return "Command %s added successfully! ^_^" % name
+
+
 def del_custom_cmd(name, usernick):
     if usernick in cfg.su(): #and cfg.chk_command(name) is True:
         cfg.del_command(name)
@@ -400,8 +475,23 @@ def del_custom_cmd(name, usernick):
         return "Unable to remove given command"
 
 
+def del_custom_rawcmd(name, usernick):
+    if usernick.lower() == "bluabk":
+        cfg.del_rawcommand(name)
+        return "Command removed"
+    else:
+        return "Unable to remove given command"
+
+
 def custom_command(name, chan):
     sendmsg(cfg.get_command(name), chan)
+
+
+def custom_rawcommand(name, chan):
+    cmd = cfg.get_rawcommand(name)
+    if "$chan" in cmd:
+        cmd.replace("$chan", chan)
+    sendraw(cmd)
 
 
 def commands(usernick, msg, raw_in, chan):
@@ -646,11 +736,26 @@ def commands(usernick, msg, raw_in, chan):
                 ret = del_custom_cmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
 
+        elif cmd[0] == "addrawcommand":
+            if len(cmd) > 1:
+                arg = list()
+                for item in xrange(len(cmd)):
+                    if item > 1:
+                        if item != "\n":
+                            arg.append(cmd[item])
+                            print "arg = %s" % arg
+                fstr = " ".join(str(x) for x in arg)
+                ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
+                sendmsg(ret, chan)
+
         elif cmd[0] == "listcustom":
             string_list = ""
             for item in cfg.lst_command():
                 string_list += (item[0] + " ")
+            for item in cfg.lst_rawcommand():
+                string_list += (item[0] + "* ")
             sendmsg(string_list, chan)
+
         # Module: Watch
         elif cmd[0] == "watch":
             watch_enabled = True
@@ -666,6 +771,9 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] in cfg.lst_command_option():
             custom_command(cmd[0], chan)
+
+        elif cmd[0] in cfg.lst_rawcommand_option():
+            custom_rawcommand(cmd[0], chan)
 
 
 def triggers(usernick, msg, chan):
