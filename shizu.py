@@ -491,7 +491,7 @@ def custom_rawcommand(name, chan):
     cmd = cfg.get_rawcommand(name)
     if "$chan" in cmd:
         cmd.replace("$chan", chan)
-    sendraw(cmd)
+    sendraw(cmd + "\n")
 
 
 def commands(usernick, msg, raw_in, chan):
