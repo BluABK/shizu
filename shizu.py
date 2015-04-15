@@ -487,17 +487,18 @@ def custom_command(name, chan):
     sendmsg(cfg.get_command(name), chan)
 
 
-def custom_rawcommand(cmd, chan):
-    c = str(cfg.get_rawcommand(cmd[0]))
-    print "Read command from file: %s" % c
-    if "$chan" in c:
-        c = c.replace("$chan", chan)
-        print "replaced $chan var occurences with %s" % chan
-    if "$nick" in c and len(cmd) > 1:
-        c = c.replace("$nick", cmd[1])
-    print "Sending command as raw: %s" % c
-    c += "\r\n"
-    sendraw(c)
+def custom_rawcommand(cmd, usernick, chan):
+    if usernick.lower() == "bluabk":
+        c = str(cfg.get_rawcommand(cmd[0]))
+        print "Read command from file: %s" % c
+        if "$chan" in c:
+            c = c.replace("$chan", chan)
+            print "replaced $chan var occurences with %s" % chan
+        if "$nick" in c and len(cmd) > 1:
+            c = c.replace("$nick", cmd[1])
+        print "Sending command as raw: %s" % c
+        c += "\r\n"
+        sendraw(c)
 
 
 def commands(usernick, msg, raw_in, chan):
@@ -781,7 +782,7 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] in cfg.lst_rawcommand_option():
             print "Executing custom rawcommand"
-            custom_rawcommand(cmd, chan)
+            custom_rawcommand(cmd, usernick, chan)
 
 
 def triggers(usernick, msg, chan):
