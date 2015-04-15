@@ -572,9 +572,9 @@ def commands(usernick, msg, raw_in, chan):
 
                     # Test returned data integrity
                     if test is None:
-                        sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
-                    elif test == "None":
                         sendmsg("%s has not played anything in the given period" % nick, chan)
+                    elif test == "None":
+                        sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
                     else:
                         sendmsg("%s has recently played:" % nick, chan)
                         for item in xrange(len(test)):
@@ -589,18 +589,18 @@ def commands(usernick, msg, raw_in, chan):
             try:
                 test = lastfm.now_playing(cmd[1])
                 if test is None:
-                    sendmsg("No user named '%s' was found =/" % cmd[1], chan)
-                elif test == "None":
                     sendmsg("%s is not currently playing anything" % cmd[1], chan)
+                elif test == "None":
+                    sendmsg("No user named '%s' was found =/" % cmd[1], chan)
                 else:
                     sendmsg("%s is currently playing: %s" % (cmd[1], test), chan)
             except IndexError:
                 test = lastfm.now_playing(usernick)
                 if test is None:
+                    sendmsg("%s is not currently playing anything" % usernick, chan)
+                elif test == "None":
                     sendmsg("%s: No user named '%s' was found =/ "
                             "You can set an alias with !lastfm set alias <lastfmuser>" % (usernick, test), chan)
-                elif test == "None":
-                    sendmsg("%s is not currently playing anything" % usernick, chan)
                 else:
                     sendmsg("%s is currently playing: %s" % (usernick, test), chan)
 
