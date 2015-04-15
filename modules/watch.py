@@ -86,6 +86,7 @@ class EventHandler(pyinotify.ProcessEvent):
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
-wdd = wm.add_watch(cfg.watch(), mask, rec=True)
+
+wdd = wm.add_watch(cfg.watch(), mask, rec=True, do_glob=True)
 
 #asyncore.loop()
