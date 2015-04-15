@@ -488,7 +488,7 @@ def custom_command(name, chan):
 
 
 def custom_rawcommand(name, chan):
-    cmd = cfg.get_rawcommand(name)
+    cmd = str(cfg.get_rawcommand(name))
     print "Read command from file:" % cmd
     if "$chan" in cmd:
         cmd.replace("$chan", chan)
