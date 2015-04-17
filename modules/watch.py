@@ -108,7 +108,7 @@ mask = pyinotify.IN_CREATE  # watched events
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
-        print event.name
+        print "\033[94mwatch.py:\tNew file: %s\033[0m" % event.name
         add(event.name)
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
