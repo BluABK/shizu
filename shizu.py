@@ -808,10 +808,12 @@ def triggers(usernick, msg, chan):
 
 
 def watch_notify(files, chan, msg, bool, cap):
+    if bool:
+        #sendmsg("... and %s more unlisted entries" % cap, chan)
+        files.append("... and %s more unlisted entries" % cap)
+
     for item in files:
         sendmsg("%s %s" % (msg, item), chan)
-    if bool:
-        sendmsg("... and %s more unlisted entries" % cap, chan)
 
 
 def helpcmd(user, chan):
