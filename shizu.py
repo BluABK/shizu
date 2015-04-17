@@ -807,11 +807,7 @@ def triggers(usernick, msg, chan):
         return
 
 
-def watch_notify(files, chan, msg, bool, cap):
-    if bool:
-        #sendmsg("... and %s more unlisted entries" % cap, chan)
-        files.append("... and %s more unlisted entries" % cap)
-
+def watch_notify(files, chan, msg):
     for item in files:
         sendmsg("%s %s" % (msg, item), chan)
 
@@ -918,15 +914,17 @@ if __name__ == "__main__":
             if watch.check():
                 if watch_enabled:
                     if len(watch.get()) <= watch.notify_limit():
-                        watch_notify(watch.get(), watch.notify_chan(), watch.msg(), False, 0)
+                        watch_notify(watch.get(), watch.notify_chan(), watch.msg())
                         for test in watch.get():
                             print ("Notified: %s" % test)
                     else:
                         cap_list = list()
                         for item in watch.get()[0:(watch.notify_limit())]:
                             cap_list.append(item)
-                        watch_notify(cap_list, watch.notify_chan(), watch.msg(), True,
-                                     str(len(watch.get()) - watch.notify_limit()))
+
+                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get()) - watch.notify_limit()) \
+                                                            + "more unlisted entries"
+                        watch_notify(cap_list, watch.notify_chan(), watch.msg())
                 else:
                     for test in watch.get():
                         print ("Ingored notify: %s" % test)
