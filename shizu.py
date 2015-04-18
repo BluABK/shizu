@@ -916,7 +916,7 @@ if __name__ == "__main__":
                     if len(watch.get()) <= watch.notify_limit():
                         watch_notify(watch.get(), watch.notify_chan(), watch.msg())
                         for test in watch.get():
-                            print ("Notified: %s" % test)
+                            print ("\033[94mNotified: %s\033[0m" % test)
                     else:
                         cap_list = list()
                         for item in watch.get()[0:(watch.notify_limit())]:
@@ -927,14 +927,11 @@ if __name__ == "__main__":
                         watch_notify(cap_list, watch.notify_chan(), watch.msg())
                 else:
                     for test in watch.get():
-                        print ("Ingored notify: %s" % test)
+                        print ("\033[94mIngored notify: %s\033[0m" % test)
 
                 watch.clear()
 
         i += 1
 
     # See ya!
-    #watch.stop()
-    #sendraw("QUIT %s\r\n" % cfg.quitmsg())
-    #ircsock.close()
     ircquit()
