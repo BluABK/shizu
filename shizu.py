@@ -111,13 +111,21 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def del_command(self, name):
         try:
-            return self.config.remove_option('custom-cmd', name)
+            config = Config.config
+            config.remove_option('custom-cmd', name)
+            with open('config.ini', 'w') as confgfile:
+                config.write(confgfile)
+            #return self.config.remove_option('custom-cmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
     def del_rawcommand(self, name):
         try:
-            return self.config.remove_option('custom-rawcmd', name)
+            config = Config.config
+            config.remove_option('custom-rawcmd', name)
+            with open('config.ini', 'w') as confgfile:
+                config.write(confgfile)
+            #return self.config.remove_option('custom-rawcmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
