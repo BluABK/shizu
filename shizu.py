@@ -923,7 +923,7 @@ if __name__ == "__main__":
                             cap_list.append(item)
 
                         cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get()) - watch.notify_limit()) \
-                                                            + "more unlisted entries"
+                                                            + " more unlisted entries"
                         watch_notify(cap_list, watch.notify_chan(), watch.msg())
                 else:
                     for test in watch.get():
