@@ -640,7 +640,8 @@ def commands(usernick, msg, raw_in, chan):
                     if len(cmd) > 2:
                         if cmd[2] == "alias":
                             if len(cmd) > 3:
-                                lastfm.add_alias(usernick, cmd[3])
+                                tmp = lastfm.add_alias(usernick, cmd[3])
+                                sendmsg(tmp, chan)
 
                 elif cmd[1] == "recent":
                     default_num = 3
