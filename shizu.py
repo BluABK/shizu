@@ -736,6 +736,9 @@ def commands(usernick, msg, raw_in, chan):
 
         # Custom commands
         elif cmd[0] == "addcommand":
+            if ignored_nick("commands", usernick) is True:
+                sendmsg("%s:ಠ_ಠ" % usernick, chan)
+                return
             if len(cmd) > 1:
                 arg = list()
                 for item in xrange(len(cmd)):
@@ -748,6 +751,9 @@ def commands(usernick, msg, raw_in, chan):
                 sendmsg(ret, chan)
 
         elif cmd[0] == "removecommand":
+            if ignored_nick("commands", usernick) is True:
+                sendmsg("%s:ಠ_ಠ" % usernick, chan)
+                return
             if len(cmd) > 1:
                 ret = del_custom_cmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
