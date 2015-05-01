@@ -941,11 +941,11 @@ if __name__ == "__main__":
                     else:
                         cap_list = list()
                         for item in watch.get()[0:(watch.notify_limit())]:
-                            cap_list.append(item)
+                            if "New folder" not in item:
+                                cap_list.append(item)
 
-                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get()) - watch.notify_limit()) \
-                                                            + " more unlisted entries"
-                        watch_notify(cap_list, watch.notify_chan(), watch.msg())
+                            cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get()) - watch.notify_limit()) + " more unlisted entries"
+                            watch_notify(cap_list, watch.notify_chan(), watch.msg())
                 else:
                     for test in watch.get():
                         print ("\033[94mIngored notify: %s\033[0m" % test)
