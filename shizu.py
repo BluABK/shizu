@@ -795,10 +795,9 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg("Watch notifications disabled.", chan)
 
                 elif cmd[1] == "limit":
-                    if len(cmd) > 1:
-                        print "watch: Setting watchlimit to %s" % cmd[1]
-                        watch.set_notify_limit(cmd[1])
-                        sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
+                    print "watch: Setting watchlimit to %s" % cmd[2]
+                    watch.set_notify_limit(cmd[2])
+                    sendmsg("Watch notifications limit set to %s" % cmd[2], chan)
             else:
                 for item in xrange(len(watch.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
