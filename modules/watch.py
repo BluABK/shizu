@@ -97,7 +97,7 @@ def stop():
 
 def helpcmd(cmdsym):
     cmdlist = list()
-    if len(commandsavail) > 0 and len(commandsavail_short) > 0:
+    if len(commandsavail) > 0 or len(commandsavail_short) > 0:
         cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
         if len(commandsavail) > 0:
             cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
