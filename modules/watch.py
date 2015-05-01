@@ -7,8 +7,8 @@ import pyinotify
 
 
 # Variables
-commandsavail_short = "watch, stopwatch"
-#commandsavail = "clear, add"
+#commandsavail_short = "enable, disable stopwatch"
+commandsavail = "enable, disable, limit"
 #watchdir = cfg.watch()
 files = list()
 # Classes
