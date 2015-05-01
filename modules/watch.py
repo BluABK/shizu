@@ -56,7 +56,8 @@ cfg = Config()
 
 # Functions
 def add(filename):
-    files.append(filename)
+    if "New folder" not in filename:
+        files.append(filename)
 
 
 def check():
