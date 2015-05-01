@@ -794,7 +794,9 @@ def commands(usernick, msg, raw_in, chan):
 
         elif cmd[0] == "watchlimit":
             if len(cmd) > 1:
+                print "watch: Setting watchlimit to %s" % cmd[1]
                 watch.set_notify_limit(cmd[1])
+                sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
 
         elif cmd[0] in cfg.lst_command_option():
             print "Executing custom command"
