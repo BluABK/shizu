@@ -687,7 +687,7 @@ def commands(usernick, msg, raw_in, chan):
             try:
                 # ABK is bored
                 if usernick == "SpyTec":
-                    test = "Kanalleto"
+                    test = lastfm.now_playing("Kanalleto")
                 else:
                     test = lastfm.now_playing(cmd[1])
                 if test is None:
