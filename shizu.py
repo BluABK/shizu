@@ -584,9 +584,12 @@ def commands(usernick, msg, raw_in, chan):
             else:
                 replay(maxbacklog, chan, 0)
         elif cmd[0] == "say":
-            # Secure outgoing message
-            if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
-                sendmsg(" ".join(cmd[1:]), chan)
+            if len(cmd) > 1:
+                # Secure outgoing message
+                if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
+                    sendmsg(" ".join(cmd[1:]), chan)
+            else:
+                sendmsg("Sytnax: %ssay <string>" % cfg.cmdsym(), chan)
         elif cmd[0] == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
         elif cmd[0] == "join":
