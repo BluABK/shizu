@@ -685,11 +685,7 @@ def commands(usernick, msg, raw_in, chan):
         # Module: lastfm - shortcuts
         elif cmd[0] == "np":
             try:
-                # ABK is bored
-                if usernick == "SpyTec":
-                    test = lastfm.now_playing("Kanalleto")
-                else:
-                    test = lastfm.now_playing(cmd[1])
+                test = lastfm.now_playing(cmd[1])
                 if test is None:
                     sendmsg("%s is not currently playing anything" % cmd[1], chan)
                 elif test == "None":
