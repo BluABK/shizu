@@ -91,7 +91,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def chk_command_perms(self, user, instance):
         try:
-            allowed = str(self.config.has_option('custom-cmd-cfg', instance))
+            allowed = str(self.config.get('custom-cmd-cfg', instance))
             if user in allowed:
                 return True
             else:
