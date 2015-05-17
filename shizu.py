@@ -433,8 +433,9 @@ def add_custom_cmd(name, function, usernick, chan):
         can_add = True
     check_everyone = cfg.chk_command_perms("everyone", "add-allow")
     if check_everyone:
-        sendmsg("DEBUG: %s" % check_everyone, chan)
         can_add = True
+
+    sendmsg("DEBUG: %s" % check_everyone, chan)
 
     if can_add:
         print str(function)
