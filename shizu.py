@@ -236,16 +236,19 @@ def ping():
 
 
 def sendmsg(msg, chan):
-    if isinstance(msg, basestring):
-        try:
-            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
-        except ValueError:
-            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
-            ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Hey... Are you trying to kill me?!"))
-    else:
-        # Don't check, errors from here are raised
-        for item in msg:
-            sendmsg(item, chan)
+    try:
+        if isinstance(msg, basestring):
+            try:
+                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
+            except ValueError:
+                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
+                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Hey... Are you trying to kill me?!"))
+        else:
+            # Don't check, errors from here are raised
+            for item in msg:
+                sendmsg(item, chan)
+    except TypeError:
+        ircsock.send("PRIVMSG %s :TypeError: 'NoneType' object is not iterable\r\n" % chan)
 
 
 def debug(msg):
