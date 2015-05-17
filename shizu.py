@@ -248,7 +248,7 @@ def sendmsg(msg, chan):
             for item in msg:
                 sendmsg(item, chan)
     except TypeError:
-        ircsock.send("PRIVMSG %s A TypeError occured, that's annoying..\r\n" % chan)
+        ircsock.send("PRIVMSG %s :A TypeError occured, that's annoying..\r\n" % chan)
 
 
 def debug(msg):
