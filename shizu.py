@@ -490,7 +490,7 @@ def del_custom_cmd(name, usernick):
     can_del = False
     if usernick in cfg.su():
         can_del = True
-    check_everyone = cfg.chk_command_perms("everyone", "add-allow")
+    check_everyone = cfg.chk_command_perms("everyone", "del-allow")
     if check_everyone:
         can_del = True
 
