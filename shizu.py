@@ -427,12 +427,13 @@ def check_id(user, facility, raw_in):
         print("Whoa whoa whoa, calm down.\n")
 
 
-def add_custom_cmd(name, function, usernick):
+def add_custom_cmd(name, function, usernick, chan):
     can_add = False
     if usernick in cfg.su():
         can_add = True
     check_everyone = cfg.chk_command_perms("everyone", "add-allow")
     if check_everyone:
+        sendmsg("DEBUG: %s" % check_everyone, chan)
         can_add = True
 
     if can_add:
@@ -766,7 +767,7 @@ def commands(usernick, msg, raw_in, chan):
                             arg.append(cmd[item])
                             print "arg = %s" % arg
                 fstr = " ".join(str(x) for x in arg)
-                ret = add_custom_cmd(str(cmd[1]), fstr, usernick)
+                ret = add_custom_cmd(str(cmd[1]), fstr, usernick, chan)
                 sendmsg(ret, chan)
 
         elif cmd[0] == "removecommand":
