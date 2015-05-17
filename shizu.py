@@ -89,6 +89,16 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def commands_ignorednicks(self):
         return str(self.config.get('commands', 'ignored-nicks'))
 
+    def chk_command_perms(self, user, instance):
+        try:
+            allowed = str(self.config.has_option('custom-cmd-cfg', instance))
+            if user in allowed:
+                return True
+            else:
+                return False
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
     # TODO: May be static
     def add_command(self, name, function):
         try:
@@ -415,7 +425,14 @@ def check_id(user, facility, raw_in):
 
 
 def add_custom_cmd(name, function, usernick):
+    can_add = False
     if usernick in cfg.su():
+        can_add = True
+    check_everyone = cfg.chk_command_perms("everyone", "add-allow")
+    if check_everyone:
+        can_add = True
+
+    if can_add:
         print str(function)
         print "Adding custom command: %s with function %s, requested by %s" % (name, function, usernick)
         print cfg.chk_command(name)
@@ -465,7 +482,14 @@ def add_custom_rawcmd(name, function, usernick):
 
 
 def del_custom_cmd(name, usernick):
-    if usernick in cfg.su(): #and cfg.chk_command(name) is True:
+    can_del = False
+    if usernick in cfg.su():
+        can_del = True
+    check_everyone = cfg.chk_command_perms("everyone", "add-allow")
+    if check_everyone:
+        can_del = True
+
+    if can_del: #and cfg.chk_command(name) is True:
         cfg.del_command(name)
         return "Command removed"
     else:
