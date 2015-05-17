@@ -435,7 +435,7 @@ def add_custom_cmd(name, function, usernick, chan):
     if check_everyone:
         can_add = True
 
-    sendmsg("DEBUG: %s" % check_everyone, chan)
+    #sendmsg("DEBUG: %s" % check_everyone, chan)
 
     if can_add:
         print str(function)
