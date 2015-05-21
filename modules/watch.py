@@ -149,10 +149,6 @@ def set_notify_limit(i):
     return cfg.set_notify_limit(i)
 
 
-def msg():
-    return cfg.msg()
-
-
 def stop():
 #    asyncore.close_all()
     notifier.stop()
