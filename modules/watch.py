@@ -184,7 +184,7 @@ def helpcmd(cmdsym):
 
 
 wm = pyinotify.WatchManager()  # Watch Manager
-mask = pyinotify.IN_CREATE  # watched events
+mask = pyinotify.IN_CREATE, pyinotify.IN_DELETE, pyinotify.IN_MOVED_TO  # watched events
 
 
 class EventHandler(pyinotify.ProcessEvent):
