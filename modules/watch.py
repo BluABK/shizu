@@ -184,7 +184,9 @@ def helpcmd(cmdsym):
 
 
 wm = pyinotify.WatchManager()  # Watch Manager
-mask = pyinotify.IN_CREATE, pyinotify.IN_DELETE, pyinotify.IN_MOVED_TO  # watched events
+mask_add = pyinotify.IN_CREATE
+mask_mov = pyinotify.IN_MOVED_TO
+mask_del = pyinotify.IN_DELETE
 
 
 class EventHandler(pyinotify.ProcessEvent):
@@ -206,6 +208,8 @@ class EventHandler(pyinotify.ProcessEvent):
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
 
-wdd = wm.add_watch(cfg.watch(), mask, rec=True, do_glob=True)
+wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
+wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
+wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
 
 #asyncore.loop()
