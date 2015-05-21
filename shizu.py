@@ -972,6 +972,7 @@ if __name__ == "__main__":
 
                 watch.clear_added()
 
+        # And the tick goes on...
         i += 1
 
     # See ya!
