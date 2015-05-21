@@ -956,7 +956,7 @@ if __name__ == "__main__":
             if watch.check_added():
                 if watch_enabled:
                     if len(watch.get_added()) <= watch.notify_limit():
-                        watch_notify(watch.get_added(), watch.notify_chan(), watch.msg())
+                        watch_notify(watch.get_added(), watch.notify_chan(), watch.cfg.msg_add())
                         for test in watch.get_added():
                             print ("\033[94mNotified: %s\033[0m" % test)
                     else:
@@ -965,12 +965,32 @@ if __name__ == "__main__":
                             cap_list.append(item)
 
                         cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get_added()) - watch.notify_limit()) + " more unlisted entries"
-                        watch_notify(cap_list, watch.notify_chan(), watch.msg())
+                        watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_add())
                 else:
                     for test in watch.get_added():
                         print ("\033[94mIngored notify: %s\033[0m" % test)
 
                 watch.clear_added()
+
+            if watch.check_erased():
+                if watch_enabled:
+                    if len(watch.get_erased()) <= watch.notify_limit():
+                        watch_notify(watch.get_erased(), watch.notify_chan(), watch.cfg.msg_del())
+                        for test in watch.get_erased():
+                            print ("\033[94mNotified: %s\033[0m" % test)
+                    else:
+                        cap_list = list()
+                        for item in watch.get_erased()[0:(watch.notify_limit())]:
+                            cap_list.append(item)
+
+                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get_erased()) - watch.notify_limit()) + " more unlisted entries"
+                        watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_del())
+                else:
+                    for test in watch.get_erased():
+                        print ("\033[94mIngored notify: %s\033[0m" % test)
+
+                watch.clear_erased()
+
 
         # And the tick goes on...
         i += 1
