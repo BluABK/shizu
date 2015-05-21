@@ -209,7 +209,7 @@ class EventHandler(pyinotify.ProcessEvent):
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
 
-wdd = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
+wdd = wm.add_watch(cfg.watch(), mask_add, rec=True, auto_add=True, do_glob=True)
 #wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
 #wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
 #wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
