@@ -68,22 +68,67 @@ def erase(filename):
 
 
 def move(oldfilename, newfilename):
-    files_moved.append(oldfilename + " --> " + newfilename)
+    #files_moved.append(oldfilename + " --> " + newfilename)
+    files_moved.append(oldfilename)
+    files_moved.append(newfilename)
 
 
-def check():
+def check_moved():
+    if len(files_moved) > 0:
+        return True
+    else:
+        return False
+
+
+def check_erased():
+    if len(files_erased) > 0:
+        return True
+    else:
+        return False
+
+
+def check_added():
     if len(files) > 0:
         return True
     else:
         return False
 
 
-def get():
+def check_all():
+    if len(files) > 0 and len(files_moved) > 0 and len(files_erased) > 0:
+        return True
+    else:
+        return False
+
+
+def get_added():
     return files
 
 
-def clear():
+def get_erased():
+    return files_erased
+
+
+def get_moved():
+    return files_moved
+
+
+def clear_moved():
+    del files_moved[:]
+
+
+def clear_erased():
+    del files_erased[:]
+
+
+def clear_added():
     del files[:]
+
+
+def clear_all():
+    del files[:]
+    del files_erased[:]
+    del files_moved[:]
 
 
 def notify_chan():
