@@ -12,6 +12,7 @@ commandsavail = "enable, disable, limit"
 #watchdir = cfg.watch()
 files = list()
 files_erased = list()
+files_moved = list()
 files_moved_src = list()
 files_moved_dst = list()
 # Classes
@@ -75,9 +76,11 @@ def erase(filename):
 
 
 def move(oldfilename, newfilename):
-    #files_moved.append(oldfilename + " --> " + newfilename)
     files_moved_src.append(oldfilename)
     files_moved_dst.append(newfilename)
+
+    # lame ass hack
+    files_moved.append(oldfilename + " " + cfg.msg_mov() + " " + newfilename)
 
 
 def check_moved():
@@ -116,13 +119,21 @@ def get_erased():
     return files_erased
 
 
+def get_moved():
+    #return files_moved_src, files_moved_dst
+    return files_moved
+
+
 def get_moved_src():
     return files_moved_src
 
 
+def get_moved_dst():
+    return files_moved_src
+
+
 def clear_moved():
-    del files_moved_src[:]
-    del files_moved_dst
+    del files_moved[:]
 
 
 def clear_erased():
@@ -138,6 +149,7 @@ def clear_all():
     del files_erased[:]
     del files_moved_src[:]
     del files_moved_dst[:]
+    del files_moved[:]
 
 
 def notify_chan():
