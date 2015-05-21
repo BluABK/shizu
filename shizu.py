@@ -953,24 +953,24 @@ if __name__ == "__main__":
             commands(tmpusernick, message, recvraw, channel)
             triggers(tmpusernick, message, channel)
 
-            if watch.check():
+            if watch.check_added():
                 if watch_enabled:
-                    if len(watch.get()) <= watch.notify_limit():
-                        watch_notify(watch.get(), watch.notify_chan(), watch.msg())
-                        for test in watch.get():
+                    if len(watch.get_added()) <= watch.notify_limit():
+                        watch_notify(watch.get_added(), watch.notify_chan(), watch.msg())
+                        for test in watch.get_added():
                             print ("\033[94mNotified: %s\033[0m" % test)
                     else:
                         cap_list = list()
-                        for item in watch.get()[0:(watch.notify_limit())]:
+                        for item in watch.get_added()[0:(watch.notify_limit())]:
                             cap_list.append(item)
 
-                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get()) - watch.notify_limit()) + " more unlisted entries"
+                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get_added()) - watch.notify_limit()) + " more unlisted entries"
                         watch_notify(cap_list, watch.notify_chan(), watch.msg())
                 else:
-                    for test in watch.get():
+                    for test in watch.get_added():
                         print ("\033[94mIngored notify: %s\033[0m" % test)
 
-                watch.clear()
+                watch.clear_added()
 
         i += 1
 
