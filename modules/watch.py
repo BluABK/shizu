@@ -59,12 +59,12 @@ cfg = Config()
 # Functions
 def add(filename):
     if "New folder" not in filename:
-        files.append("+ " + filename)
+        files.append(filename)
 
 
 def erase(filename):
     if "New folder" not in filename:
-        files.append("- " + filename)
+        files.append(filename)
 
 
 def move(oldfilename, newfilename):
