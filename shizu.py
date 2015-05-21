@@ -865,7 +865,6 @@ def watch_notify_moved(files, chan, msg):
         sendmsg(item, chan)
 
 
-
 def helpcmd(user, chan):
     sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
     sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), chan)
@@ -988,6 +987,7 @@ if __name__ == "__main__":
                 if watch_enabled:
                     if len(watch.get_erased()) <= watch.notify_limit():
                         watch_notify(watch.get_erased(), watch.notify_chan(), watch.cfg.msg_del())
+                        print "Debug del sign is %s" % watch.cfg.msg_del()
                         for test in watch.get_erased():
                             print ("\033[94mNotified: %s\033[0m" % test)
                     else:
