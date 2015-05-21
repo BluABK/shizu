@@ -37,8 +37,14 @@ class Config:  # Mandatory Config class
     def chan(self):
         return str(self.config.get('watch', 'chan'))
 
-    def msg(self):
-        return str(self.config.get('watch', 'msg'))
+    def msg_add(self):
+        return str(self.config.get('watch', 'msg_add'))
+
+    def msg_del(self):
+        return str(self.config.get('watch', 'msg_del'))
+
+    def msg_mov(self):
+        return str(self.config.get('watch', 'msg_mov'))
 
     def notify_limit(self):
         return int(self.config.get('watch', 'limit'))
