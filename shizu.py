@@ -996,6 +996,7 @@ if __name__ == "__main__":
                             cap_list.append(item)
 
                         cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get_erased()) - watch.notify_limit()) + " more unlisted entries"
+                        print "Debug2 del sign is %s" % watch.cfg.msg_del()
                         watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_del())
                 else:
                     for test in watch.get_erased():
