@@ -854,6 +854,18 @@ def watch_notify(files, chan, msg):
         sendmsg("%s %s" % (msg, item), chan)
 
 
+def watch_notify_moved(files, chan, msg):
+    index = 0
+    strings = list()
+#    for li in files:
+#        for index in xrange(li[0]):
+
+# lame ass hack
+    for item in files:
+        sendmsg(item, chan)
+
+
+
 def helpcmd(user, chan):
     sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
     sendmsg("Available commands: %s, %s (* command contains sub-commands)" % (commandsavail, modulesavail), chan)
@@ -990,6 +1002,25 @@ if __name__ == "__main__":
                         print ("\033[94mIngored notify: %s\033[0m" % test)
 
                 watch.clear_erased()
+
+            if watch.check_moved():
+                if watch_enabled:
+                    if len(watch.get_moved()) <= watch.notify_limit():
+                        watch_notify_moved(watch.get_moved(), watch.notify_chan(), watch.cfg.msg_mov())
+                        for test in watch.get_moved():
+                            print ("\033[94mNotified: %s\033[0m" % test)
+                    else:
+                        cap_list = list()
+                        for item in watch.get_moved()[0:(watch.notify_limit())]:
+                            cap_list.append(item)
+
+                        cap_list[watch.notify_limit()-1] += " ... and " + str(len(watch.get_moved()) - watch.notify_limit()) + " more unlisted entries"
+                        watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_mov())
+                #else:
+                #    for test in watch.get_moved():
+                #        print ("\033[94mIngored notify: %s\033[0m" % test)
+
+                watch.clear_moved()
 
         # And the tick goes on...
         i += 1
