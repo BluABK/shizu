@@ -12,7 +12,8 @@ commandsavail = "enable, disable, limit"
 #watchdir = cfg.watch()
 files = list()
 files_erased = list()
-files_moved = list()
+files_moved_src = list()
+files_moved_dst = list()
 # Classes
 
 
@@ -75,12 +76,12 @@ def erase(filename):
 
 def move(oldfilename, newfilename):
     #files_moved.append(oldfilename + " --> " + newfilename)
-    files_moved.append(oldfilename)
-    files_moved.append(newfilename)
+    files_moved_src.append(oldfilename)
+    files_moved_dst.append(newfilename)
 
 
 def check_moved():
-    if len(files_moved) > 0:
+    if len(files_moved_src) > 0 and files_moved_dst > 0:
         return True
     else:
         return False
@@ -101,7 +102,7 @@ def check_added():
 
 
 def check_all():
-    if len(files) > 0 and len(files_moved) > 0 and len(files_erased) > 0:
+    if len(files) > 0 and len(files_moved_src) > 0 and len(files_moved_dst) > 0 and len(files_erased) > 0:
         return True
     else:
         return False
@@ -115,12 +116,13 @@ def get_erased():
     return files_erased
 
 
-def get_moved():
-    return files_moved
+def get_moved_src():
+    return files_moved_src
 
 
 def clear_moved():
-    del files_moved[:]
+    del files_moved_src[:]
+    del files_moved_dst
 
 
 def clear_erased():
@@ -134,7 +136,8 @@ def clear_added():
 def clear_all():
     del files[:]
     del files_erased[:]
-    del files_moved[:]
+    del files_moved_src[:]
+    del files_moved_dst[:]
 
 
 def notify_chan():
