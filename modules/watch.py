@@ -11,6 +11,8 @@ commandsavail_short = "" #"enable, disable stopwatch"
 commandsavail = "enable, disable, limit"
 #watchdir = cfg.watch()
 files = list()
+files_erased = list()
+files_moved = list()
 # Classes
 
 
@@ -57,7 +59,16 @@ cfg = Config()
 # Functions
 def add(filename):
     if "New folder" not in filename:
-        files.append(filename)
+        files.append("+ " + filename)
+
+
+def erase(filename):
+    if "New folder" not in filename:
+        files.append("- " + filename)
+
+
+def move(oldfilename, newfilename):
+    files_moved.append(oldfilename + " --> " + newfilename)
 
 
 def check():
@@ -117,7 +128,18 @@ mask = pyinotify.IN_CREATE  # watched events
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         print "\033[94mwatch.py: New file: %s\033[0m" % event.name
-        add(event.name)
+        #add(event.name, 'new')
+        add(event.pathname)
+
+    def process_IN_DELETE(self, event):
+        print "\033[94mwatch.py: Erased file: %s\033[0m" % event.name
+        #add(event.name, 'del')
+        erase(event.pathname)
+
+    def process_IN_MOVED_TO(self, event):
+        print "\033[94mwatch.py: Moved file: %s\033[0m --> %s\033[0m" % (event.src_pathname, event.pathname)
+        #add(event.name, 'del')
+        move(event.src_pathname, event.pathname)
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
