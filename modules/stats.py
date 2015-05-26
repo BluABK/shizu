@@ -70,7 +70,22 @@ class Config:  # Mandatory Config class
 
 cfg = Config()
 
+
 # Functions
+def update_user(user, cmd, num):
+    return cfg.update_user(str(user), str(cmd), int(num))
+
+
+def update_cmd(cmd, num):
+    return cfg.update_cmd(str(cmd), int(num))
+
+
+def get_user(user):
+    return cfg.get_user(str(user))
+
+
+def get_cmd(cmd):
+    return cfg.get_cmd(str(cmd))
 
 
 def helpcmd(cmdsym):
