@@ -6,7 +6,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 import ConfigParser
 
 # Variables
-commandsavail = "wishfulthinking, pipedreams, 42, imagination"
+commandsavail = "user, command, dump"
 
 # Classes
 
