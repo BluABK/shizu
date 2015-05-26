@@ -46,6 +46,7 @@ class Config:  # Mandatory Config class
         except:
             retv = "Unable to open configuration"
 
+        print ('\033[94mstats.py: update_cmd(%s, %s):\033[0m %s' % (cmd, num, retv))
         return retv
 
     def update_user(self, user, cmd, num):
@@ -66,6 +67,7 @@ class Config:  # Mandatory Config class
         except:
             retv = "Unable to open configuration"
 
+        print ('\033[94mstats.py: update_user(%s, %s, %s):\033[0m %s' % (user, cmd, num, retv))
         return retv
 
 cfg = Config()
