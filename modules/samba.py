@@ -14,6 +14,8 @@ from subprocess import check_output
 
 # Define variables
 
+commandsavail = "logins"
+
 regex = re.compile(" +")
 
 
