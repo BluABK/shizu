@@ -548,7 +548,12 @@ def commands(usernick, msg, raw_in, chan):
             stats.update_cmd(cmd[0], 1)
             stats.update_user(usernick, cmd[0], 1)
         elif len(cmd) > 1:
-            if cmd[0] == "lastfm":
+            if cmd[0] == "stats":
+                print "stats: matched stats module command"
+                if cmd[1] in lastfm.commandsavail:
+                    stats.update_cmd(('stats ' + cmd[1]), 1)
+                    stats.update_user(usernick, ('stats ' + cmd[1]), 1)
+            elif cmd[0] == "lastfm":
                 print "stats: matched lastfm module command"
                 if cmd[1] in lastfm.commandsavail:
                     stats.update_cmd(('lastfm ' + cmd[1]), 1)
