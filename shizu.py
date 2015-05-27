@@ -544,18 +544,22 @@ def commands(usernick, msg, raw_in, chan):
     if usernick != "HoloBot":			# TODO: make nick-exclusions in config.ini
         # Stats
         if cmd[0] in commandsavail or cmd[0] in lastfm.commandsavail_short or cmd[0] in watch.commandsavail_short or cmd[0] in cfg.lst_command_option() or cmd[0] in cfg.lst_rawcommand_option():
+            print "stats: matched regular command"
             stats.update_cmd(cmd[0], 1)
             stats.update_user(usernick, cmd[0], 1)
         elif len(cmd) > 1:
             if cmd[0] == "lastfm":
+                print "stats: matched lastfm module command"
                 if cmd[1] in lastfm.commandsavail:
                     stats.update_cmd(('lastfm ' + cmd[1]), 1)
                     stats.update_user(usernick, ('lastfm ' + cmd[1]), 1)
             elif cmd[0] == "watch":
+                print "stats: matched watch module command"
                 if cmd[1] in watch.commandsavail:
                     stats.update_cmd(('watch ' + cmd[1]), 1)
                     stats.update_user(usernick, ('watch ' + cmd[1]), 1)
             elif cmd[0] == "samba":
+                print "stats: matched samba module command"
                 if cmd[1] in samba.commandsavail:
                     stats.update_cmd(('samba ' + cmd[1]), 1)
                     stats.update_user(usernick, ('samba ' + cmd[1]), 1)
