@@ -78,6 +78,9 @@ class Config:  # Mandatory Config class
         print ('\033[94mstats.py: update_user(%s, %s, %s):\033[0m %s' % (user, cmd, num, retv))
         return retv
 
+    def dump_cmd(self):
+        return self.config.items('stats-cmd')
+
 cfg = Config()
 
 
@@ -96,6 +99,10 @@ def get_user(user):
 
 def get_cmd(cmd):
     return cfg.get_cmd(str(cmd))
+
+
+def get_cmd_all():
+    return cfg.dump_cmd()
 
 
 def helpcmd(cmdsym):
