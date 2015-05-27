@@ -851,6 +851,23 @@ def commands(usernick, msg, raw_in, chan):
                 for item in xrange(len(watch.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
 
+        # Module: Stats
+        elif cmd[0] == "stats":
+            if len(cmd) > 1:
+                if cmd[1] == "cmd":
+                    if len(cmd) > 2:
+                        sendmsg(stats.get_cmd(cmd[2]), chan)
+                    else:
+                        for item in stats.get_cmd_all():
+                            sendmsg("%s = %s" % (item[0], item[1]), chan)
+
+                elif cmd[1] == "user":
+                    # TODO: Code user stats get command
+                    sendmsg("Dummy function", chan)
+            else:
+                for item in xrange(len(stats.helpcmd(cfg.cmdsym()))):
+                    sendmsg(str(stats.helpcmd(cfg.cmdsym())[item]), chan)
+
         elif cmd[0] in cfg.lst_command_option():
             print "Executing custom command"
             custom_command(cmd[0], chan)
