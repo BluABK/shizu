@@ -60,7 +60,15 @@ class Config:  # Mandatory Config class
                     retv = "Updated num and cmd"
 
             else:
-                config.set('stats-user', str(user)+'-num', str(self.get_user(user)[1]+num))
+                cnt = 0
+                for c in config.get('stats-user', str(user)+'-cmd').split(","):
+                    if c == cmd:
+                        break
+                    cnt += 1
+                sl = config.get('stats-user', str(user)+'-num').split(",")
+                sl[cnt] += num
+                s = sl.toString()
+                config.set('stats-user', str(user)+'-num', s)
                 with open('config.ini', 'w') as configfile:
                         config.write(configfile)
                 retv = "Updated num"
