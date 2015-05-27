@@ -22,6 +22,7 @@ from subprocess import *
 import modules.samba as samba            # for server-side samba functionality
 import modules.lastfm as lastfm
 import modules.watch as watch
+import modules.stats as stats
 #import db               # for server-side file search and lookup
 
 # Global variables
