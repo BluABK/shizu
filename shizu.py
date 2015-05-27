@@ -854,7 +854,7 @@ def commands(usernick, msg, raw_in, chan):
         # Module: Stats
         elif cmd[0] == "stats":
             if len(cmd) > 1:
-                if cmd[1] == "cmd":
+                if cmd[1] == "cmd" or cmd[1] == "command":
                     if len(cmd) > 2:
                         sendmsg(stats.get_cmd(cmd[2]), chan)
                     else:
