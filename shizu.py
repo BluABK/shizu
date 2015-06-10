@@ -543,42 +543,42 @@ def commands(usernick, msg, raw_in, chan):
     cmd = msg.split(' ')
     if usernick != "HoloBot":			# TODO: make nick-exclusions in config.ini
         # Stats
-        if cmd[0] in commandsavail or cmd[0] in lastfm.commandsavail_short or cmd[0] in watch.commandsavail_short or cmd[0] in cfg.lst_command_option() or cmd[0] in cfg.lst_rawcommand_option():
+        if cmd[0].lower() in commandsavail or cmd[0].lower() in lastfm.commandsavail_short or cmd[0].lower() in watch.commandsavail_short or cmd[0].lower() in cfg.lst_command_option() or cmd[0].lower() in cfg.lst_rawcommand_option():
             print "stats: matched regular command"
             stats.update_cmd(cmd[0], 1)
             stats.update_user(usernick, cmd[0], 1)
         elif len(cmd) > 1:
-            if cmd[0] == "stats":
+            if cmd[0].lower() == "stats":
                 print "stats: matched stats module command"
                 if cmd[1] in lastfm.commandsavail:
                     stats.update_cmd(('stats ' + cmd[1]), 1)
                     stats.update_user(usernick, ('stats ' + cmd[1]), 1)
-            elif cmd[0] == "lastfm":
+            elif cmd[0].lower() == "lastfm":
                 print "stats: matched lastfm module command"
                 if cmd[1] in lastfm.commandsavail:
                     stats.update_cmd(('lastfm ' + cmd[1]), 1)
                     stats.update_user(usernick, ('lastfm ' + cmd[1]), 1)
-            elif cmd[0] == "watch":
+            elif cmd[0].lower() == "watch":
                 print "stats: matched watch module command"
                 if cmd[1] in watch.commandsavail:
                     stats.update_cmd(('watch ' + cmd[1]), 1)
                     stats.update_user(usernick, ('watch ' + cmd[1]), 1)
-            elif cmd[0] == "samba":
+            elif cmd[0].lower() == "samba":
                 print "stats: matched samba module command"
                 if cmd[1] in samba.commandsavail:
                     stats.update_cmd(('samba ' + cmd[1]), 1)
                     stats.update_user(usernick, ('samba ' + cmd[1]), 1)
 
         # General commands
-        if cmd[0] == "awesome":
+        if cmd[0].lower() == "awesome":
             sendmsg("Everything is awesome!", chan)
-        elif cmd[0] == "nyaa":
+        elif cmd[0].lower() == "nyaa":
             sendmsg("Nyaa~", chan)
-        elif cmd[0] == "date":
+        elif cmd[0].lower() == "date":
             sendmsg(date(), chan)
-        elif cmd[0] == "ddate":
+        elif cmd[0].lower() == "ddate":
             sendmsg(ddate(), chan)
-        elif cmd[0] == "dump":
+        elif cmd[0].lower() == "dump":
             try:
                 if cmd[1] == "cmd":
                     if cmd[2] == "ignorednicks":
@@ -588,7 +588,7 @@ def commands(usernick, msg, raw_in, chan):
                         sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
-        elif cmd[0] == "kick":
+        elif cmd[0].lower() == "kick":
 
             # Make sure that it is an actual user
             if ignored_nick("commands", usernick) is True:
@@ -614,7 +614,7 @@ def commands(usernick, msg, raw_in, chan):
             # If all else fails, user was probably not authorised and must be punished for abuse
             sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
 
-        elif cmd[0] == "replay":
+        elif cmd[0].lower() == "replay":
             # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
             if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
                 try:
@@ -629,16 +629,16 @@ def commands(usernick, msg, raw_in, chan):
                     replay(int(cmd[1]), chan, 0)
             else:
                 replay(maxbacklog, chan, 0)
-        elif cmd[0] == "say":
+        elif cmd[0].lower() == "say":
             if len(cmd) > 1:
                 # Secure outgoing message
                 if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
                     sendmsg(" ".join(cmd[1:]), chan)
             else:
                 sendmsg("Syntax: %ssay <string>" % cfg.cmdsym(), chan)
-        elif cmd[0] == "act":
+        elif cmd[0].lower() == "act":
             sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
-        elif cmd[0] == "join":
+        elif cmd[0].lower() == "join":
             # Ability to join multiple channels
             newchans = cmd[1:]
             for newchan in newchans:
@@ -646,10 +646,10 @@ def commands(usernick, msg, raw_in, chan):
                     ircsock.send("JOIN %s\r\n" % newchan)
                 else:
                     ircsock.send("JOIN #%s\r\n" % newchan)
-        elif cmd[0] == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
+        elif cmd[0].lower() == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
                 ircquit()
 
-        elif cmd[0] == "host":
+        elif cmd[0].lower() == "host":
             if len(cmd) > 1:
                 try:
                     retval = check_output("host %s" % cmd[1], shell=True)
@@ -660,7 +660,7 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg("Invalid argument.... (and you *know* it)", chan)
 
         # Help calls
-        if cmd[0] == "help":
+        if cmd[0].lower() == "help":
             try:
                 if cmd[1] == "triggers":
                     sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
@@ -688,7 +688,7 @@ def commands(usernick, msg, raw_in, chan):
                 helpcmd(usernick, chan)
 
         # module lastfm
-        elif cmd[0] == "lastfm":
+        elif cmd[0].lower() == "lastfm":
             if len(cmd) > 1:
                 if cmd[1] == "bio":
                     if len(cmd) > 2:
@@ -740,7 +740,7 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
 
         # Module: lastfm - shortcuts
-        elif cmd[0] == "np":
+        elif cmd[0].lower() == "np":
             try:
                 test = lastfm.now_playing(cmd[1])
                 if test is None:
@@ -759,14 +759,14 @@ def commands(usernick, msg, raw_in, chan):
                 else:
                     sendmsg("%s is currently playing: %s" % (usernick, test), chan)
 
-        elif cmd[0] == "npt":
+        elif cmd[0].lower() == "npt":
             try:
                 sendmsg("%s is currently playing; %s" % (usernick, lastfm.test_playing(cmd[1])), chan)
             except IndexError:
                 sendmsg("Index derp", chan)
 
         # Module: samba
-        elif cmd[0] == "samba":
+        elif cmd[0].lower() == "samba":
             if len(cmd) > 1:
                 if cmd[1] == "logins":
                     sendmsg(samba.getlogins(cmd[2:]), chan)
@@ -775,7 +775,7 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
 
         # Debug commands
-        elif cmd[0] == "debug":
+        elif cmd[0].lower() == "debug":
             if len(cmd) >= 2 and cmd[1] == "logins":
                 dbg = samba.getlogins(cmd[2:])
                 debug("Passed variable of length:" + str(len(dbg)))
@@ -784,7 +784,7 @@ def commands(usernick, msg, raw_in, chan):
                     debug(dbg[itr])
 
         # Custom commands
-        elif cmd[0] == "addcommand":
+        elif cmd[0].lower() == "addcommand":
             if ignored_nick("commands", usernick) is True:
                 sendmsg("%s:ಠ_ಠ" % usernick, chan)
                 return
@@ -799,7 +799,7 @@ def commands(usernick, msg, raw_in, chan):
                 ret = add_custom_cmd(str(cmd[1]), fstr, usernick, chan)
                 sendmsg(ret, chan)
 
-        elif cmd[0] == "removecommand":
+        elif cmd[0].lower() == "removecommand":
             if ignored_nick("commands", usernick) is True:
                 sendmsg("%s:ಠ_ಠ" % usernick, chan)
                 return
@@ -807,7 +807,7 @@ def commands(usernick, msg, raw_in, chan):
                 ret = del_custom_cmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
 
-        elif cmd[0] == "addrawcommand" and usernick.lower() == "bluabk":
+        elif cmd[0].lower() == "addrawcommand" and usernick.lower() == "bluabk":
             if len(cmd) > 1:
                 arg = list()
                 for item in xrange(len(cmd)):
@@ -819,12 +819,12 @@ def commands(usernick, msg, raw_in, chan):
                 ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
                 sendmsg(ret, chan)
 
-        elif cmd[0] == "removerawcommand" and usernick.lower() == "bluabk":
+        elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
             if len(cmd) > 1:
                 ret = del_custom_rawcmd(str(cmd[1]), usernick)
                 sendmsg(ret, chan)
 
-        elif cmd[0] == "listcustom":
+        elif cmd[0].lower() == "listcustom":
             string_list = ""
             for item in cfg.lst_command():
                 string_list += (item[0] + " ")
@@ -833,7 +833,7 @@ def commands(usernick, msg, raw_in, chan):
             sendmsg(string_list, chan)
 
         # Module: Watch
-        elif cmd[0] == "watch":
+        elif cmd[0].lower() == "watch":
             if len(cmd) > 1:
                 if cmd[1] == "enable":
                     watch_enabled = True
@@ -852,7 +852,7 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
 
         # Module: Stats
-        elif cmd[0] == "stats":
+        elif cmd[0].lower() == "stats":
             if len(cmd) > 1:
                 if cmd[1] == "cmd" or cmd[1] == "command":
                     if len(cmd) > 2:
@@ -868,11 +868,11 @@ def commands(usernick, msg, raw_in, chan):
                 for item in xrange(len(stats.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(stats.helpcmd(cfg.cmdsym())[item]), chan)
 
-        elif cmd[0] in cfg.lst_command_option():
+        elif cmd[0].lower() in cfg.lst_command_option():
             print "Executing custom command"
-            custom_command(cmd[0], chan)
+            custom_command(cmd[0].lower(), chan)
 
-        elif cmd[0] in cfg.lst_rawcommand_option() and usernick in cfg.su():
+        elif cmd[0].lower() in cfg.lst_rawcommand_option() and usernick in cfg.su():
             print "Executing custom rawcommand"
             custom_rawcommand(cmd, usernick, chan)
 
