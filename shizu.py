@@ -585,7 +585,10 @@ def commands(usernick, msg, raw_in, chan):
                         sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
                 elif cmd[1] == "trg":
                     if cmd[2] == "ignorednicks":
-                        sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
+                        try:
+                            sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
+                        except:
+                            sendmsg("An error occured, sue me", chan)
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0].lower() == "kick":
