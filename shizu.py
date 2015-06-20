@@ -754,10 +754,10 @@ def commands(usernick, msg, raw_in, chan):
                         sendmsg("%s has recently played:" % nick, chan)
                         for item in xrange(len(test)):
                             sendmsg(str(test[item]), chan)
-            # Print help
-            else:
-                for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
-                    sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
+                # Print help
+                else:
+                    for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
+                        sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
 
         # Module: lastfm - shortcuts
         elif cmd[0].lower() == "np":
