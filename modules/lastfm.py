@@ -55,6 +55,12 @@ class Config:  # Shizu's config class
         else:
             return "Alias already exists"
 
+    def list_alias(self):
+        if self.config.has_section('lastfm-alias') is True:
+            return str(self.config.items('lastfm-alias'))
+        else:
+            return "Wha! The section has left the building T_T"
+
 
 cfg = Config()
 commandsavail_short = "np, npt"
