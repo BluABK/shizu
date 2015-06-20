@@ -596,9 +596,10 @@ def commands(usernick, msg, raw_in, chan):
                         if cmd[2] == "alias":
                             try:
                                 da_list = lastfm.cfg.list_alias()
-                                for i in range(len(da_list[0])):
-                                    for item in da_list:
-                                        print item[i]
+                                #for i in range(len(da_list[0])):
+                                #    for item in da_list:
+                                #        print item[i]
+                                print da_list
                                 #sendmsg("", chan)
                             except:
                                 sendmsg("An error occured, sue me", chan)
