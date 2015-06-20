@@ -581,14 +581,27 @@ def commands(usernick, msg, raw_in, chan):
         elif cmd[0].lower() == "dump":
             try:
                 if cmd[1] == "cmd":
-                    if cmd[2] == "ignorednicks":
-                        sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
+                    if len(cmd) > 1:
+                        if cmd[2] == "ignorednicks":
+                            sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
                 elif cmd[1] == "trg":
-                    if cmd[2] == "ignorednicks":
-                        try:
-                            sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
-                        except:
-                            sendmsg("An error occured, sue me", chan)
+                    if len(cmd) > 1:
+                        if cmd[2] == "ignorednicks":
+                            try:
+                                sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
+                            except TypeError:
+                                sendmsg("An error occured, sue me", chan)
+                elif cmd[1] == "lastfm":
+                    if len(cmd) > 1:
+                        if cmd[2] == "alias":
+                            try:
+                                da_list = lastfm.cfg.list_alias()
+                                for i in range(len(da_list[0])):
+                                    for item in da_list:
+                                        print item[i]
+                                #sendmsg("", chan)
+                            except:
+                                sendmsg("An error occured, sue me", chan)
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0].lower() == "kick":
