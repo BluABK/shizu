@@ -73,7 +73,7 @@ def test_playing(user):
     try:
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
-        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): 404\033[0m' % user)
+        print ('\033[94mlstfm.py: test_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % user)
         return "No user with that name was found"
 
 
@@ -119,7 +119,7 @@ def now_playing(user):
         if u is None:
             print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
-        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): 404\033[0m' % u)
+        print ('\033[94mlstfm.py: now_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % u)
         return network.get_user(u).get_now_playing()
     except pylast.WSError:
         print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
