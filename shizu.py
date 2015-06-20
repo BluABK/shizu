@@ -603,6 +603,9 @@ def commands(usernick, msg, raw_in, chan):
                                 sendmsg(da_list, chan)
                             except:
                                 sendmsg("An error occured, sue me", chan)
+                else:
+                    sendmsg("Available parameters for this debug function:"
+                            " {cmd ignorednicks, trg ignorednicks, lastfm alias}", chan)
             except IndexError:
                 sendmsg("INFODUMP: Invalid argument(s)", chan)
         elif cmd[0].lower() == "kick":
