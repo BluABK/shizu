@@ -67,6 +67,7 @@ def test_playing(user):
     try:
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
+        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): 404\033[0m' % user)
         return "No user with that name was found"
 
 
@@ -110,9 +111,12 @@ def now_playing(user):
     try:
         u = cfg.test_alias(user)
         if u is None:
+            print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
+        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): 404\033[0m' % u)
         return network.get_user(u).get_now_playing()
     except pylast.WSError:
+        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
         return None
 
 
@@ -120,6 +124,7 @@ def recently_played(user, num):
     try:
         u = cfg.test_alias(user)
         if u is None:
+            print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
         rplist = network.get_user(u).get_recent_tracks(limit=num)
 #    except pylast.WSError.details == "Rate limit exceeded":
@@ -127,7 +132,9 @@ def recently_played(user, num):
     except pylast.WSError:
         #err = "No user with that name was found"
         return None
-
+    print ('\033[94mlstfm.py: recently played list:')
+    print format_basic(rplist)
+    print('\033[0m')
     return format_basic(rplist)
 
 
@@ -138,7 +145,7 @@ def artist_bio(name):
         data = "Ouch, attribute error. Did you try something nasty?"
         return data
     except pylast.WSError:
-        data = "There was an error or some shit, happy now SpyTec?"
+        data = "There was an error or some shit, happy now SpyTec? (Translation: General Error)"
         return data
     data = strip_html(data).encode('utf-8')
     try:
@@ -155,7 +162,6 @@ def add_alias(nick, user):
 
 
 #def del_alias(nick, user):
-
 
 
 def helpcmd(cmdsym):
