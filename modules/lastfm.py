@@ -174,6 +174,5 @@ def helpcmd(cmdsym):
     cmdlist = list()
     cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
     cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail_short)
-    cmdlist.append("Syntax: %slastfm help arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
+    cmdlist.append("Available subcommands: %s (* command contains sub-commands)" % commandsavail)
     return cmdlist
