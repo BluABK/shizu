@@ -599,8 +599,8 @@ def commands(usernick, msg, raw_in, chan):
                                 #for i in range(len(da_list[0])):
                                 #    for item in da_list:
                                 #        print item[i]
-                                print da_list
-                                #sendmsg("", chan)
+                                #print da_list
+                                sendmsg(da_list, chan)
                             except:
                                 sendmsg("An error occured, sue me", chan)
             except IndexError:
