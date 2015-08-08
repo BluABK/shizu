@@ -532,7 +532,9 @@ def version():
     c_date = str(check_output("git show -s --format=%ci", shell=True))
     c_hash_short = str(check_output("git rev-parse --short HEAD", shell=True))
 
-    return c_date + " (" + c_hash_short + ")"
+    retv = c_date + " (" + c_hash_short + ")"
+    print(retv)
+    return retv
 
 
 def commands(usernick, msg, raw_in, chan):
