@@ -528,6 +528,12 @@ def custom_rawcommand(cmd, usernick, chan):
         sendraw(c)
 
 
+def version():
+    current = str(check_output("git show -s --format=%ci", shell=True))
+    current += " (" + str(check_output("git rev-parse --short HEAD", shell=True)) + ")"
+    return current
+
+
 def commands(usernick, msg, raw_in, chan):
     global watch_enabled
     # First of all, check if it is a command
@@ -571,6 +577,8 @@ def commands(usernick, msg, raw_in, chan):
     # General commands
     if cmd[0].lower() == "awesome":
         sendmsg("Everything is awesome!", chan)
+    elif cmd[0].lower() == "version":
+        sendmsg("%s" % version(), chan)
     elif cmd[0].lower() == "nyaa":
         sendmsg("Nyaa~", chan)
     elif cmd[0].lower() == "date":
