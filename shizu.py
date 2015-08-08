@@ -32,7 +32,7 @@ ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
 watch_enabled = True
-commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate"
+commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
 modulesavail = "samba*"
 
 
@@ -541,364 +541,363 @@ def commands(usernick, msg, raw_in, chan):
             return
 
     cmd = msg.split(' ')
-    if usernick != "HoloBot":			# TODO: make nick-exclusions in config.ini
-        # Stats
-        if cmd[0].lower() in commandsavail or cmd[0].lower() in lastfm.commandsavail_short or cmd[0].lower() in watch.commandsavail_short or cmd[0].lower() in cfg.lst_command_option() or cmd[0].lower() in cfg.lst_rawcommand_option():
-            print "stats: matched regular command"
-            stats.update_cmd(cmd[0], 1)
-            stats.update_user(usernick, cmd[0], 1)
-        elif len(cmd) > 1:
-            if cmd[0].lower() == "stats":
-                print "stats: matched stats module command"
-                if cmd[1] in lastfm.commandsavail:
-                    stats.update_cmd(('stats ' + cmd[1]), 1)
-                    stats.update_user(usernick, ('stats ' + cmd[1]), 1)
-            elif cmd[0].lower() == "lastfm":
-                print "stats: matched lastfm module command"
-                if cmd[1] in lastfm.commandsavail:
-                    stats.update_cmd(('lastfm ' + cmd[1]), 1)
-                    stats.update_user(usernick, ('lastfm ' + cmd[1]), 1)
-            elif cmd[0].lower() == "watch":
-                print "stats: matched watch module command"
-                if cmd[1] in watch.commandsavail:
-                    stats.update_cmd(('watch ' + cmd[1]), 1)
-                    stats.update_user(usernick, ('watch ' + cmd[1]), 1)
-            elif cmd[0].lower() == "samba":
-                print "stats: matched samba module command"
-                if cmd[1] in samba.commandsavail:
-                    stats.update_cmd(('samba ' + cmd[1]), 1)
-                    stats.update_user(usernick, ('samba ' + cmd[1]), 1)
-
-        # General commands
-        if cmd[0].lower() == "awesome":
-            sendmsg("Everything is awesome!", chan)
-        elif cmd[0].lower() == "nyaa":
-            sendmsg("Nyaa~", chan)
-        elif cmd[0].lower() == "date":
-            sendmsg(date(), chan)
-        elif cmd[0].lower() == "ddate":
-            sendmsg(ddate(), chan)
-        elif cmd[0].lower() == "dump":
-            try:
-                if cmd[1] == "cmd":
-                    if len(cmd) > 1:
-                        if cmd[2] == "ignorednicks":
-                            sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
-                elif cmd[1] == "trg":
-                    if len(cmd) > 1:
-                        if cmd[2] == "ignorednicks":
-                            try:
-                                sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
-                            except TypeError:
-                                sendmsg("An error occured, sue me", chan)
-                elif cmd[1] == "lastfm":
-                    if len(cmd) > 1:
-                        if cmd[2] == "alias":
-                            try:
-                                da_list = lastfm.cfg.list_alias()
-                                #for i in range(len(da_list[0])):
-                                #    for item in da_list:
-                                #        print item[i]
-                                #print da_list
-                                sendmsg(da_list, chan)
-                            except:
-                                sendmsg("An error occured, sue me", chan)
-                else:
-                    sendmsg("Available parameters for this debug function:"
-                            " {cmd ignorednicks, trg ignorednicks, lastfm alias}", chan)
-            except IndexError:
-                sendmsg("INFODUMP: Invalid argument(s)", chan)
-        elif cmd[0].lower() == "kick":
-
-            # Make sure that it is an actual user
-            if ignored_nick("commands", usernick) is True:
-                sendmsg("%s: Abuse by proxy? Nice try... ಠ_ಠ" % usernick, chan)
-                return
-
-            # Check if user is authorised to do so
-            for u in cfg.su().lower().split(","):
-                if usernick.lower() == u:
-                    try:
-                        try:
-                            # KICK <user> <reason>
-                            sendraw("KICK %s %s %s\n" % (chan, cmd[1], cmd[2]))
-                            return
-                        except IndexError:
-                            # KICK <user> <static reason> (fallback if no reason given)
-                            sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
-                            return
-                    except IndexError:
-                        print("IndexError in authorisation check")
-                        return
-
-            # If all else fails, user was probably not authorised and must be punished for abuse
-            sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
-
-        elif cmd[0].lower() == "replay":
-            # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
-            if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
-                try:
-                    if cmd[2] == "duplex":
-                        replay(int(cmd[1]), chan, 0)
-                    elif cmd[2] == "recv":
-                        replay(int(cmd[1]), chan, 1)
-                    elif cmd[2] == "send":
-                        replay(int(cmd[1]), chan, 2)
-                except IndexError:
-                    sendmsg("WHOA! IndexError in cmd[2] o_0", chan)
-                    replay(int(cmd[1]), chan, 0)
-            else:
-                replay(maxbacklog, chan, 0)
-        elif cmd[0].lower() == "say":
-            if len(cmd) > 1:
-                # Secure outgoing message
-                if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
-                    sendmsg(" ".join(cmd[1:]), chan)
-            else:
-                sendmsg("Syntax: %ssay <string>" % cfg.cmdsym(), chan)
-        elif cmd[0].lower() == "act":
-            sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
-        elif cmd[0].lower() == "join":
-            # Ability to join multiple channels
-            newchans = cmd[1:]
-            for newchan in newchans:
-                if newchan[0] == '#':
-                    ircsock.send("JOIN %s\r\n" % newchan)
-                else:
-                    ircsock.send("JOIN #%s\r\n" % newchan)
-        elif cmd[0].lower() == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
-                ircquit()
-
-        elif cmd[0].lower() == "host":
-            if len(cmd) > 1:
-                try:
-                    retval = check_output("host %s" % cmd[1], shell=True)
-                    #for line in retval:
-                        #sendmsg(line, chan)
-                    sendmsg(retval, chan)
-                except CalledProcessError:
-                    sendmsg("Invalid argument.... (and you *know* it)", chan)
-
-        # Help calls
-        if cmd[0].lower() == "help":
-            try:
-                if cmd[1] == "triggers":
-                    sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                    sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
-                elif cmd[1] == "replay":
-                    sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
-                    sendmsg("Available commands: recv, send, duplex", chan)
-                elif cmd[1] == "kick":
-                    sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
-                elif cmd[1] == "samba":
-                    if len(cmd) > 2:
-                        if cmd[2] == "logins":
-                            sendmsg("%s: Syntax: %ssamba logins <user>" % (usernick, cfg.cmdsym()), chan)
-                    else:
-                        for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
-                            sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
-                elif cmd[1] == "lastfm":
-                    if len(cmd) > 2:
-                        if cmd[2] == "recent":
-                            sendmsg("%s: Syntax: %slastfm recent <user> <num>" % (usernick, cfg.cmdsym()), chan)
-                    else:
-                        for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
-                            sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
-            except IndexError:
-                helpcmd(usernick, chan)
-
-        # module lastfm
+    # Stats
+    if cmd[0].lower() in commandsavail or cmd[0].lower() in lastfm.commandsavail_short or cmd[0].lower() in watch.commandsavail_short or cmd[0].lower() in cfg.lst_command_option() or cmd[0].lower() in cfg.lst_rawcommand_option():
+        print "stats: matched regular command"
+        stats.update_cmd(cmd[0], 1)
+        stats.update_user(usernick, cmd[0], 1)
+    elif len(cmd) > 1:
+        if cmd[0].lower() == "stats":
+            print "stats: matched stats module command"
+            if cmd[1] in lastfm.commandsavail:
+                stats.update_cmd(('stats ' + cmd[1]), 1)
+                stats.update_user(usernick, ('stats ' + cmd[1]), 1)
         elif cmd[0].lower() == "lastfm":
-            if len(cmd) > 1:
-                if cmd[1] == "bio":
-                    if len(cmd) > 2:
-                        sendmsg(str(lastfm.artist_bio(cmd[2])), chan)
-                elif cmd[1] == "set":
-                    if len(cmd) > 2:
-                        if cmd[2] == "alias":
-                            if len(cmd) > 3:
-                                tmp = lastfm.add_alias(usernick, cmd[3])
-                                sendmsg(tmp, chan)
+            print "stats: matched lastfm module command"
+            if cmd[1] in lastfm.commandsavail:
+                stats.update_cmd(('lastfm ' + cmd[1]), 1)
+                stats.update_user(usernick, ('lastfm ' + cmd[1]), 1)
+        elif cmd[0].lower() == "watch":
+            print "stats: matched watch module command"
+            if cmd[1] in watch.commandsavail:
+                stats.update_cmd(('watch ' + cmd[1]), 1)
+                stats.update_user(usernick, ('watch ' + cmd[1]), 1)
+        elif cmd[0].lower() == "samba":
+            print "stats: matched samba module command"
+            if cmd[1] in samba.commandsavail:
+                stats.update_cmd(('samba ' + cmd[1]), 1)
+                stats.update_user(usernick, ('samba ' + cmd[1]), 1)
 
-                elif cmd[1] == "recent":
-                    default_num = 3
-                    # !lastfm recent nick num
-                    if len(cmd) > 3:
-                            num = cmd[3]
-                            nick = cmd[2]
-                            # !lastfm recent nick num
-                            try:
-                                if 0 > num <= 10:
-                                    test = lastfm.recently_played(nick, num)
-                                # !lastfm recent nick 3 (num was out of bounds)
-                                else:
-                                    test = lastfm.recently_played(nick, default_num)
-                            except TypeError:
-                                test = lastfm.recently_played(nick, default_num)
-                    # !lastfm recent num
-                    elif len(cmd) > 2:
-                        num = cmd[2]
-                        nick = usernick
-                        test = lastfm.recently_played(nick, num)
-                    # !lastfm recent
-                    else:
-                        nick = usernick
-                        test = lastfm.recently_played(nick, default_num)
+    # General commands
+    if cmd[0].lower() == "awesome":
+        sendmsg("Everything is awesome!", chan)
+    elif cmd[0].lower() == "nyaa":
+        sendmsg("Nyaa~", chan)
+    elif cmd[0].lower() == "date":
+        sendmsg(date(), chan)
+    elif cmd[0].lower() == "ddate":
+        sendmsg(ddate(), chan)
+    elif cmd[0].lower() == "dump":
+        try:
+            if cmd[1] == "cmd":
+                if len(cmd) > 1:
+                    if cmd[2] == "ignorednicks":
+                        sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
+            elif cmd[1] == "trg":
+                if len(cmd) > 1:
+                    if cmd[2] == "ignorednicks":
+                        try:
+                            sendmsg(("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan))
+                        except TypeError:
+                            sendmsg("An error occured, sue me", chan)
+            elif cmd[1] == "lastfm":
+                if len(cmd) > 1:
+                    if cmd[2] == "alias":
+                        try:
+                            da_list = lastfm.cfg.list_alias()
+                            #for i in range(len(da_list[0])):
+                            #    for item in da_list:
+                            #        print item[i]
+                            #print da_list
+                            sendmsg(da_list, chan)
+                        except:
+                            sendmsg("An error occured, sue me", chan)
+            else:
+                sendmsg("Available parameters for this debug function:"
+                        " {cmd ignorednicks, trg ignorednicks, lastfm alias}", chan)
+        except IndexError:
+            sendmsg("INFODUMP: Invalid argument(s)", chan)
+    elif cmd[0].lower() == "kick":
 
-                    # Test returned data integrity
-                    if test is None:
-                        sendmsg("%s has not played anything in the given period" % nick, chan)
-                    elif test == "None":
-                        sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
-                    else:
-                        sendmsg("%s has recently played:" % nick, chan)
-                        for item in xrange(len(test)):
-                            sendmsg(str(test[item]), chan)
-                # Print help
+        # Make sure that it is an actual user
+        if ignored_nick("commands", usernick) is True:
+            sendmsg("%s: Abuse by proxy? Nice try... ಠ_ಠ" % usernick, chan)
+            return
+
+        # Check if user is authorised to do so
+        for u in cfg.su().lower().split(","):
+            if usernick.lower() == u:
+                try:
+                    try:
+                        # KICK <user> <reason>
+                        sendraw("KICK %s %s %s\n" % (chan, cmd[1], cmd[2]))
+                        return
+                    except IndexError:
+                        # KICK <user> <static reason> (fallback if no reason given)
+                        sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
+                        return
+                except IndexError:
+                    print("IndexError in authorisation check")
+                    return
+
+        # If all else fails, user was probably not authorised and must be punished for abuse
+        sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
+
+    elif cmd[0].lower() == "replay":
+        # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
+        if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
+            try:
+                if cmd[2] == "duplex":
+                    replay(int(cmd[1]), chan, 0)
+                elif cmd[2] == "recv":
+                    replay(int(cmd[1]), chan, 1)
+                elif cmd[2] == "send":
+                    replay(int(cmd[1]), chan, 2)
+            except IndexError:
+                sendmsg("WHOA! IndexError in cmd[2] o_0", chan)
+                replay(int(cmd[1]), chan, 0)
+        else:
+            replay(maxbacklog, chan, 0)
+    elif cmd[0].lower() == "say":
+        if len(cmd) > 1:
+            # Secure outgoing message
+            if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
+                sendmsg(" ".join(cmd[1:]), chan)
+        else:
+            sendmsg("Syntax: %ssay <string>" % cfg.cmdsym(), chan)
+    elif cmd[0].lower() == "act":
+        sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
+    elif cmd[0].lower() == "join":
+        # Ability to join multiple channels
+        newchans = cmd[1:]
+        for newchan in newchans:
+            if newchan[0] == '#':
+                ircsock.send("JOIN %s\r\n" % newchan)
+            else:
+                ircsock.send("JOIN #%s\r\n" % newchan)
+    elif cmd[0].lower() == "quit" and usernick in cfg.su(): #and cmd[1] == cfg.quitpro():
+            ircquit()
+
+    elif cmd[0].lower() == "host":
+        if len(cmd) > 1:
+            try:
+                retval = check_output("host %s" % cmd[1], shell=True)
+                #for line in retval:
+                    #sendmsg(line, chan)
+                sendmsg(retval, chan)
+            except CalledProcessError:
+                sendmsg("Invalid argument.... (and you *know* it)", chan)
+
+    # Help calls
+    if cmd[0].lower() == "help":
+        try:
+            if cmd[1] == "triggers":
+                sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
+                sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
+            elif cmd[1] == "replay":
+                sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
+                sendmsg("Available commands: recv, send, duplex", chan)
+            elif cmd[1] == "kick":
+                sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
+            elif cmd[1] == "samba":
+                if len(cmd) > 2:
+                    if cmd[2] == "logins":
+                        sendmsg("%s: Syntax: %ssamba logins <user>" % (usernick, cfg.cmdsym()), chan)
+                else:
+                    for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
+                        sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
+            elif cmd[1] == "lastfm":
+                if len(cmd) > 2:
+                    if cmd[2] == "recent":
+                        sendmsg("%s: Syntax: %slastfm recent <user> <num>" % (usernick, cfg.cmdsym()), chan)
                 else:
                     for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                         sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
+        except IndexError:
+            helpcmd(usernick, chan)
 
-        # Module: lastfm - shortcuts
-        elif cmd[0].lower() == "np":
-            try:
-                test = lastfm.now_playing(cmd[1])
-                if test is None:
-                    sendmsg("%s is not currently playing anything" % cmd[1], chan)
-                elif test == "None":
-                    sendmsg("No user named '%s' was found =/" % cmd[1], chan)
-                elif test == "timeout":
-                    sendmsg("Request timed out =/", chan)
+    # module lastfm
+    elif cmd[0].lower() == "lastfm":
+        if len(cmd) > 1:
+            if cmd[1] == "bio":
+                if len(cmd) > 2:
+                    sendmsg(str(lastfm.artist_bio(cmd[2])), chan)
+            elif cmd[1] == "set":
+                if len(cmd) > 2:
+                    if cmd[2] == "alias":
+                        if len(cmd) > 3:
+                            tmp = lastfm.add_alias(usernick, cmd[3])
+                            sendmsg(tmp, chan)
+
+            elif cmd[1] == "recent":
+                default_num = 3
+                # !lastfm recent nick num
+                if len(cmd) > 3:
+                        num = cmd[3]
+                        nick = cmd[2]
+                        # !lastfm recent nick num
+                        try:
+                            if 0 > num <= 10:
+                                test = lastfm.recently_played(nick, num)
+                            # !lastfm recent nick 3 (num was out of bounds)
+                            else:
+                                test = lastfm.recently_played(nick, default_num)
+                        except TypeError:
+                            test = lastfm.recently_played(nick, default_num)
+                # !lastfm recent num
+                elif len(cmd) > 2:
+                    num = cmd[2]
+                    nick = usernick
+                    test = lastfm.recently_played(nick, num)
+                # !lastfm recent
                 else:
-                    sendmsg("%s is currently playing: %s" % (cmd[1], test), chan)
-            except IndexError:
-                test = lastfm.now_playing(usernick)
+                    nick = usernick
+                    test = lastfm.recently_played(nick, default_num)
+
+                # Test returned data integrity
                 if test is None:
-                    sendmsg("%s is not currently playing anything" % usernick, chan)
+                    sendmsg("%s has not played anything in the given period" % nick, chan)
                 elif test == "None":
-                    sendmsg("%s: No user named '%s' was found =/ "
-                            "You can set an alias with !lastfm set alias <lastfmuser>" % (usernick, test), chan)
-                elif test == "timeout":
-                    sendmsg("Request timed out =/", chan)
+                    sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
                 else:
-                    sendmsg("%s is currently playing: %s" % (usernick, test), chan)
-
-        elif cmd[0].lower() == "npt":
-            try:
-                sendmsg("%s is currently playing; %s" % (usernick, lastfm.test_playing(cmd[1])), chan)
-            except IndexError:
-                sendmsg("Index derp", chan)
-
-        # Module: samba
-        elif cmd[0].lower() == "samba":
-            if len(cmd) > 1:
-                if cmd[1] == "logins":
-                    sendmsg(samba.getlogins(cmd[2:]), chan)
+                    sendmsg("%s has recently played:" % nick, chan)
+                    for item in xrange(len(test)):
+                        sendmsg(str(test[item]), chan)
+            # Print help
             else:
-                for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
-                    sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
+                for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
+                    sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
 
-        # Debug commands
-        elif cmd[0].lower() == "debug":
-            if len(cmd) >= 2 and cmd[1] == "logins":
-                dbg = samba.getlogins(cmd[2:])
-                debug("Passed variable of length:" + str(len(dbg)))
-                for itr in range(len(dbg)):
-                    debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
-                    debug(dbg[itr])
-
-        # Custom commands
-        elif cmd[0].lower() == "addcommand":
-            if ignored_nick("commands", usernick) is True:
-                sendmsg("%s:ಠ_ಠ" % usernick, chan)
-                return
-            if len(cmd) > 1:
-                arg = list()
-                for item in xrange(len(cmd)):
-                    if item > 1:
-                        if item != "\n":
-                            arg.append(cmd[item])
-                            print "arg = %s" % arg
-                fstr = " ".join(str(x) for x in arg)
-                ret = add_custom_cmd(str(cmd[1]), fstr, usernick, chan)
-                sendmsg(ret, chan)
-
-        elif cmd[0].lower() == "removecommand":
-            if ignored_nick("commands", usernick) is True:
-                sendmsg("%s:ಠ_ಠ" % usernick, chan)
-                return
-            if len(cmd) > 1:
-                ret = del_custom_cmd(str(cmd[1]), usernick)
-                sendmsg(ret, chan)
-
-        elif cmd[0].lower() == "addrawcommand" and usernick.lower() == "bluabk":
-            if len(cmd) > 1:
-                arg = list()
-                for item in xrange(len(cmd)):
-                    if item > 1:
-                        if item != "\n":
-                            arg.append(cmd[item])
-                            print "arg = %s" % arg
-                fstr = " ".join(str(x) for x in arg)
-                ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
-                sendmsg(ret, chan)
-
-        elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
-            if len(cmd) > 1:
-                ret = del_custom_rawcmd(str(cmd[1]), usernick)
-                sendmsg(ret, chan)
-
-        elif cmd[0].lower() == "listcustom":
-            string_list = ""
-            for item in cfg.lst_command():
-                string_list += (item[0] + " ")
-            for item in cfg.lst_rawcommand():
-                string_list += (item[0] + "* ")
-            sendmsg(string_list, chan)
-
-        # Module: Watch
-        elif cmd[0].lower() == "watch":
-            if len(cmd) > 1:
-                if cmd[1] == "enable":
-                    watch_enabled = True
-                    sendmsg("Watch notifications enabled.", chan)
-
-                elif cmd[1] == "disable":
-                    watch_enabled = False
-                    sendmsg("Watch notifications disabled.", chan)
-
-                elif cmd[1] == "limit":
-                    print "watch: Setting watchlimit to %s" % cmd[2]
-                    watch.set_notify_limit(cmd[2])
-                    sendmsg("Watch notifications limit set to %s" % cmd[2], chan)
+    # Module: lastfm - shortcuts
+    elif cmd[0].lower() == "np":
+        try:
+            test = lastfm.now_playing(cmd[1])
+            if test is None:
+                sendmsg("%s is not currently playing anything" % cmd[1], chan)
+            elif test == "None":
+                sendmsg("No user named '%s' was found =/" % cmd[1], chan)
+            elif test == "timeout":
+                sendmsg("Request timed out =/", chan)
             else:
-                for item in xrange(len(watch.helpcmd(cfg.cmdsym()))):
-                    sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
-
-        # Module: Stats
-        elif cmd[0].lower() == "stats":
-            if len(cmd) > 1:
-                if cmd[1] == "cmd" or cmd[1] == "command":
-                    if len(cmd) > 2:
-                        sendmsg(stats.get_cmd(cmd[2]), chan)
-                    else:
-                        for item in stats.get_cmd_all():
-                            sendmsg("%s = %s" % (item[0], item[1]), chan)
-
-                elif cmd[1] == "user":
-                    # TODO: Code user stats get command
-                    sendmsg("Dummy function", chan)
+                sendmsg("%s is currently playing: %s" % (cmd[1], test), chan)
+        except IndexError:
+            test = lastfm.now_playing(usernick)
+            if test is None:
+                sendmsg("%s is not currently playing anything" % usernick, chan)
+            elif test == "None":
+                sendmsg("%s: No user named '%s' was found =/ "
+                        "You can set an alias with !lastfm set alias <lastfmuser>" % (usernick, test), chan)
+            elif test == "timeout":
+                sendmsg("Request timed out =/", chan)
             else:
-                for item in xrange(len(stats.helpcmd(cfg.cmdsym()))):
-                    sendmsg(str(stats.helpcmd(cfg.cmdsym())[item]), chan)
+                sendmsg("%s is currently playing: %s" % (usernick, test), chan)
 
-        elif cmd[0].lower() in cfg.lst_command_option():
-            print "Executing custom command"
-            custom_command(cmd[0].lower(), chan)
+    elif cmd[0].lower() == "npt":
+        try:
+            sendmsg("%s is currently playing; %s" % (usernick, lastfm.test_playing(cmd[1])), chan)
+        except IndexError:
+            sendmsg("Index derp", chan)
 
-        elif cmd[0].lower() in cfg.lst_rawcommand_option() and usernick in cfg.su():
-            print "Executing custom rawcommand"
-            custom_rawcommand(cmd, usernick, chan)
+    # Module: samba
+    elif cmd[0].lower() == "samba":
+        if len(cmd) > 1:
+            if cmd[1] == "logins":
+                sendmsg(samba.getlogins(cmd[2:]), chan)
+        else:
+            for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
+                sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
+
+    # Debug commands
+    elif cmd[0].lower() == "debug":
+        if len(cmd) >= 2 and cmd[1] == "logins":
+            dbg = samba.getlogins(cmd[2:])
+            debug("Passed variable of length:" + str(len(dbg)))
+            for itr in range(len(dbg)):
+                debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
+                debug(dbg[itr])
+
+    # Custom commands
+    elif cmd[0].lower() == "addcommand":
+        if ignored_nick("commands", usernick) is True:
+            sendmsg("%s:ಠ_ಠ" % usernick, chan)
+            return
+        if len(cmd) > 1:
+            arg = list()
+            for item in xrange(len(cmd)):
+                if item > 1:
+                    if item != "\n":
+                        arg.append(cmd[item])
+                        print "arg = %s" % arg
+            fstr = " ".join(str(x) for x in arg)
+            ret = add_custom_cmd(str(cmd[1]), fstr, usernick, chan)
+            sendmsg(ret, chan)
+
+    elif cmd[0].lower() == "removecommand":
+        if ignored_nick("commands", usernick) is True:
+            sendmsg("%s:ಠ_ಠ" % usernick, chan)
+            return
+        if len(cmd) > 1:
+            ret = del_custom_cmd(str(cmd[1]), usernick)
+            sendmsg(ret, chan)
+
+    elif cmd[0].lower() == "addrawcommand" and usernick.lower() == "bluabk":
+        if len(cmd) > 1:
+            arg = list()
+            for item in xrange(len(cmd)):
+                if item > 1:
+                    if item != "\n":
+                        arg.append(cmd[item])
+                        print "arg = %s" % arg
+            fstr = " ".join(str(x) for x in arg)
+            ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
+            sendmsg(ret, chan)
+
+    elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
+        if len(cmd) > 1:
+            ret = del_custom_rawcmd(str(cmd[1]), usernick)
+            sendmsg(ret, chan)
+
+    elif cmd[0].lower() == "listcustom":
+        string_list = ""
+        for item in cfg.lst_command():
+            string_list += (item[0] + " ")
+        for item in cfg.lst_rawcommand():
+            string_list += (item[0] + "* ")
+        sendmsg(string_list, chan)
+
+    # Module: Watch
+    elif cmd[0].lower() == "watch":
+        if len(cmd) > 1:
+            if cmd[1] == "enable":
+                watch_enabled = True
+                sendmsg("Watch notifications enabled.", chan)
+
+            elif cmd[1] == "disable":
+                watch_enabled = False
+                sendmsg("Watch notifications disabled.", chan)
+
+            elif cmd[1] == "limit":
+                print "watch: Setting watchlimit to %s" % cmd[2]
+                watch.set_notify_limit(cmd[2])
+                sendmsg("Watch notifications limit set to %s" % cmd[2], chan)
+        else:
+            for item in xrange(len(watch.helpcmd(cfg.cmdsym()))):
+                sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
+
+    # Module: Stats
+    elif cmd[0].lower() == "stats":
+        if len(cmd) > 1:
+            if cmd[1] == "cmd" or cmd[1] == "command":
+                if len(cmd) > 2:
+                    sendmsg(stats.get_cmd(cmd[2]), chan)
+                else:
+                    for item in stats.get_cmd_all():
+                        sendmsg("%s = %s" % (item[0], item[1]), chan)
+
+            elif cmd[1] == "user":
+                # TODO: Code user stats get command
+                sendmsg("Dummy function", chan)
+        else:
+            for item in xrange(len(stats.helpcmd(cfg.cmdsym()))):
+                sendmsg(str(stats.helpcmd(cfg.cmdsym())[item]), chan)
+
+    elif cmd[0].lower() in cfg.lst_command_option():
+        print "Executing custom command"
+        custom_command(cmd[0].lower(), chan)
+
+    elif cmd[0].lower() in cfg.lst_rawcommand_option() and usernick in cfg.su():
+        print "Executing custom rawcommand"
+        custom_rawcommand(cmd, usernick, chan)
 
 
 def triggers(usernick, msg, chan):
