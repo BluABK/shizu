@@ -767,6 +767,8 @@ def commands(usernick, msg, raw_in, chan):
                     sendmsg("%s is not currently playing anything" % cmd[1], chan)
                 elif test == "None":
                     sendmsg("No user named '%s' was found =/" % cmd[1], chan)
+                elif test == "timeout":
+                    sendmsg("Request timed out =/", chan)
                 else:
                     sendmsg("%s is currently playing: %s" % (cmd[1], test), chan)
             except IndexError:
@@ -776,6 +778,8 @@ def commands(usernick, msg, raw_in, chan):
                 elif test == "None":
                     sendmsg("%s: No user named '%s' was found =/ "
                             "You can set an alias with !lastfm set alias <lastfmuser>" % (usernick, test), chan)
+                elif test == "timeout":
+                    sendmsg("Request timed out =/", chan)
                 else:
                     sendmsg("%s is currently playing: %s" % (usernick, test), chan)
 

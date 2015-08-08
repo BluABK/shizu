@@ -120,7 +120,12 @@ def now_playing(user):
             print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
         print ('\033[94mlstfm.py: now_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % u)
-        return network.get_user(u).get_now_playing()
+        try:
+            return network.get_user(u).get_now_playing()
+        except IndexError:
+            print ('\033[94mlstfm.py: now_playing(): network.get_user(%s).get_now_playing()0:'
+                   ' Index out of range\033[0m' % u)
+            return "timeout"
     except pylast.WSError:
         print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
         return None
