@@ -529,9 +529,10 @@ def custom_rawcommand(cmd, usernick, chan):
 
 
 def version():
-    current = str(check_output("git show -s --format=%ci", shell=True))
-    current += " (" + str(check_output("git rev-parse --short HEAD", shell=True)) + ")"
-    return current
+    c_date = str(check_output("git show -s --format=%ci", shell=True))
+    c_hash_short = str(check_output("git rev-parse --short HEAD", shell=True))
+
+    return c_date + " (" + c_hash_short + ")"
 
 
 def commands(usernick, msg, raw_in, chan):
