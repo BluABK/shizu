@@ -6,6 +6,7 @@ import ConfigParser
 import os
 import re, cgi
 
+
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
