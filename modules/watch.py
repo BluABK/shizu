@@ -3,13 +3,25 @@ __author__ = 'BluABK'
 # Example: loops monitoring events forever.
 #
 import ConfigParser
-import pyinotify
 
+
+def module_exists(module_name):
+    try:
+        __import__(module_name)
+    except ImportError:
+        return False
+    else:
+        return True
+
+if module_exists("pyinotify") is True:
+    import pyinotify
+else:
+    print "IMPORT ERROR: Unable to import pyinotify, expect issues!"
 
 # Variables
-commandsavail_short = "" #"enable, disable stopwatch"
+commandsavail_short = ""  # "enable, disable stopwatch"
 commandsavail = "enable, disable, limit"
-#watchdir = cfg.watch()
+# watchdir = cfg.watch()
 files = list()
 files_erased = list()
 files_moved = list()
@@ -25,16 +37,16 @@ class Config:  # Mandatory Config class
         self.config.read('config.ini')
 
     def watch(self):
-        try:
-            dir_l = list()
-            dir_s = str(self.config.get('watch', 'dir'))
-            print "watch: " + str(self.config.get('watch', 'dir'))
-            for s in dir_s.split(" "):
-                    print "watch: Added path: " + s
-                    dir_l.append(s)
-            return dir_l
-        except:
-            print "Config not implemented"
+        # try:
+        dir_l = list()
+        dir_s = str(self.config.get('watch', 'dir'))
+        print "watch: " + str(self.config.get('watch', 'dir'))
+        for s in dir_s.split(" "):
+                print "watch: Added path: " + s
+                dir_l.append(s)
+        return dir_l
+        # except:
+        #    print "Config not implemented"
 
     def chan(self):
         return str(self.config.get('watch', 'chan'))
@@ -50,16 +62,16 @@ class Config:  # Mandatory Config class
 
     def notify_limit(self):
         return int(self.config.get('watch', 'limit'))
-
+    # TODO: May be static
     def set_notify_limit(self, i):
-            try:
-                config = Config.config
-                config.set('watch', 'limit', i)
-                with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
-                return "limit set"
-            except:
-                return "Unable to open configuration"
+            # try:
+            config = Config.config
+            config.set('watch', 'limit', i)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+            return "limit set"
+            # except:
+            #    return "Unable to open configuration"
 
 cfg = Config()
 
@@ -120,7 +132,7 @@ def get_erased():
 
 
 def get_moved():
-    #return files_moved_src, files_moved_dst
+    # return files_moved_src, files_moved_dst
     return files_moved
 
 
@@ -165,7 +177,7 @@ def set_notify_limit(i):
 
 
 def stop():
-#    asyncore.close_all()
+    # asyncore.close_all()
     notifier.stop()
 
 
@@ -193,25 +205,25 @@ mask = pyinotify.IN_CREATE | pyinotify.IN_DELETE
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         print "\033[94mwatch.py: New file: %s\033[0m" % event.name
-        #add(event.name, 'new')
+        # add(event.name, 'new')
         add(event.pathname)
 
     def process_IN_DELETE(self, event):
         print "\033[94mwatch.py: Erased file: %s\033[0m" % event.name
-        #add(event.name, 'del')
+        # add(event.name, 'del')
         erase(event.pathname)
 
     def process_IN_MOVED_TO(self, event):
         print "\033[94mwatch.py: Moved file: %s\033[0m --> %s\033[0m" % (event.src_pathname, event.pathname)
-        #add(event.name, 'del')
+        # add(event.name, 'del')
         move(event.src_pathname, event.pathname)
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()
 
 wdd = wm.add_watch(cfg.watch(), mask, rec=True, auto_add=True, do_glob=True)
-#wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
-#wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
-#wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
+# wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
+# wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
+# wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
 
-#asyncore.loop()
+# asyncore.loop()

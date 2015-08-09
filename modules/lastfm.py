@@ -1,10 +1,23 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
 # This module requires pylast to be installed https://github.com/pylast/pylast
-import pylast
 import ConfigParser
 import os
 import re, cgi
+
+
+def module_exists(module_name):
+    try:
+        __import__(module_name)
+    except ImportError:
+        return False
+    else:
+        return True
+
+if module_exists("pylast") is True:
+    import pylast
+else:
+    print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
 
 class Config:  # Shizu's config class
@@ -74,7 +87,7 @@ def test_playing(user):
     try:
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
-        print ('\033[94mlstfm.py: test_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % user)
+        print ('\033[94mlastfm.py: test_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % user)
         return "No user with that name was found"
 
 
@@ -118,17 +131,17 @@ def now_playing(user):
     try:
         u = cfg.test_alias(user)
         if u is None:
-            print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
+            print ('\033[94mlastfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
-        print ('\033[94mlstfm.py: now_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % u)
+        print ('\033[94mlastfm.py: now_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % u)
         try:
             return network.get_user(u).get_now_playing()
         except IndexError:
-            print ('\033[94mlstfm.py: now_playing(): network.get_user(%s).get_now_playing()0:'
+            print ('\033[94mlastfm.py: now_playing(): network.get_user(%s).get_now_playing()0:'
                    ' Index out of range\033[0m' % u)
             return "timeout"
     except pylast.WSError:
-        print ('\033[94mlstfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
+        print ('\033[94mlastfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
         return None
 
 
@@ -136,15 +149,15 @@ def recently_played(user, num):
     try:
         u = cfg.test_alias(user)
         if u is None:
-            print ('\033[94mlstfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
+            print ('\033[94mlastfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
             u = user
         rplist = network.get_user(u).get_recent_tracks(limit=num)
 #    except pylast.WSError.details == "Rate limit exceeded":
 #        return "Rate limit exceeded o0"
     except pylast.WSError:
-        #err = "No user with that name was found"
+        # err = "No user with that name was found"
         return None
-    print ('\033[94mlstfm.py: recently played list:')
+    print ('\033[94mlastfm.py: recently played list:')
     print format_basic(rplist)
     print('\033[0m')
     return format_basic(rplist)
@@ -173,7 +186,7 @@ def add_alias(nick, user):
     return cfg.add_alias(nick, user)
 
 
-#def del_alias(nick, user):
+# def del_alias(nick, user):
 
 
 def helpcmd(cmdsym):
