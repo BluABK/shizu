@@ -15,7 +15,7 @@ commandsavail = "search, update, locations, erase"
 
 # Classes
 
-class db:
+class Db:
     def __init__(self):
         print "dummy class"
 
@@ -34,8 +34,9 @@ cfg = Config()
 # Functions
 
 
-def help():
+def helpcmd(cmdsym):
     cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cfg.cmdsym())
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
+    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
+    # cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail_short)
+    cmdlist.append("Available subcommands: %s (* command contains sub-commands)" % commandsavail)
     return cmdlist
