@@ -3,7 +3,9 @@ __author__ = 'BluABK <abk@blucoders.net'
 # This module requires pylast to be installed https://github.com/pylast/pylast
 import ConfigParser
 import os
-import re, cgi
+import re
+import cgi
+import colours as clr
 
 
 def module_exists(module_name):
@@ -19,12 +21,15 @@ if module_exists("pylast") is True:
 else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
+my_name = os.path.basename(__file__)
+clr_default = ""
+
 
 class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "[modules/lastfm]:\t Initiating config..."
+        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
         self.config.read(os.getcwd() + '/' + "config.ini")
 
     def loadconfig(self):

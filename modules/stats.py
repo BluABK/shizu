@@ -4,10 +4,13 @@ __author__ = 'BluABK <abk@blucoders.net'
 
 # Imports
 import ConfigParser
+import os
+import colours as clr
 
 # Variables
+my_name = os.path.basename(__file__)
+clr_default = ""
 commandsavail = "user, command, dump"
-
 # Classes
 
 
@@ -15,7 +18,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "[modules/stats]:\t Initiating config..."
+        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
         self.config.read('config.ini')
 
 #    def loadconfig(self):

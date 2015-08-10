@@ -11,9 +11,12 @@ import os
 import re
 #from sys import exc_info
 from subprocess import check_output
+import os
+import colours as clr
 
 # Define variables
-
+my_name = os.path.basename(__file__)
+clr_default = ""
 commandsavail = "logins"
 
 regex = re.compile(" +")
@@ -23,7 +26,7 @@ class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "[modules/samba]:\t Initiating config..."
+        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
         self.config.read(os.getcwd() + '/' + "config.ini")
 
     def loadconfig(self):

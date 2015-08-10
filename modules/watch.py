@@ -3,6 +3,8 @@ __author__ = 'BluABK'
 # Example: loops monitoring events forever.
 #
 import ConfigParser
+import os
+import colours as clr
 
 
 def module_exists(module_name):
@@ -19,6 +21,8 @@ else:
     print "IMPORT ERROR: Unable to import pyinotify, expect issues!"
 
 # Variables
+my_name = os.path.basename(__file__)
+clr_default = ""
 commandsavail_short = ""  # "enable, disable stopwatch"
 commandsavail = "enable, disable, limit"
 # watchdir = cfg.watch()
@@ -34,7 +38,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "[modules/watch]:\t Initiating config..."
+        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
         self.config.read('config.ini')
 
     def watch(self):
