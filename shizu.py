@@ -20,6 +20,9 @@ from subprocess import *
 
 
 # Project-specific modules
+import colours as clr
+
+
 def module_exists(module_name):
     try:
         __import__(module_name)
@@ -52,7 +55,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "[shizu]:\t\t Initiating config..."
+        print "%s[shizu]%s:\t\t Initiating config..." % clr.yellow, clr.off
         self.default.read('config.ini')
 
     def server(self):
