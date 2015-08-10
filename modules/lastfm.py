@@ -22,7 +22,7 @@ else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
 my_name = os.path.basename(__file__)
-clr_default = ""
+clr_default = clr.red
 
 
 class Config:  # Shizu's config class

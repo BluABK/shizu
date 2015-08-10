@@ -22,7 +22,7 @@ else:
 
 # Variables
 my_name = os.path.basename(__file__)
-clr_default = ""
+clr_default = clr.blue
 commandsavail_short = ""  # "enable, disable stopwatch"
 commandsavail = "enable, disable, limit"
 # watchdir = cfg.watch()

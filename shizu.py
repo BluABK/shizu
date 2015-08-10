@@ -37,24 +37,24 @@ def module_exists(module_name):
 
 if module_exists("modules.samba") is True:
     import modules.samba as samba            # for server-side samba functionality
-    clr = clr_selection.popleft()
-    samba.clr_default = clr
-    clr_selection.append(clr)
+#    clr = clr_selection.popleft()
+#    samba.clr_default = clr
+#    clr_selection.append(clr)
 if module_exists("modules.lastfm") is True:
     import modules.lastfm as lastfm
-    clr = clr_selection.popleft()
-    lastfm.clr_default = clr
-    clr_selection.append(clr)
+#    clr = clr_selection.popleft()
+#    lastfm.clr_default = clr
+#    clr_selection.append(clr)
 if module_exists("modules.watch") is True:
     import modules.watch as watch
-    clr = clr_selection.popleft()
-    watch.clr_default = clr
-    clr_selection.append(clr)
+#    clr = clr_selection.popleft()
+#    watch.clr_default = clr
+#    clr_selection.append(clr)
 if module_exists("modules.stats") is True:
     import modules.stats as stats
-    clr = clr_selection.popleft()
-    stats.clr_default = clr
-    clr_selection.append(clr)
+#    clr = clr_selection.popleft()
+#    stats.clr_default = clr
+#    clr_selection.append(clr)
 
 # Global variables
 my_name = os.path.basename(__file__)

@@ -9,7 +9,7 @@ import colours as clr
 
 # Variables
 my_name = os.path.basename(__file__)
-clr_default = ""
+clr_default = clr.purple
 commandsavail = "user, command, dump"
 # Classes
 
