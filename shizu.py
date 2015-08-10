@@ -55,7 +55,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "%s[shizu]%s:\t\t Initiating config..." % clr.yellow, clr.off
+        print "%s[shizu]%s:\t\t Initiating config..." % (clr.yellow, clr.off)
         self.default.read('config.ini')
 
     def server(self):
