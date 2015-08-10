@@ -17,10 +17,12 @@ import ConfigParser
 from random import randint
 # from subprocess import check_output
 from subprocess import *
+from collections import deque
 
 
 # Project-specific modules
 import colours as clr
+clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
 
 def module_exists(module_name):
@@ -34,14 +36,28 @@ def module_exists(module_name):
 
 if module_exists("modules.samba") is True:
     import modules.samba as samba            # for server-side samba functionality
+    clr = clr_selection.popleft()
+    samba.clr_default = clr
+    clr_selection.append(clr)
 if module_exists("modules.lastfm") is True:
     import modules.lastfm as lastfm
+    clr = clr_selection.popleft()
+    lastfm.clr_default = clr
+    clr_selection.append(clr)
 if module_exists("modules.watch") is True:
     import modules.watch as watch
+    clr = clr_selection.popleft()
+    watch.clr_default = clr
+    clr_selection.append(clr)
 if module_exists("modules.stats") is True:
     import modules.stats as stats
+    clr = clr_selection.popleft()
+    stats.clr_default = clr
+    clr_selection.append(clr)
 
 # Global variables
+my_name = os.path.basename(__file__)
+clr_default = clr.yellow
 ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
@@ -55,7 +71,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "%s[shizu]%s:\t\t Initiating config..." % (clr.yellow, clr.off)
+        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
         self.default.read('config.ini')
 
     def server(self):
