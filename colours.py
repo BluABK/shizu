@@ -26,17 +26,17 @@ cfg = Config()
 # Functions
 
 # Reset
-off = '\e[0m'                           # Text Reset
+off = '\033[0m'                     # Text Reset
 
 # Regular Colors
-black = '\e[0;30m'                  # Black
-red = '\e[0;31m'                    # Red
-green = '\e[0;32m'                  # Green
-yellow = '\e[0;33m'                 # Yellow
-blue = '\e[0;34m'                   # Blue
-purple = '\e[0;35m'                 # Purple
-cyan = '\e[0;36m'                   # Cyan
-white = '\e[0;37m'                  # White
+black = '\033[30m'                  # Black
+red = '\033[31m'                    # Red
+green = '\033[32m'                  # Green
+yellow = '\033[33m'                 # Yellow
+blue = '\033[34m'                   # Blue
+purple = '\033[35m'                 # Purple
+cyan = '\033[36m'                   # Cyan
+white = '\033[37m'                  # White
 
 # Bold
 bold_black = '\e[1;30m'             # Black
@@ -69,14 +69,14 @@ bg_cyan = '\e[46m'                  # Cyan
 bg_white = '\e[47m'                 # White
 
 # High Intensity
-intense_black = '\e[0;90m'          # Black
-intense_red = '\e[0;91m'            # Red
-intense_green = '\e[0;92m'          # Green
-intense_yellow = '\e[0;93m'         # Yellow
-intense_blue = '\e[0;94m'           # Blue
-intense_purple = '\e[0;95m'         # Purple
-intense_cyan = '\e[0;96m'           # Cyan
-intense_white = '\e[0;97m'          # White
+intense_black = '\033[90m'          # Black
+intense_red = '\033[91m'            # Red
+intense_green = '\033[92m'          # Green
+intense_yellow = '\033[93m'         # Yellow
+intense_blue = '\033[94m'           # Blue
+intense_purple = '\033[95m'         # Purple
+intense_cyan = '\033[96m'           # Cyan
+intense_white = '\033[97m'          # White
 
 # Bold High Intensity
 intense_bold_black = '\e[1;90m'     # Black
@@ -89,14 +89,14 @@ intense_bold_cyan = '\e[1;96m'      # Cyan
 intense_bold_white = '\e[1;97m'     # White
 
 # High Intensity backgrounds
-intense_bg_black = '\e[0;100m'      # Black
-intense_bg_red = '\e[0;101m'        # Red
-intense_bg_green = '\e[0;102m'      # Green
-intense_bg_yellow = '\e[0;103m'     # Yellow
-intense_bg_blue = '\e[0;104m'       # Blue
-intense_bg_purple = '\e[0;105m'     # Purple
-intense_bg_cyan = '\e[0;106m'       # Cyan
-intense_bg_white = '\e[0;107m'      # White
+intense_bg_black = '\033[100m'      # Black
+intense_bg_red = '\033[101m'        # Red
+intense_bg_green = '\033[102m'      # Green
+intense_bg_yellow = '\033[103m'     # Yellow
+intense_bg_blue = '\033[104m'       # Blue
+intense_bg_purple = '\033[105m'     # Purple
+intense_bg_cyan = '\033[106m'       # Cyan
+intense_bg_white = '\033[107m'      # White
 
 
 def helpcmd(cmdsym):
