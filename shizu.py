@@ -10,6 +10,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
 # Import necessary modules
+import os
 import socket           # A rather *useful* network tool
 import time             # For time-based greeting functionality
 import re               # Regex for the win.
