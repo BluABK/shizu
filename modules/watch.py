@@ -34,6 +34,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
+        print "[modules/watch]:\t Initiating config..."
         self.config.read('config.ini')
 
     def watch(self):

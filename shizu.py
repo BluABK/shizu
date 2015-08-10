@@ -18,15 +18,27 @@ from random import randint
 # from subprocess import check_output
 from subprocess import *
 
+
 # Project-specific modules
-import modules.samba as samba            # for server-side samba functionality
-import modules.lastfm as lastfm
-import modules.watch as watch
-import modules.stats as stats
-# import db               # for server-side file search and lookup
+def module_exists(module_name):
+    try:
+        __import__(module_name)
+    except ImportError:
+        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
+        return False
+    else:
+        return True
+
+if module_exists("modules.samba") is True:
+    import modules.samba as samba            # for server-side samba functionality
+if module_exists("modules.lastfm") is True:
+    import modules.lastfm as lastfm
+if module_exists("modules.watch") is True:
+    import modules.watch as watch
+if module_exists("modules.stats") is True:
+    import modules.stats as stats
 
 # Global variables
-
 ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
@@ -40,6 +52,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
+        print "[shizu]:\t Initiating config..."
         self.default.read('config.ini')
 
     def server(self):

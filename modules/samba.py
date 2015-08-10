@@ -23,6 +23,7 @@ class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
+        print "[modules/samba]:\t Initiating config..."
         self.config.read(os.getcwd() + '/' + "config.ini")
 
     def loadconfig(self):
