@@ -38,27 +38,27 @@ def module_exists(module_name):
 if module_exists("modules.samba") is True:
     import modules.samba as samba            # for server-side samba functionality
 #    clr = clr_selection.popleft()
-#    samba.clr_default = clr
+#    samba.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.lastfm") is True:
     import modules.lastfm as lastfm
 #    clr = clr_selection.popleft()
-#    lastfm.clr_default = clr
+#    lastfm.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.watch") is True:
     import modules.watch as watch
 #    clr = clr_selection.popleft()
-#    watch.clr_default = clr
+#    watch.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.stats") is True:
     import modules.stats as stats
 #    clr = clr_selection.popleft()
-#    stats.clr_default = clr
+#    stats.my_colour = clr
 #    clr_selection.append(clr)
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
-clr_default = clr.yellow
+my_colour = clr.yellow
 ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
@@ -72,7 +72,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
+        print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.default.read('config.ini')
 
     def server(self):

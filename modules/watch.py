@@ -22,7 +22,7 @@ else:
 
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
-clr_default = clr.blue
+my_colour = clr.blue
 commandsavail_short = ""  # "enable, disable stopwatch"
 commandsavail = "enable, disable, limit"
 # watchdir = cfg.watch()
@@ -38,7 +38,7 @@ class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
-        print "%s[%s]%s:\t Initiating config..." % (clr_default, my_name, clr.off)
+        print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.config.read('config.ini')
 
     def watch(self):
