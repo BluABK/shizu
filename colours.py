@@ -1,30 +1,8 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
-# This is a module specification, which contains everything you need to get started on writing a module.
+# This is a colour palette for use in other scripts to make beautiful colourful prompts ~
 
-# Imports
-import ConfigParser
-import os
-
-# Variables
-my_name = os.path.basename(__file__)
 clr_default = ""
-commandsavail = "wishfulthinking, pipedreams, 42, imagination"
-
-# Classes
-
-
-class Config:  # Mandatory Config class
-    config = ConfigParser.RawConfigParser()
-
-    def __init__(self):
-        print "%s[%s]%s:\t Initiating config..." % (yellow, my_name, off)
-        self.config.read('config.ini')
-
-    def sample(self):
-        return str(self.config.get('sample', 'sampleitem'))
-
-cfg = Config()
 
 # Reset
 off = '\033[0m'                     # Text Reset
