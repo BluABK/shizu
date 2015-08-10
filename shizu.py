@@ -57,7 +57,7 @@ if module_exists("modules.stats") is True:
 #    clr_selection.append(clr)
 
 # Global variables
-my_name = os.path.basename(__file__).split('.', 1)
+my_name = os.path.basename(__file__).split('.', 1)[0]
 clr_default = clr.yellow
 ircbacklog = list()
 ircbacklog_in = list()
