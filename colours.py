@@ -76,10 +76,3 @@ intense_bg_blue = '\033[104m'       # Blue
 intense_bg_purple = '\033[105m'     # Purple
 intense_bg_cyan = '\033[106m'       # Cyan
 intense_bg_white = '\033[107m'      # White
-
-
-def helpcmd(cmdsym):
-    cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
-    return cmdlist
