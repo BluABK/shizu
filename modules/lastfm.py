@@ -21,7 +21,7 @@ if module_exists("pylast") is True:
 else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
-my_name = os.path.basename(__file__)
+my_name = os.path.basename(__file__).split('.', 1)[0]
 clr_default = clr.red
 
 

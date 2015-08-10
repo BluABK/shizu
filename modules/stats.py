@@ -8,7 +8,7 @@ import os
 import colours as clr
 
 # Variables
-my_name = os.path.basename(__file__)
+my_name = os.path.basename(__file__).split('.', 1)[0]
 clr_default = clr.purple
 commandsavail = "user, command, dump"
 # Classes

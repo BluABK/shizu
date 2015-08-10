@@ -15,7 +15,7 @@ import os
 import colours as clr
 
 # Define variables
-my_name = os.path.basename(__file__)
+my_name = os.path.basename(__file__).split('.', 1)[0]
 clr_default = clr.green
 commandsavail = "logins"
 
