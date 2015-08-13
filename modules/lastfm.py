@@ -143,7 +143,12 @@ def now_playing(user):
             u = user
 
         try:
-            return network.get_user(u).get_now_playing()
+            artist = network.get_user(u).get_now_playing().get_artist()
+            album = network.get_user(u).get_now_playing().get_album()
+            track = network.get_user(u).get_now_playing().get_title(properly_capitalized=True)
+            np = artist + " " + album + " " + track
+            return np
+            #return network.get_user(u).get_now_playing()
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
