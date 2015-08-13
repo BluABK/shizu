@@ -1874,7 +1874,7 @@ class Album(_Opus):
             'artist': artist, 'album': title}
 
     def get_the_sodding_name(self):
-        return _extract(self._request(
+        return _extract_all(self._request(
             self.ws_prefix + ".getInfo", cacheable=True), "album")
 
 
