@@ -147,6 +147,7 @@ def now_playing(user):
             base = network.get_user(u).get_now_playing()
             print "DEBUG: base = %s" % base
             print "DEBUG: %s" % str(base)
+            base = str(base)
             artist = base.split(' - ', 1)[0]
             title = base.split(' - ', 1)[1]
         #    album = network.get_album(artist, title)
