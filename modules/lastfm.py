@@ -148,22 +148,22 @@ def now_playing(user):
 
         try:
             # These are not the hacks you are looking for, move along
-            base = str(network.get_user(u).get_now_playing())
-            print "DEBUG: base = %s" % base
-            artist = base.split(' - ', 1)[0]
-            title = base.split(' - ', 1)[1]
-            album = network.get_album(artist, title).get_the_sodding_name()
-            print "DEBUG: album mayhaps: %s" % album
-            album = str(album)
-            print "DEBUG: album mayhaps: %s" % album
+            # base = str(network.get_user(u).get_now_playing())
+            # print "DEBUG: base = %s" % base
+            # artist = base.split(' - ', 1)[0]
+            # title = base.split(' - ', 1)[1]
+            # album = network.get_album(artist, title).get_the_sodding_name()
+            # print "DEBUG: album mayhaps: %s" % album
+            # album = str(album)
+            # print "DEBUG: album mayhaps: %s" % album
             # album = str(network.get_album(artist, title))
             # album = str(network.get_album(artist, title).get_url())
             # album = str(network.search_for_track(artist, title))
             # print "DEBUG album maybe: %s" % album
             # album = "THIS IS TOTALLY NOT A FILLER FOR TESTING PURPOSES OR ANYTHING, B-BAKA!"
-            np = artist + " - " + album + " - " + title
-            return np
-            #return network.get_user(u).get_now_playing()
+            # np = artist + " - " + album + " - " + title
+            # return np
+            return network.get_user(u).get_now_playing()
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
