@@ -144,14 +144,12 @@ def now_playing(user):
 
         try:
             # These are not the hacks you are looking for, move along
-            base = network.get_user(u).get_now_playing()
+            base = str(network.get_user(u).get_now_playing())
             print "DEBUG: base = %s" % base
-            print "DEBUG: %s" % str(base)
-            base = str(base)
             artist = base.split(' - ', 1)[0]
             title = base.split(' - ', 1)[1]
-        #    album = network.get_album(artist, title)
-            album = "THIS IS TOTALLY NOT A FILLER FOR TESTING PURPOSES OR ANYTHING, B-BAKA!"
+            album = str(network.get_album(artist, title))
+        #    album = "THIS IS TOTALLY NOT A FILLER FOR TESTING PURPOSES OR ANYTHING, B-BAKA!"
             np = artist + " - " + album + " - " + title
             return np
             # return network.get_user(u).get_now_playing()
