@@ -16,8 +16,11 @@ def module_exists(module_name):
     else:
         return True
 
-if module_exists("pylast") is True:
-    import pylast
+# if module_exists("pylast") is True:
+#    import pylast
+
+if module_exists("forklast") is True:
+    import forklast as pylast
 else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
@@ -144,18 +147,19 @@ def now_playing(user):
 
         try:
             # These are not the hacks you are looking for, move along
-            # base = str(network.get_user(u).get_now_playing())
-            # print "DEBUG: base = %s" % base
-            # artist = base.split(' - ', 1)[0]
-            # title = base.split(' - ', 1)[1]
+            base = str(network.get_user(u).get_now_playing())
+            print "DEBUG: base = %s" % base
+            artist = base.split(' - ', 1)[0]
+            title = base.split(' - ', 1)[1]
+            album = str(network.get_album(artist, title).get_the_sodding_name())
             # album = str(network.get_album(artist, title))
             # album = str(network.get_album(artist, title).get_url())
             # album = str(network.search_for_track(artist, title))
             # print "DEBUG album maybe: %s" % album
             # album = "THIS IS TOTALLY NOT A FILLER FOR TESTING PURPOSES OR ANYTHING, B-BAKA!"
-            # np = artist + " - " + album + " - " + title
-            # return np
-            return network.get_user(u).get_now_playing()
+            np = artist + " - " + album + " - " + title
+            return np
+            #return network.get_user(u).get_now_playing()
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
