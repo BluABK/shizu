@@ -1873,9 +1873,18 @@ class Album(_Opus):
             domain_name, self.ws_prefix) % {
             'artist': artist, 'album': title}
 
-    def get_the_sodding_name(self):
-        return _extract_all(self._request(
-            self.ws_prefix + ".getInfo", cacheable=True), "album")
+    def get_the_sodding_name(self, limit=None, cachable=True):
+        #return _extract_all(self._request(
+            #self.ws_prefix + ".getInfo", cacheable=True), "album")
+        params = self._get_params()
+        print params
+        #params['period'] = period
+        if limit:
+            params['limit'] = limit
+
+        doc = self._request(
+            self.ws_prefix + '.getTopAlbums', cacheable, params)
+        return doc
 
 
 class Artist(_BaseObject, _Taggable):
