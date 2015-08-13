@@ -149,7 +149,8 @@ def now_playing(user):
             artist = base.split(' - ', 1)[0]
             title = base.split(' - ', 1)[1]
             # album = str(network.get_album(artist, title))
-            album = str(network.get_album(artist, title).get_url())
+            # album = str(network.get_album(artist, title).get_url())
+            album = str(network.get_track(title, artist).get_album())
         #    album = "THIS IS TOTALLY NOT A FILLER FOR TESTING PURPOSES OR ANYTHING, B-BAKA!"
             np = artist + " - " + album + " - " + title
             return np
