@@ -152,6 +152,7 @@ def now_playing(user):
             artist = base.split(' - ', 1)[0]
             title = base.split(' - ', 1)[1]
             album = str(network.get_album(artist, title).get_the_sodding_name())
+            print "DEBUG: album mayhaps: " % album
             # album = str(network.get_album(artist, title))
             # album = str(network.get_album(artist, title).get_url())
             # album = str(network.search_for_track(artist, title))
