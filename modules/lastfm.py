@@ -166,7 +166,9 @@ def recently_played(user, num):
         # err = "No user with that name was found"
         return None
     print ('%s[%s\t now_playing()]%s: recently played list:' % (my_colour, my_name, clr.off))
-    print my_colour + format_basic(rplist) + clr.off
+    print my_colour
+    print format_basic(rplist)
+    print clr.off
     return format_basic(rplist)
 
 
