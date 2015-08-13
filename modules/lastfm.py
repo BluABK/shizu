@@ -5,6 +5,7 @@ import ConfigParser
 import os
 import re
 import cgi
+
 import colours as clr
 
 
@@ -19,8 +20,8 @@ def module_exists(module_name):
 # if module_exists("pylast") is True:
 #    import pylast
 
-if module_exists("forklast") is True:
-    import forklast as pylast
+if module_exists("modules.forklast") is True:
+    import modules.forklast as pylast
 else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
