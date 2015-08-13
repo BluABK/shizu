@@ -1873,7 +1873,7 @@ class Album(_Opus):
             domain_name, self.ws_prefix) % {
             'artist': artist, 'album': title}
 
-    def get_the_sodding_name(self, limit=None, cachable=True):
+    def get_the_sodding_name(self, limit=None, cacheable=True):
         #return _extract_all(self._request(
             #self.ws_prefix + ".getInfo", cacheable=True), "album")
         params = self._get_params()
