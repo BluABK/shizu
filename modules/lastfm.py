@@ -144,12 +144,16 @@ def now_playing(user):
 
         try:
             # These are not the hacks you are looking for, move along
-            artist = (network.get_user(u).get_now_playing()).split(' - ', 1)[0]
-            title = (network.get_user(u).get_now_playing()).split(' - ', 1)[1]
-            album = network.get_album(artist, title)
-            np = artist + " - " + album + " - " + title
-            return np
-            #return network.get_user(u).get_now_playing()
+            base = network.get_user(u).get_now_playing()
+            print "DEBUG: base = %s" % base
+            print "DEBUG: %s" % str(base)
+        #    artist = base.split(' - ', 1)[0]
+        #    title = base.split(' - ', 1)[1]
+        #    album = network.get_album(artist, title)
+        #    np = artist + " - " + album + " - " + title
+        #    return np
+            return "meh"
+            # return network.get_user(u).get_now_playing()
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
