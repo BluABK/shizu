@@ -144,8 +144,8 @@ def now_playing(user):
 
         try:
             # These are not the hacks you are looking for, move along
-            artist = network.get_artist((network.get_user(u).get_now_playing()).split(' - ', 1)[0])
-            title = network.get_artist((network.get_user(u).get_now_playing()).split(' - ', 1)[1])
+            artist = (network.get_user(u).get_now_playing()).split(' - ', 1)[0]
+            title = (network.get_user(u).get_now_playing()).split(' - ', 1)[1]
             album = network.get_album(artist, title)
             np = artist + " - " + album + " - " + title
             return np
