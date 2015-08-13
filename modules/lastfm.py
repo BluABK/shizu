@@ -143,10 +143,11 @@ def now_playing(user):
             u = user
 
         try:
-            artist = network.get_user(u).get_now_playing().get_artist()
-            album = network.get_user(u).get_now_playing().get_album()
-            track = network.get_user(u).get_now_playing().get_title(properly_capitalized=True)
-            np = artist + " - " + album + " - " + track
+            # These are not the hacks you are looking for, move along
+            artist = network.get_artist(network.get_user(u).get_now_playing().split(' - ', 1)[0])
+            title = network.get_artist(network.get_user(u).get_now_playing().split(' - ', 1)[1])
+            album = network.get_album(artist, title)
+            np = artist + " - " + album + " - " + title
             return np
             #return network.get_user(u).get_now_playing()
         except IndexError:
