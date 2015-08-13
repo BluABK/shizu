@@ -93,7 +93,8 @@ def test_playing(user):
     try:
         return network.get_user(user).get_now_playing()
     except pylast.WSError:
-        print ('\033[94mlastfm.py: test_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % user)
+        print ('%s[%s\t test_playing()]%s: network.get_user(%s).get_now_playing(): No such user' %
+               (my_colour, my_name, clr.off, user))
         return "No user with that name was found"
 
 
@@ -137,17 +138,17 @@ def now_playing(user):
     try:
         u = cfg.test_alias(user)
         if u is None:
-            print ('\033[94mlastfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
+            print ('%s[%s\t now_playing()]%s: No local alias found for %s, trying online database' %
+                   (my_colour, my_name, clr.off, user))
             u = user
-        print ('\033[94mlastfm.py: now_playing(): network.get_user(%s).get_now_playing(): 404\033[0m' % u)
+
         try:
             return network.get_user(u).get_now_playing()
         except IndexError:
-            print ('\033[94mlastfm.py: now_playing(): network.get_user(%s).get_now_playing()0:'
-                   ' Index out of range\033[0m' % u)
+            print ('%s[%s\t now_playing()]%s: Index out of range for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
     except pylast.WSError:
-        print ('\033[94mlastfm.py: network.get_user(%s).get_now_playing(): DERP\033[0m')
+        print ('%s[%s\t now_playing()]%s: User %s DERPED' % (my_colour, my_name, clr.off, user))
         return None
 
 
@@ -155,7 +156,8 @@ def recently_played(user, num):
     try:
         u = cfg.test_alias(user)
         if u is None:
-            print ('\033[94mlastfm.py: now_playing(): User Alias was None, Using argument \'%s\' instead\033[0m' % user)
+            print ('%s[%s\t now_playing()]%s: User Alias was None, Using argument \'%s\' instead' %
+                   (my_colour, my_name, clr.off, user))
             u = user
         rplist = network.get_user(u).get_recent_tracks(limit=num)
 #    except pylast.WSError.details == "Rate limit exceeded":
@@ -163,9 +165,8 @@ def recently_played(user, num):
     except pylast.WSError:
         # err = "No user with that name was found"
         return None
-    print ('\033[94mlastfm.py: recently played list:')
-    print format_basic(rplist)
-    print('\033[0m')
+    print ('%s[%s\t now_playing()]%s: recently played list:' % (my_colour, my_name, clr.off))
+    print my_colour + format_basic(rplist) + clr.off
     return format_basic(rplist)
 
 
