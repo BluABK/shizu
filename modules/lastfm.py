@@ -146,7 +146,7 @@ def now_playing(user):
             artist = network.get_user(u).get_now_playing().get_artist()
             album = network.get_user(u).get_now_playing().get_album()
             track = network.get_user(u).get_now_playing().get_title(properly_capitalized=True)
-            np = artist + " " + album + " " + track
+            np = artist + " - " + album + " - " + track
             return np
             #return network.get_user(u).get_now_playing()
         except IndexError:
