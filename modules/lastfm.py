@@ -17,11 +17,11 @@ def module_exists(module_name):
     else:
         return True
 
-# if module_exists("pylast") is True:
-#    import pylast
+if module_exists("pylast") is True:
+   import pylast
 
-if module_exists("modules.forklast") is True:
-    import modules.forklast as pylast
+# if module_exists("modules.forklast") is True:
+#    import modules.forklast as pylast
 else:
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
