@@ -80,16 +80,11 @@ def getplaying():
         if not len(line):
             continue
 
-        tmpline = regex.split(line)
+        #tmpline = regex.split(line)
+        tmpline = re.split(r'\s{2,}', line)
         splitline = list()
-
+        print tmpline
         # pos = 0
-        for test in tmpline:
-            if not ' ' in test:
-                print test
-                splitline.append(test)
-                # splitline.insert(pos, test)
-                # pos += 1
 
     print splitline
 
