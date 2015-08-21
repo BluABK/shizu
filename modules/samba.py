@@ -120,7 +120,7 @@ def getplaying():
             tmp_playback = playback
 
     artist = re.split(r'\s{2,}: ',
-                      check_output("mediainfo %s | grep Performer | tail -n1" % tmp_playback.get_path(), shell=True))
+                      check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(), shell=True))
     title = ""
 
     return artist
