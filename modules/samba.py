@@ -66,7 +66,7 @@ class SambaUser:
 
 
 def getplaying():
-    tmp = check_output("sudo smbstatus -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
+    tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
     handles = tmp.splitlines()
     print handles
     li = list()
@@ -74,6 +74,27 @@ def getplaying():
 
     # Sort significant parts
     li_srt = list()
+
+    for index, line in enumerate(handles):
+        # throw out empty lines
+        if not len(line):
+            continue
+
+        tmpline = regex.split(line)
+        splitline = list()
+
+        # pos = 0
+        for test in tmpline:
+            if not ' ' in test:
+                print test
+                splitline.append(test)
+                # splitline.insert(pos, test)
+                # pos += 1
+
+    print splitline
+
+    return playing
+
     for line in handles:
         tmp = line.split('            ')
         tmp[1].split('   Fri')
