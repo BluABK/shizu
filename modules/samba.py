@@ -107,14 +107,17 @@ def getplaying():
 
         # li.append(path)
         # li.append(date)
-        li.append(Playback(path, date))
+        new_playback = Playback(path)
+        new_playback.set_stringdate(date)
+        li.append(new_playback)
         # Ignore junk data
 
     tmp_playback = Playback()
     for playback in li:
         print playback.get_date()
-        print "SKILLEVEGG"
+        print "==========="
         print tmp_playback.get_date()
+        print "END"
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
 
