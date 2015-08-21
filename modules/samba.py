@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Load smbstatus' BATCHes into separate command
@@ -120,10 +122,26 @@ def getplaying():
             tmp_playback = playback
 
     artist = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(), shell=True))
-    title = ""
+                      check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    title = re.split(r'\s{2,}: ',
+                      check_output("mediainfo \"%s\" | grep \"Track name\" | tail -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    album = re.split(r'\s{2,}: ',
+                      check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    codec = re.split(r'\s{2,}: ',
+                      check_output("mediainfo \"%s\" | grep Audio | tail -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    bitrate = re.split(r'\s{2,}: ',
+                      check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    sep = " - "
+    fancy_start = "『"
+    fancy_end = "』"
+    np_format = artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end
+    return np_format
 
-    return artist
 
 def getlogins(msg):
     global cfg
@@ -167,7 +185,7 @@ def getlogins(msg):
                                                      sambausers[item].host))
     except:
         loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
-    #        loginlist.append("Exception:")
+    # loginlist.append("Exception:")
     #        for err in xrange(len(exc_info())):
     #            loginlist.append(exc_info()[err])
     #        raise
