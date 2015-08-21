@@ -68,6 +68,7 @@ class SambaUser:
 def getplaying():
     tmp = check_output("sudo smbstatus -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
     handles = tmp.splitlines()
+    print handles
     li = list()
     playing = "Definitely undefined ~"
 
