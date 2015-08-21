@@ -121,25 +121,20 @@ def get_playing():
                                    shell=True))[-1].strip('\n')
     title = re.split(r'\s{2,}: ',
                      check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
-                                  shell=True))[-1]
+                                  shell=True))[-1].strip('\n')
     album = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
+                                   shell=True))[-1].strip('\n')
     codec = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
+                                   shell=True))[-1].strip('\n')
     bitdepth = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
+                                   shell=True))[-1].strip('\n')
     bitrate = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
-    print artist
-    print title
-    print album
-    print codec
-    print bitrate
-    print bitdepth
+                                   shell=True))[-1].strip('\n')
+
     sep = " - "
     fancy_start = "["  # u'\u300E'  # u"\u300E"  # "『"
     fancy_end = "]"  # u'\u300F'  # "』"
