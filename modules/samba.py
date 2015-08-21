@@ -86,8 +86,8 @@ def getplaying():
     print handles
 
     # Remove junk from tail
-    for i in range(0, len(handles), 1):
-        for line in handles[i].split('            '):
+    # for i in range(0, len(handles), 1):
+    #    for line in handles[i].split('            '):
 
     return playing
 
