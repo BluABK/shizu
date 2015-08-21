@@ -81,10 +81,13 @@ def getplaying():
             continue
 
         #tmpline = regex.split(line)
-        tmpline = re.split(r'\s{2,}', line)
+        tmpline = re.split(r'\s{4,}', line)
         splitline = list()
+        # Add neglected trailing slash
+        # tmpline[6] += "/"
+        # Ignore junk data
+
         print tmpline
-        # pos = 0
 
     print splitline
 
