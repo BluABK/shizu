@@ -66,7 +66,30 @@ class SambaUser:
 
 
 def getplaying():
-    return True
+    tmp = check_output("sudo smbstatus -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
+    handles = tmp.splitlines()
+    playing = list()
+
+    for index, line in enumerate(handles):
+        # throw out empty lines
+        if not len(line):
+            continue
+
+        tmpline = regex.split(line)
+        splitline = list()
+
+        for test in tmpline:
+            if not ' ' in test:
+                print test
+                splitline.append(test)
+
+        if len(splitline) < 4:
+            # TODO investigate
+            print "splitline had wrong length: %s" % str(len(splitline))
+        else:
+            playing.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+
+    return playing
 
 
 def getlogins(msg):
