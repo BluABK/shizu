@@ -118,7 +118,7 @@ def get_playing():
 
     artist = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
+                                   shell=True))[-1].strip('\n')
     title = re.split(r'\s{2,}: ',
                      check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
                                   shell=True))[-1]
