@@ -12,6 +12,7 @@ import re
 #from sys import exc_info
 from subprocess import check_output
 import os
+import time
 import colours as clr
 
 # Define variables
@@ -65,6 +66,27 @@ class SambaUser:
             return self.playing
 
 
+class Playback:
+    path = "nowhere"
+    date = "sometime"
+
+    def __init__(self, path, date):
+        self.path = path
+        self.date = time.strptime(str(date), '%a %b %d %H:%M:%S %Y')
+
+    def set_path(self, new_path):
+        self.path = new_path
+
+    def get_path(self):
+        return self.path
+
+    def set_date(self, new_date):
+        self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
+
+    def get_date(self):
+        return self.date
+
+
 def getplaying():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
     handles = tmp.splitlines()
@@ -72,19 +94,13 @@ def getplaying():
     li = list()
     playing = "Definitely undefined ~"
 
-    # Sort significant parts
-    li_srt = list()
-
     for index, line in enumerate(handles):
         # throw out empty lines
         if not len(line):
             continue
 
-        #tmpline = regex.split(line)
         tmpline = re.split(r'\s{2,}', line)
         splitline = list()
-        # Add neglected trailing slash
-        # tmpline[6] += "/"
 
         date = tmpline[-1]
         path = tmpline[-3] + "/" + tmpline[-2]
@@ -92,82 +108,22 @@ def getplaying():
         print "nyaa"
         print date
         print path
+        # li.append(path)
+        # li.append(date)
+        li.append(Playback(path, date))
         # Ignore junk data
 
-        print tmpline
-
-    print splitline
-
-    return playing
-
-    for line in handles:
-        tmp = line.split('            ')
-        tmp[1].split('   Fri')
-
-        head = tmp[0]
-        path = tmp[1][0]
-        date = tmp[1][1]
-
-        tmp2 = list()
-        tmp2.append(head)
-        tmp2.append(path)
-        tmp2.append(date)
-
-        li_srt.append(tmp2)
-
-    print li_srt
-
-    #for i in range(0, len(handles), 1):
-        # for line in handles[i].split('            ')
-        # handles[line] = str(handles[i])
-        #handles[line] = handles[line].split('            ')
-        #handles[line] = handles[i].split('   Man')
-        #handles[line] = handles[i].split('   Tue')
-        #handles[line] = handles[i].split('   Wed')
-        #handles[line] = handles[i].split('   Thu')
-        #handles[line] = handles[i].split('   Fri')
-        #handles[line] = handles[i].split('   Sat')
-        #handles[line] = handles[i].split('   Sun')
-
-    # print handles
-
-    # Remove junk from tail
-    # for i in range(0, len(handles), 1):
-    #    for line in handles[i].split('            '):
+    for playback in li:
+        print Playback
 
     return playing
 
-    for index, line in enumerate(handles):
-        # throw out empty lines
-        if not len(line):
-            continue
+    plays = list()
+    for i in xrange(len(li)):
+        plays.append(Playback(li[i][0], li[i][1]))
+        # time.strptime(str(li[0]), '%a %b %d %H:%M:%S %Y')
 
-        tmpline = regex.split(line)
-        splitline = list()
-
-        pos = 0
-        for test in tmpline:
-            if not ' ' in test:
-                print test
-                splitline.insert(pos, test)
-                pos += 1
-
-        if len(splitline) < 4:
-            # TODO investigate
-            print "splitline had wrong length: %s" % str(len(splitline))
-        else:
-            # playing.insert(index, splitline[0], splitline[1], splitline[3])
-            for i in range(5, len(splitline), 1):
-                li.insert(index, splitline[i])
-
-    # for item in li:
-    #    print
-    print "---"
-    for l in range(0, len(li), 1):
-        print "==="
-        print li[l]
-
-    return playing
+    # for tmp_date in
 
 
 def getlogins(msg):
