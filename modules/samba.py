@@ -17,7 +17,7 @@ import colours as clr
 # Define variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.green
-commandsavail = "logins"
+commandsavail = "logins np"
 
 regex = re.compile(" +")
 
