@@ -95,7 +95,9 @@ def getplaying():
     # for item in li:
     #    print
     print "---"
-    print li
+    for l in len(li):
+        print "==="
+        print li[l]
 
     return playing
 
