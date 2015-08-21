@@ -68,7 +68,8 @@ class SambaUser:
 def getplaying():
     tmp = check_output("sudo smbstatus -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
     handles = tmp.splitlines()
-    playing = list()
+    li = list()
+    playing = "Definitely undefined ~"
 
     for index, line in enumerate(handles):
         # throw out empty lines
@@ -79,7 +80,7 @@ def getplaying():
         splitline = list()
 
         for test in tmpline:
-            if not ' \t' in test:
+            if not ' ' in test:
                 print test
                 splitline.append(test)
 
@@ -87,7 +88,14 @@ def getplaying():
             # TODO investigate
             print "splitline had wrong length: %s" % str(len(splitline))
         else:
-            playing.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+            # playing.insert(index, splitline[0], splitline[1], splitline[3])
+            for i in range(5, len(splitline), 1):
+                li.insert(index, splitline[i])
+
+    # for item in li:
+    #    print
+    print "---"
+    print li
 
     return playing
 
