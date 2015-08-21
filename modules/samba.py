@@ -76,8 +76,18 @@ def getplaying():
     li_srt = list()
     for line in handles:
         tmp = line.split('            ')
+        tmp[1].split('   Fri')
 
-        li_srt.append(tmp)
+        head = tmp[0]
+        path = tmp[1][0]
+        date = tmp[1][1]
+
+        tmp2 = list()
+        tmp2.append(head)
+        tmp2.append(path)
+        tmp2.append(date)
+
+        li_srt.append(tmp2)
 
     print li_srt
 
@@ -93,7 +103,7 @@ def getplaying():
         #handles[line] = handles[i].split('   Sat')
         #handles[line] = handles[i].split('   Sun')
 
-    print handles
+    # print handles
 
     # Remove junk from tail
     # for i in range(0, len(handles), 1):
