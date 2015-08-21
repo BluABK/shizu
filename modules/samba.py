@@ -72,6 +72,11 @@ def getplaying():
     li = list()
     playing = "Definitely undefined ~"
 
+    for entry in regex.split('            '):
+        print entry
+
+    return playing
+
     for index, line in enumerate(handles):
         # throw out empty lines
         if not len(line):
