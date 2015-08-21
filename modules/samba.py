@@ -79,7 +79,7 @@ def getplaying():
         splitline = list()
 
         for test in tmpline:
-            if not ' ' in test:
+            if not ' \t' in test:
                 print test
                 splitline.append(test)
 
