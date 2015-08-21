@@ -125,8 +125,8 @@ def getplaying():
                       check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
     title = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep \"Track name\" | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1]
+                     check_output("mediainfo \"%s\" | grep \"Track name\" | tail -n1" % tmp_playback.get_path(),
+                                  shell=True))[-1]
     album = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
@@ -140,7 +140,7 @@ def getplaying():
     fancy_start = "『"
     fancy_end = "』"
     np_format = artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end
-    return np_format
+    return str(np_format)
 
 
 def getlogins(msg):
