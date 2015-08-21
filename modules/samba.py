@@ -116,13 +116,10 @@ def getplaying():
 
     tmp_playback = Playback()
     for playback in li:
-        print playback
-        print playback.get_date()
-        print playback.get_path()
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
 
-    print tmp_playback
+    print tmp_playback.get_path()
 
     return playing
 
