@@ -136,6 +136,7 @@ def get_playing():
                                    shell=True))[-1].strip('\n')
 
     np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
+
     return np_format
 
 
