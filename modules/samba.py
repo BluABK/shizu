@@ -120,13 +120,16 @@ def get_playing():
                       check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
     title = re.split(r'\s{2,}: ',
-                     check_output("mediainfo \"%s\" | grep \"Track name\" | tail -n1" % tmp_playback.get_path(),
+                     check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
                                   shell=True))[-1]
     album = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
     codec = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Audio | tail -n1" % tmp_playback.get_path(),
+                      check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
+                                   shell=True))[-1]
+    bitdepth = re.split(r'\s{2,}: ',
+                      check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
     bitrate = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
@@ -136,10 +139,11 @@ def get_playing():
     print album
     print codec
     print bitrate
+    print bitdepth
     sep = " - "
     fancy_start = "["  # u'\u300E'  # u"\u300E"  # "『"
     fancy_end = "]"  # u'\u300F'  # "』"
-    np_format = str(artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end)
+    np_format = str(artist + sep + album + sep + title + "[" + bitrate + " " + codec + " (" + bitdepth + ")" "]")
     return np_format
 
 
