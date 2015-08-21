@@ -9,7 +9,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 import ConfigParser
 import os
 import re
-#from sys import exc_info
+# from sys import exc_info
 from subprocess import check_output
 import os
 import datetime
@@ -45,6 +45,7 @@ class Config:  # Shizu's config class
 
     def excludepaths(self):
         return str(self.config.get('samba', 'exclude-paths'))
+
 
 cfg = Config()
 
@@ -89,7 +90,8 @@ class Playback:
 
 
 def getplaying():
-    tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
+    tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
+                       shell=True)
     handles = tmp.splitlines()
     li = list()
     playing = "Definitely undefined ~"
@@ -114,28 +116,18 @@ def getplaying():
 
     tmp_playback = Playback()
     for playback in li:
-        print playback.get_date()
-        print "==========="
-        print tmp_playback.get_date()
-        print "END"
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
 
-    print tmp_playback.get_path()
+    artist = re.split(r'\s{2,}: ',
+                      check_output("mediainfo %s | grep Performer | tail -n1" % tmp_playback.get_path(), shell=True))
+    title = ""
 
-    return playing
-
-    plays = list()
-    for i in xrange(len(li)):
-        plays.append(Playback(li[i][0], li[i][1]))
-        # time.strptime(str(li[0]), '%a %b %d %H:%M:%S %Y')
-
-    # for tmp_date in
-
+    return artist
 
 def getlogins(msg):
     global cfg
-    #TODO: cfg.loadconfig seems to have no effect according to PyCharm o0
+    # TODO: cfg.loadconfig seems to have no effect according to PyCharm o0
     cfg.loadconfig
     loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
     loginhandles = loginhandlesraw.splitlines()
@@ -170,15 +162,15 @@ def getlogins(msg):
         loginlist.append("[ID]        user@host")
         for item in xrange(len(sambausers)):
             if not len(msg) or sambausers[item].name in msg:
-                #if excluded user
+                # if excluded user
                 loginlist.append("[ID: %s] %s@%s" % (sambausers[item].pid.zfill(5), sambausers[item].name,
                                                      sambausers[item].host))
     except:
         loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
-#        loginlist.append("Exception:")
-#        for err in xrange(len(exc_info())):
-#            loginlist.append(exc_info()[err])
-#        raise
+    #        loginlist.append("Exception:")
+    #        for err in xrange(len(exc_info())):
+    #            loginlist.append(exc_info()[err])
+    #        raise
     return loginlist
 
 
