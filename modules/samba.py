@@ -70,7 +70,7 @@ class SambaUser:
 class Playback:
     def __init__(self, path="", date=time.gmtime(0)):
         self.path = path
-        self.date = time.strptime(str(date), '%a %b %d %H:%M:%S %Y')
+        self.date = date
 
     def set_path(self, new_path):
         self.path = new_path
@@ -79,10 +79,13 @@ class Playback:
         return self.path
 
     def set_date(self, new_date):
-        self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
+        self.date = new_date
 
     def get_date(self):
         return self.date
+
+    def set_stringdate(self, new_date):
+        self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
 
 
 def getplaying():
