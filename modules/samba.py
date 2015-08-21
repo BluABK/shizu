@@ -12,6 +12,7 @@ import re
 #from sys import exc_info
 from subprocess import check_output
 import os
+import datetime
 import time
 import colours as clr
 
@@ -67,15 +68,9 @@ class SambaUser:
 
 
 class Playback:
-    path = "nowhere"
-    date = "sometime"
-
-    def __init__(self, path, date):
+    def __init__(self, path="", date=time.gmtime(0)):
         self.path = path
         self.date = time.strptime(str(date), '%a %b %d %H:%M:%S %Y')
-
-    def __init__(self):
-        self.date = 0
 
     def set_path(self, new_path):
         self.path = new_path
