@@ -131,6 +131,11 @@ def get_playing():
     bitrate = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
+    print artist
+    print title
+    print album
+    print codec
+    print bitrate
     sep = " - "
     fancy_start = "["  # u'\u300E'  # u"\u300E"  # "『"
     fancy_end = "]"  # u'\u300F'  # "』"
