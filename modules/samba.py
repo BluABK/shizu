@@ -137,7 +137,7 @@ def getplaying():
                       check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1]
     sep = " - "
-    fancy_start = "『".encode("utf-8")  # u"\u300E"  # "『"
+    fancy_start = unicode("『", "utf-8")  # u"\u300E"  # "『"
     fancy_end = u"\u300F"  # "』"
     np_format = artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end
     return str(np_format)
