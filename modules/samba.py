@@ -73,16 +73,25 @@ def getplaying():
     playing = "Definitely undefined ~"
 
     # Sort significant parts
-    for i in range(0, len(handles), 1):
-        handles[i] = str(handles[i])
-        handles[i] = handles[i].split('            ')
-        handles[i] = handles[i].split('   Man')
-        handles[i] = handles[i].split('   Tue')
-        handles[i] = handles[i].split('   Wed')
-        handles[i] = handles[i].split('   Thu')
-        handles[i] = handles[i].split('   Fri')
-        handles[i] = handles[i].split('   Sat')
-        handles[i] = handles[i].split('   Sun')
+    li_srt = list()
+    for line in handles:
+        tmp = line.split('            ')
+
+        li_srt.append(tmp)
+
+    print li_srt
+
+    #for i in range(0, len(handles), 1):
+        # for line in handles[i].split('            ')
+        # handles[line] = str(handles[i])
+        #handles[line] = handles[line].split('            ')
+        #handles[line] = handles[i].split('   Man')
+        #handles[line] = handles[i].split('   Tue')
+        #handles[line] = handles[i].split('   Wed')
+        #handles[line] = handles[i].split('   Thu')
+        #handles[line] = handles[i].split('   Fri')
+        #handles[line] = handles[i].split('   Sat')
+        #handles[line] = handles[i].split('   Sun')
 
     print handles
 
