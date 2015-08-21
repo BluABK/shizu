@@ -79,10 +79,12 @@ def getplaying():
         tmpline = regex.split(line)
         splitline = list()
 
+        pos = 0
         for test in tmpline:
             if not ' ' in test:
                 print test
-                splitline.append(test)
+                splitline.insert(pos, test)
+                pos += 1
 
         if len(splitline) < 4:
             # TODO investigate
