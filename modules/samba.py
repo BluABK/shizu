@@ -138,7 +138,6 @@ def get_playing():
     sep = " - "
     fancy_start = "["  # u'\u300E'  # u"\u300E"  # "『"
     fancy_end = "]"  # u'\u300F'  # "』"
-    #np_format = str(artist + sep + album + sep + title + " [" + bitrate + " " + codec + " (" + bitdepth + ")" + "]")
     np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
     return np_format
 
