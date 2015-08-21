@@ -91,30 +91,25 @@ class Playback:
         self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
 
 
-def getplaying():
+def get_playing():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
                        shell=True)
     handles = tmp.splitlines()
-    li = list()
-    playing = "Definitely undefined ~"
 
+    li = list()
     for index, line in enumerate(handles):
         # throw out empty lines
         if not len(line):
             continue
 
         tmpline = re.split(r'\s{2,}', line)
-        splitline = list()
 
         date = tmpline[-1]
         path = tmpline[-3] + "/" + tmpline[-2]
 
-        # li.append(path)
-        # li.append(date)
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
         li.append(new_playback)
-        # Ignore junk data
 
     tmp_playback = Playback()
     for playback in li:
