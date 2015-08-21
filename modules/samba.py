@@ -74,6 +74,9 @@ class Playback:
         self.path = path
         self.date = time.strptime(str(date), '%a %b %d %H:%M:%S %Y')
 
+    def __init__(self):
+        self.date = 0
+
     def set_path(self, new_path):
         self.path = new_path
 
@@ -113,10 +116,15 @@ def getplaying():
         li.append(Playback(path, date))
         # Ignore junk data
 
+    tmp_playback = Playback()
     for playback in li:
         print playback
-        #print Playback.get_date()
-        #print Playback.get_path()
+        print playback.get_date()
+        print playback.get_path()
+        if playback.get_date() > tmp_playback.get_date():
+            tmp_playback = playback
+
+    print tmp_playback
 
     return playing
 
