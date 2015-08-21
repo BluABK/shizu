@@ -71,9 +71,9 @@ def getplaying():
     print handles
     li = list()
     playing = "Definitely undefined ~"
-
-    for entry in regex.split('            '):
-        print entry
+    for i in range(0, len(handles), 1):
+        for line in handles[i].split('            '):
+            print line
 
     return playing
 
