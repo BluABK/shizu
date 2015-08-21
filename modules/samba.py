@@ -74,6 +74,7 @@ def getplaying():
 
     # Sort significant parts
     for i in range(0, len(handles), 1):
+        handles[i] = str(handles[i])
         handles[i] = handles[i].split('            ')
         handles[i] = handles[i].split('   Man')
         handles[i] = handles[i].split('   Tue')
