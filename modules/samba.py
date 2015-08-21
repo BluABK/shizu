@@ -112,6 +112,9 @@ def getplaying():
 
     tmp_playback = Playback()
     for playback in li:
+        print playback.get_date()
+        print "SKILLEVEGG"
+        print tmp_playback.get_date()
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
 
