@@ -114,7 +114,9 @@ def getplaying():
         # Ignore junk data
 
     for playback in li:
-        print Playback
+        print playback
+        #print Playback.get_date()
+        #print Playback.get_path()
 
     return playing
 
