@@ -91,7 +91,6 @@ class Playback:
 def getplaying():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png", shell=True)
     handles = tmp.splitlines()
-    print handles
     li = list()
     playing = "Definitely undefined ~"
 
@@ -106,9 +105,6 @@ def getplaying():
         date = tmpline[-1]
         path = tmpline[-3] + "/" + tmpline[-2]
 
-        print "nyaa"
-        print date
-        print path
         # li.append(path)
         # li.append(date)
         li.append(Playback(path, date))
