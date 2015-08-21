@@ -102,10 +102,10 @@ def get_playing():
         if not len(line):
             continue
 
-        tmpline = re.split(r'\s{2,}', line)
+        tmp_line = re.split(r'\s{2,}', line)
 
-        date = tmpline[-1]
-        path = tmpline[-3] + "/" + tmpline[-2]
+        date = tmp_line[-1]
+        path = tmp_line[-3] + "/" + tmp_line[-2]
 
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
@@ -134,7 +134,7 @@ def get_playing():
     sep = " - "
     fancy_start = "["  # u'\u300E'  # u"\u300E"  # "『"
     fancy_end = "]"  # u'\u300F'  # "』"
-    np_format = artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end
+    np_format = str(artist + sep + album + sep + title + fancy_start + bitrate + " " + codec + fancy_end)
     return np_format
 
 
