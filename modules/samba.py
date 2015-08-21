@@ -71,9 +71,23 @@ def getplaying():
     print handles
     li = list()
     playing = "Definitely undefined ~"
+
+    # Sort significant parts
+    for i in range(0, len(handles), 1):
+        handles[i] = handles[i].split('            ')
+        handles[i] = handles[i].split('   Man')
+        handles[i] = handles[i].split('   Tue')
+        handles[i] = handles[i].split('   Wed')
+        handles[i] = handles[i].split('   Thu')
+        handles[i] = handles[i].split('   Fri')
+        handles[i] = handles[i].split('   Sat')
+        handles[i] = handles[i].split('   Sun')
+
+    print handles
+
+    # Remove junk from tail
     for i in range(0, len(handles), 1):
         for line in handles[i].split('            '):
-            print line
 
     return playing
 
