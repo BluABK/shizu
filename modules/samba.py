@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import subprocess
+
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Load smbstatus' BATCHes into separate command
@@ -115,27 +117,30 @@ def get_playing():
     for playback in li:
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
-
-    artist = re.split(r'\s{2,}: ',
+    try:
+        artist = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1].strip('\n')
-    title = re.split(r'\s{2,}: ',
+        title = re.split(r'\s{2,}: ',
                      check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
                                   shell=True))[-1].strip('\n')
-    album = re.split(r'\s{2,}: ',
+        album = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1].strip('\n')
-    codec = re.split(r'\s{2,}: ',
+        codec = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
                                    shell=True))[-1].strip('\n')
-    bitdepth = re.split(r'\s{2,}: ',
+        bitdepth = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
                                    shell=True))[-1].strip('\n')
-    bitrate = re.split(r'\s{2,}: ',
+        bitrate = re.split(r'\s{2,}: ',
                       check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
                                    shell=True))[-1].strip('\n')
 
-    np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
+        np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
+
+    except subprocess.CalledProcessError:
+        np_format = "Shell execute failed =/"
 
     return np_format
 
