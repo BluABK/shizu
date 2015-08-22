@@ -139,7 +139,8 @@ def get_playing():
 
         np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
 
-    except subprocess.CalledProcessError:
+    #except subprocess.CalledProcessError:
+    except:
         np_format = "Shell execute failed =/"
 
     return np_format
