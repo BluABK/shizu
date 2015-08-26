@@ -118,6 +118,8 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
+        print check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+                                   shell=True)
         artist_li = re.split(r'\s{2,}: ',
                      check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
                                    shell=True).strip('\n'))
