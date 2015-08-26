@@ -127,6 +127,8 @@ def get_playing():
         if "Performer" in artist_li:
             artist = artist_li[artist_li.index("Performer")+1]
             print artist
+        else:
+            artist ="Null, son!"
     else:
         print "Nullified"
     title = re.split(r'\s{2,}: ',
