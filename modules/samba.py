@@ -118,15 +118,17 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
-        print check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+        tmp_string = check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
                                    shell=True)
-        artist_li = re.split(r'\s{2,}: ',
-                     check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                   shell=True).strip('\n'))
-        if "Performer" in artist_li:
-            artist = artist_li[artist_li.index("Performer")+1]
-            print artist
-
+        if tmp_string is not None:
+            artist_li = re.split(r'\s{2,}: ',
+                         check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+                                       shell=True).strip('\n'))
+            if "Performer" in artist_li:
+                artist = artist_li[artist_li.index("Performer")+1]
+                print artist
+        else:
+            print "Nullified"
         title = re.split(r'\s{2,}: ',
                      check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
                                   shell=True))[-1].strip('\n')
