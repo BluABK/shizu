@@ -117,39 +117,39 @@ def get_playing():
     for playback in li:
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
-    try:
-        tmp_string = check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                   shell=True)
-        if tmp_string is not None:
-            artist_li = re.split(r'\s{2,}: ',
-                         check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                       shell=True).strip('\n'))
-            if "Performer" in artist_li:
-                artist = artist_li[artist_li.index("Performer")+1]
-                print artist
-        else:
-            print "Nullified"
-        title = re.split(r'\s{2,}: ',
-                     check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
-                                  shell=True))[-1].strip('\n')
-        album = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        codec = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        bitdepth = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        bitrate = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
+    #try:
+    tmp_string = check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+                               shell=True)
+    if tmp_string is not None:
+        artist_li = re.split(r'\s{2,}: ',
+                     check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
+                                   shell=True).strip('\n'))
+        if "Performer" in artist_li:
+            artist = artist_li[artist_li.index("Performer")+1]
+            print artist
+    else:
+        print "Nullified"
+    title = re.split(r'\s{2,}: ',
+                 check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
+                              shell=True))[-1].strip('\n')
+    album = re.split(r'\s{2,}: ',
+                  check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
+                               shell=True))[-1].strip('\n')
+    codec = re.split(r'\s{2,}: ',
+                  check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
+                               shell=True))[-1].strip('\n')
+    bitdepth = re.split(r'\s{2,}: ',
+                  check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
+                               shell=True))[-1].strip('\n')
+    bitrate = re.split(r'\s{2,}: ',
+                  check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
+                               shell=True))[-1].strip('\n')
 
-        np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
+    np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
 
     #except subprocess.CalledProcessError:
-    except:
-        np_format = "Shell execute failed =/"
+    #except:
+    #    np_format = "Shell execute failed =/"
 
     return np_format
 
