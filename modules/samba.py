@@ -94,7 +94,7 @@ class Playback:
 
 
 def format_mediainfo(playback, criteria, args):
-    shellex = check_output("mediainfo \"%s\" | grep %s | %s" % (playback.get_path(), criteria, args),
+    shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
                            shell=True).strip('\n')
     if shellex is not None:
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
