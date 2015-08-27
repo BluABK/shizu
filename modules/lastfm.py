@@ -205,9 +205,12 @@ def artist_bio(name):
         data = "Ouch, attribute error. Did you try something nasty?"
         return data
     except pylast.WSError as e:
-        data = e.message
+        derp = list()
+        derp.append("Oh noes, an exception!\n" + str(e.message))
+        for a in e.args:
+            derp.append(str(a) + ", ")
         # data = "There was an error or some shit, happy now SpyTec? (Translation: General Error)"
-        return data
+        return derp
     data = strip_html(data).encode('utf-8')
     try:
         data = strip_biojunk(data)

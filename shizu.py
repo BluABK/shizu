@@ -761,7 +761,13 @@ def commands(usernick, msg, chan, ircsock):
         if len(cmd) > 1:
             if cmd[1] == "bio":
                 if len(cmd) > 2:
-                    sendmsg(str(lastfm.artist_bio(cmd[2])), chan, ircsock)
+                    feedback = lastfm.artist_bio(cmd[2])
+                    if isinstance(feedback, str):
+                        sendmsg(str(feedback), chan, ircsock)
+                    # elif isinstance(feedback, list):
+                    else:
+                        for i in feedback:
+                            sendmsg(str(i), chan, ircsock)
             elif cmd[1] == "self-test":
                 if len(cmd) > 2:
                     for i in lastfm.test_connection():
