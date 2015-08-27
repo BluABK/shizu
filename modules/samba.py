@@ -164,6 +164,7 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     #try:
+    print tmp_playback.get_path()
     format_dict= {}
     format_dict = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Track name", "head -n1", format_dict)
