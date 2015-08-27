@@ -858,6 +858,11 @@ def commands(usernick, msg, chan, ircsock):
                     sendmsg(samba.get_playing(), chan, ircsock)
                 else:
                     sendmsg("%s: Get your own damn service, leech!" % usernick, chan, ircsock)
+            elif cmd[1] == "np2":
+                if usernick.lower() == "bluabk":
+                    sendmsg(samba.get_playing2(), chan, ircsock)
+                else:
+                    sendmsg("%s: Get your own damn service, leech!" % usernick, chan, ircsock)
         else:
             for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
                 sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan, ircsock)
