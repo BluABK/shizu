@@ -93,18 +93,36 @@ class Playback:
         self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
 
 
-def format_mediainfo(playback, criteria, args):
+def format_mediainfo(playback, criteria, args, format_list):
     shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
                            shell=True).strip('\n')
     if shellex is not None:
         print shellex
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
         if criteria in li:
-            return li[li.index(criteria) + 1]
+            format_list[criteria] = li[li.index(criteria) + 1]
+            return format_list
         else:
             return "<Criteria Mismatch>"
     else:
         return None
+
+
+def format_np(li):
+    output = ""
+    for key, value in li.iteritems():
+        if key == "Album/Performer": output += "%s ft " % value
+        # elif key == "Performer": output += "%s - " % value
+        elif key == "ISBN": output += "[%s] " % value
+        elif key == "Track name": output += "%s " % value
+        elif key == "Bit rate": output += "<%s " % value
+        elif key == "Format": output += "%s " % value
+        elif key == "Bit depth": output += "(%s)>" % value
+        else:
+            output += "%s - " % value
+        print output
+
+    return output
 
 
 def get_playing():
@@ -132,32 +150,19 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
-        artist = format_mediainfo(tmp_playback, "Performer", "tail -n1")
-        title = format_mediainfo(tmp_playback, "Track name", "head -n1")
-        album = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1")
-        album_artist = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1")
-        isbn = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1")
-        codec = format_mediainfo(tmp_playback, "Format", "head -n1")
-        bit_depth = format_mediainfo(tmp_playback, "Bit depth", "head -n1")
-        bit_rate = format_mediainfo(tmp_playback, "Bit rate", "tail -n1")
+        format_li = []
+        format_li = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Track name", "head -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Format", "head -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_li)
+        format_li = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_li)
 
-        if album_artist is not None:
-            if isbn is not None:
-                np_format = "%s ft. %s - %s [%s] - %s [%s %s (%s)]" % (
-                    album_artist, artist, album, isbn, title, bit_rate, codec,
-                    bit_depth)
-            else:
-                np_format = "%s ft. %s - %s - %s [%s %s (%s)]" % (album_artist, artist, album, title, bit_rate, codec,
-                                                                  bit_depth)
-        else:
-            if isbn is not None:
-                np_format = "%s - %s [%s] - %s [%s %s (%s)]" % (artist, album, isbn, title, bit_rate, codec, bit_depth)
-            else:
-                np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
+        return format_np(format_li)
     except:
-        np_format = "Shell execute failed =/"
-
-    return np_format
+        return "Shell execute failed =/"
 
 
 def get_logins(msg):
