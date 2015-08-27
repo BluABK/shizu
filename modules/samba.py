@@ -99,7 +99,7 @@ def format_mediainfo(playback, criteria, args):
     if shellex is not None:
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
         if criteria in li:
-            return li[li.index("Performer") + 1]
+            return li[li.index(criteria) + 1]
         else:
             return "Null, son!"
     else:
