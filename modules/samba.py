@@ -111,16 +111,6 @@ def format_mediainfo(playback, criteria, args, format_list):
 
 def format_np(format_dict):
     output = ""
-    #for key, value in format_dict.iteritems():
-    #    if key == "Album/Performer": output += "%s ft " % value
-        # elif key == "Performer": output += "%s - " % value
-    #    elif key == "ISBN": output += "[%s] " % value
-    #    elif key == "Track name": output += "%s " % value
-    #    elif key == "Bit rate": output += "<%s " % value
-    #    elif key == "Format": output += "%s " % value
-    #    elif key == "Bit depth": output += "(%s)>" % value
-    #    else:
-    #        output += "%s - " % value
 
     if "Album/Performer" in format_dict:
         output += "%s ft " % format_dict["Album/Performer"]
@@ -151,6 +141,7 @@ def format_np(format_dict):
 def get_playing():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
                        shell=True)
+    print tmp
     handles = tmp.splitlines()
 
     li = list()
