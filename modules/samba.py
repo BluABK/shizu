@@ -93,6 +93,19 @@ class Playback:
         self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
 
 
+def format_mediainfo(playback, criteria, args):
+    shellex = check_output("mediainfo \"%s\" | grep %s | %s" % (playback.get_path(), criteria, args),
+                           shell=True).strip('\n')
+    if shellex is not None:
+        li = re.split(r'\s{2,}: ', shellex.strip('\n'))
+        if criteria in li:
+            return li[li.index("Performer") + 1]
+        else:
+            return "Null, son!"
+    else:
+        return "Nullified"
+
+
 def get_playing():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
                        shell=True)
@@ -118,91 +131,67 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
-        tmp_string = check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                   shell=True)
-        if tmp_string is not None:
-            artist_li = re.split(r'\s{2,}: ',
-                         check_output("mediainfo \"%s\" | grep Performer | tail -n1" % tmp_playback.get_path(),
-                                       shell=True).strip('\n'))
-            if "Performer" in artist_li:
-                artist = artist_li[artist_li.index("Performer")+1]
-                print artist
-            else:
-                artist ="Null, son!"
-        else:
-            print "Nullified"
-        title = re.split(r'\s{2,}: ',
-                     check_output("mediainfo \"%s\" | grep \"Track name\" | head -n1" % tmp_playback.get_path(),
-                                  shell=True))[-1].strip('\n')
-        album = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Album | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        codec = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep Format | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        bitdepth = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep \"Bit depth\" | head -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
-        bitrate = re.split(r'\s{2,}: ',
-                      check_output("mediainfo \"%s\" | grep \"Bit rate\" | tail -n1" % tmp_playback.get_path(),
-                                   shell=True))[-1].strip('\n')
+        artist = format_mediainfo(tmp_playback,     "Performer",    "tail -n1")
+        title = format_mediainfo(tmp_playback,      "Track name",   "head -n1")
+        album = format_mediainfo(tmp_playback,      "Album",        "tail -n1")
+        codec = format_mediainfo(tmp_playback,      "Format",       "head -n1")
+        bit_depth = format_mediainfo(tmp_playback,  "Bit depth",    "head -n1")
+        bit_rate = format_mediainfo(tmp_playback,   "Bit rate",     "tail -n1")
 
-        np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bitrate, codec, bitdepth)
-
-    #except subprocess.CalledProcessError:
+        np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
     except:
         np_format = "Shell execute failed =/"
 
     return np_format
 
 
-def getlogins(msg):
+def get_logins(msg):
     global cfg
     # TODO: cfg.loadconfig seems to have no effect according to PyCharm o0
     cfg.loadconfig
-    loginhandlesraw = check_output(cfg.rawlogins(), shell=True)
-    loginhandles = loginhandlesraw.splitlines()
-    sambausers = list()
+    login_handles_raw = check_output(cfg.rawlogins(), shell=True)
+    login_handles = login_handles_raw.splitlines()
+    samba_users = list()
 
-    for index, line in enumerate(loginhandles):
+    for index, line in enumerate(login_handles):
         # throw out empty lines
         if not len(line):
             continue
 
-        tmpline = regex.split(line)
-        splitline = list()
+        tmp_line = regex.split(line)
+        split_line = list()
 
-        for test in tmpline:
+        for test in tmp_line:
             if not ' ' in test:
-                splitline.append(test)
+                split_line.append(test)
 
-        if len(splitline) < 4:
+        if len(split_line) < 4:
             # TODO investigate
-            print "samba/getlogins: splitline has not enough items, are you root?"
+            print "samba/getlogins: split_line has not enough items, are you root?"
         else:
-            sambausers.insert(index, SambaUser(splitline[0], splitline[1], splitline[3]))
+            samba_users.insert(index, SambaUser(split_line[0], split_line[1], split_line[3]))
 
-    loginlist = list()
+    login_list = list()
 
     longestname = 0
     try:
-        for item in xrange(len(sambausers)):
-            if not len(msg) or sambausers[item].name in msg:
-                if len(sambausers[item].name) > longestname:
-                    longestname = len(sambausers[item].name)
-        loginlist.append("[ID]        user@host")
-        for item in xrange(len(sambausers)):
-            if not len(msg) or sambausers[item].name in msg:
+        for item in xrange(len(samba_users)):
+            if not len(msg) or samba_users[item].name in msg:
+                if len(samba_users[item].name) > longestname:
+                    longestname = len(samba_users[item].name)
+        login_list.append("[ID]        user@host")
+        for item in xrange(len(samba_users)):
+            if not len(msg) or samba_users[item].name in msg:
                 # if excluded user
-                loginlist.append("[ID: %s] %s@%s" % (sambausers[item].pid.zfill(5), sambausers[item].name,
-                                                     sambausers[item].host))
+                login_list.append("[ID: %s] %s@%s" % (samba_users[item].pid.zfill(5), samba_users[item].name,
+                                                     samba_users[item].host))
     except:
-        loginlist.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
-    # loginlist.append("Exception:")
+        login_list.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
+    # login_list.append("Exception:")
     #        for err in xrange(len(exc_info())):
-    #            loginlist.append(exc_info()[err])
+    #            login_list.append(exc_info()[err])
     #        raise
-    return loginlist
+    return login_list
 
 
 def helpcmd(cmdsym):

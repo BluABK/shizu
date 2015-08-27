@@ -852,7 +852,7 @@ def commands(usernick, msg, chan, ircsock):
     elif cmd[0].lower() == "samba":
         if len(cmd) > 1:
             if cmd[1] == "logins":
-                sendmsg(samba.getlogins(cmd[2:]), chan, ircsock)
+                sendmsg(samba.get_logins(cmd[2:]), chan, ircsock)
             elif cmd[1] == "np":
                 if usernick.lower() == "bluabk":
                     sendmsg(samba.get_playing(), chan, ircsock)
@@ -865,7 +865,7 @@ def commands(usernick, msg, chan, ircsock):
     # Debug commands
     elif cmd[0].lower() == "debug":
         if len(cmd) >= 2 and cmd[1] == "logins":
-            dbg = samba.getlogins(cmd[2:])
+            dbg = samba.get_logins(cmd[2:])
             debug("Passed variable of length:" + str(len(dbg)), ircsock)
             for itr in range(len(dbg)):
                 debug("Iteration: %s/%s" % (str(itr), str(len(dbg))), ircsock)
