@@ -762,6 +762,10 @@ def commands(usernick, msg, chan, ircsock):
             if cmd[1] == "bio":
                 if len(cmd) > 2:
                     sendmsg(str(lastfm.artist_bio(cmd[2])), chan, ircsock)
+            elif cmd[1] == "self-test":
+                if len(cmd) > 2:
+                    for i in lastfm.test_connection():
+                        sendmsg(i, chan, ircsock)
             elif cmd[1] == "set":
                 if len(cmd) > 2:
                     if cmd[2] == "alias":

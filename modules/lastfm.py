@@ -88,9 +88,15 @@ class Config:  # Shizu's config class
 
 cfg = Config()
 commandsavail_short = "np, npt"
-commandsavail = "imaginary, recent*"
+commandsavail = "imaginary, recent*, bio, self-test"
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
+
+
+def test_connection():
+    # debug = list()
+    # debug.append(network.get_user())
+    return network.get_authenticated_user()
 
 
 def test_playing(user):
@@ -198,8 +204,9 @@ def artist_bio(name):
     except AttributeError:
         data = "Ouch, attribute error. Did you try something nasty?"
         return data
-    except pylast.WSError:
-        data = "There was an error or some shit, happy now SpyTec? (Translation: General Error)"
+    except pylast.WSError as e:
+        data = e.message
+        # data = "There was an error or some shit, happy now SpyTec? (Translation: General Error)"
         return data
     data = strip_html(data).encode('utf-8')
     try:
