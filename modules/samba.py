@@ -135,7 +135,7 @@ def format_np(format_dict):
     if "Track name" in format_dict:
         output += " - %s" % format_dict["Track name"]
     # Format metadata
-    output += "<"
+    output += " <"
     if "Bit rate" in format_dict:
         output += "%s" % format_dict["Bit rate"]
     if "Format" in format_dict:
