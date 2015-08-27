@@ -102,6 +102,9 @@ class FileLock:
     def get_amount(self):
         return len(self.locks)
 
+    def get_lock(self, id):
+        return self.locks[id]
+
 
 def format_mediainfo(playback, criteria, args, format_list):
     shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
@@ -151,7 +154,7 @@ def format_np(format_dict):
 def get_playing2():
     locks = FileLock()
     print "==============="
-    print locks
+    print locks.get_lock(0)
     print "==============="
     locks__num = locks.get_amount()
     return str(locks__num)
