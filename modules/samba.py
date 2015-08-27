@@ -101,9 +101,9 @@ def format_mediainfo(playback, criteria, args):
         if criteria in li:
             return li[li.index(criteria) + 1]
         else:
-            return "Null, son!"
+            return "<Criteria Mismatch>"
     else:
-        return "Nullified"
+        return None
 
 
 def get_playing():
@@ -131,14 +131,19 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
-        artist = format_mediainfo(tmp_playback,     "Performer",    "tail -n1")
-        title = format_mediainfo(tmp_playback,      "Track name",   "head -n1")
-        album = format_mediainfo(tmp_playback,      "Album",        "tail -n1")
-        codec = format_mediainfo(tmp_playback,      "Format",       "head -n1")
-        bit_depth = format_mediainfo(tmp_playback,  "Bit depth",    "head -n1")
-        bit_rate = format_mediainfo(tmp_playback,   "Bit rate",     "tail -n1")
+        artist = format_mediainfo(tmp_playback,         "Performer",        "tail -n1")
+        title = format_mediainfo(tmp_playback,          "Track name",       "head -n1")
+        album = format_mediainfo(tmp_playback,          "Album ",           "tail -n1")
+        album_artist = format_mediainfo(tmp_playback,   "Album/Performer",  "tail -n1")
+        codec = format_mediainfo(tmp_playback,          "Format",           "head -n1")
+        bit_depth = format_mediainfo(tmp_playback,      "Bit depth",        "head -n1")
+        bit_rate = format_mediainfo(tmp_playback,       "Bit rate",         "tail -n1")
 
-        np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
+        if album_artist is not None:
+            np_format = "%s ft. %s - %s - %s [%s %s (%s)]" % (album_artist, artist, album, title, bit_rate, codec,
+                                                              bit_depth)
+        else:
+            np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
     except:
         np_format = "Shell execute failed =/"
 
