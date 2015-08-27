@@ -154,7 +154,7 @@ def format_np(format_dict):
 def get_playing2():
     locks = FileLock()
     print "==============="
-    for i in locks.get_amount():
+    for i in xrange(locks.get_amount()):
         print locks.get_lock(i)
     print "==============="
     locks__num = locks.get_amount()
