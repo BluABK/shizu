@@ -108,9 +108,9 @@ def format_mediainfo(playback, criteria, args, format_list):
         return None
 
 
-def format_np(li):
+def format_np(format_dict):
     output = ""
-    for key, value in li.iteritems():
+    for key, value in format_dict.iteritems():
         if key == "Album/Performer": output += "%s ft " % value
         # elif key == "Performer": output += "%s - " % value
         elif key == "ISBN": output += "[%s] " % value
@@ -150,17 +150,17 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     #try:
-    format_li = []
-    format_li = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Track name", "head -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Format", "head -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_li)
-    format_li = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_li)
+    format_dict= {}
+    format_dict = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Track name", "head -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Format", "head -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_dict)
+    format_dict = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_dict)
 
-    return format_np(format_li)
+    return format_np(format_dict)
     #except:
     return "Shell execute failed =/"
 
