@@ -149,9 +149,8 @@ def get_playing():
         # throw out empty lines
         if not len(line):
             continue
-
         tmp_line = re.split(r'\s{2,}', line)
-
+        print tmp_line
         date = tmp_line[-1]
         path = tmp_line[-3] + "/" + tmp_line[-2]
 
