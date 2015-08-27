@@ -132,19 +132,28 @@ def get_playing():
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
     try:
-        artist = format_mediainfo(tmp_playback,         "Performer",        "tail -n1")
-        title = format_mediainfo(tmp_playback,          "Track name",       "head -n1")
-        album = format_mediainfo(tmp_playback,          "Album",           "grep -v \"Album/Performer\" | tail -n1")
-        album_artist = format_mediainfo(tmp_playback,   "Album/Performer",  "tail -n1")
-        codec = format_mediainfo(tmp_playback,          "Format",           "head -n1")
-        bit_depth = format_mediainfo(tmp_playback,      "Bit depth",        "head -n1")
-        bit_rate = format_mediainfo(tmp_playback,       "Bit rate",         "tail -n1")
+        artist = format_mediainfo(tmp_playback, "Performer", "tail -n1")
+        title = format_mediainfo(tmp_playback, "Track name", "head -n1")
+        album = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1")
+        album_artist = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1")
+        isbn = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1")
+        codec = format_mediainfo(tmp_playback, "Format", "head -n1")
+        bit_depth = format_mediainfo(tmp_playback, "Bit depth", "head -n1")
+        bit_rate = format_mediainfo(tmp_playback, "Bit rate", "tail -n1")
 
         if album_artist is not None:
-            np_format = "%s ft. %s - %s - %s [%s %s (%s)]" % (album_artist, artist, album, title, bit_rate, codec,
-                                                              bit_depth)
+            if isbn is not None:
+                np_format = "%s ft. %s - %s [%s] - %s [%s %s (%s)]" % (
+                    album_artist, artist, album, isbn, title, bit_rate, codec,
+                    bit_depth)
+            else:
+                np_format = "%s ft. %s - %s - %s [%s %s (%s)]" % (album_artist, artist, album, title, bit_rate, codec,
+                                                                  bit_depth)
         else:
-            np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
+            if isbn is not None:
+                np_format = "%s - %s [%s] - %s [%s %s (%s)]" % (artist, album, isbn, title, bit_rate, codec, bit_depth)
+            else:
+                np_format = "%s - %s - %s [%s %s (%s)]" % (artist, album, title, bit_rate, codec, bit_depth)
     except:
         np_format = "Shell execute failed =/"
 
@@ -190,7 +199,7 @@ def get_logins(msg):
             if not len(msg) or samba_users[item].name in msg:
                 # if excluded user
                 login_list.append("[ID: %s] %s@%s" % (samba_users[item].pid.zfill(5), samba_users[item].name,
-                                                     samba_users[item].host))
+                                                      samba_users[item].host))
     except:
         login_list.append("Ouch, some sort of unexpected exception occurred, have fun devs!")
     # login_list.append("Exception:")
