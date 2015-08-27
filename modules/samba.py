@@ -97,6 +97,7 @@ def format_mediainfo(playback, criteria, args):
     shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
                            shell=True).strip('\n')
     if shellex is not None:
+        print shellex
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
         if criteria in li:
             return li[li.index(criteria) + 1]
@@ -133,7 +134,7 @@ def get_playing():
     try:
         artist = format_mediainfo(tmp_playback,         "Performer",        "tail -n1")
         title = format_mediainfo(tmp_playback,          "Track name",       "head -n1")
-        album = format_mediainfo(tmp_playback,          "Album ",           "grep -v \"Album/Performer\"| tail -n1")
+        album = format_mediainfo(tmp_playback,          "Album",           "grep -v \"Album/Performer\" | tail -n1")
         album_artist = format_mediainfo(tmp_playback,   "Album/Performer",  "tail -n1")
         codec = format_mediainfo(tmp_playback,          "Format",           "head -n1")
         bit_depth = format_mediainfo(tmp_playback,      "Bit depth",        "head -n1")
