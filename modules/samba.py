@@ -148,7 +148,8 @@ def format_np(format_dict):
 
 
 def get_playing2():
-    locks__num = FileLock.get_amount()
+    locks = FileLock()
+    locks__num = locks.get_amount()
     return str(locks__num)
 
 
