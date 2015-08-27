@@ -149,20 +149,20 @@ def get_playing():
     for playback in li:
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
-    try:
-        format_li = []
-        format_li = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Track name", "head -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Format", "head -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_li)
-        format_li = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_li)
+    #try:
+    format_li = []
+    format_li = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Track name", "head -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Format", "head -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_li)
+    format_li = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_li)
 
-        return format_np(format_li)
-    except:
-        return "Shell execute failed =/"
+    return format_np(format_li)
+    #except:
+    return "Shell execute failed =/"
 
 
 def get_logins(msg):
