@@ -133,7 +133,7 @@ def get_playing():
     try:
         artist = format_mediainfo(tmp_playback,         "Performer",        "tail -n1")
         title = format_mediainfo(tmp_playback,          "Track name",       "head -n1")
-        album = format_mediainfo(tmp_playback,          "Album ",           "tail -n1")
+        album = format_mediainfo(tmp_playback,          "Album ",           "grep -v \"Album/Performer\"| tail -n1")
         album_artist = format_mediainfo(tmp_playback,   "Album/Performer",  "tail -n1")
         codec = format_mediainfo(tmp_playback,          "Format",           "head -n1")
         bit_depth = format_mediainfo(tmp_playback,      "Bit depth",        "head -n1")
