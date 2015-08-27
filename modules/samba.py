@@ -96,7 +96,8 @@ class Playback:
 class FileLock:
     def __init__(self):
         self.dump = check_output("sudo smbstatus -L -d 11", shell=True)
-        self.locks = self.dump.split("parse_share_modes:")
+        # self.locks = self.dump.split(r'parse_share_modes:')
+        self.locks = self.dump.splitlines()
 
     def get_amount(self):
         return len(self.locks)
