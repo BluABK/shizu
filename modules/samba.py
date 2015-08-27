@@ -132,7 +132,9 @@ def format_np(format_dict):
     else:
         output += "No Artist"
     if "Album" in format_dict:
-        output += "- %s" % format_dict["Album"]
+        output += " - %s" % format_dict["Album"]
+    else:
+        output += " - No Album"
     if "ISBN" in format_dict:
         output += " [%s]" % format_dict["ISBN"]
     if "Track name" in format_dict:
