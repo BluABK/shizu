@@ -93,6 +93,15 @@ class Playback:
         self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
 
 
+class FileLock:
+    def __init__(self):
+        self.dump = check_output("sudo smbstatus -L -d 11")
+        self.locks = self.dump.split("parse_share_modes:")
+
+    def get_amount(self):
+        return len(self.locks)
+
+
 def format_mediainfo(playback, criteria, args, format_list):
     shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
                            shell=True).strip('\n')
@@ -138,6 +147,11 @@ def format_np(format_dict):
     return output
 
 
+def get_playing2():
+    locks__num = FileLock.get_amount()
+    print str(locks__num)
+
+
 def get_playing():
     tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
                        shell=True)
@@ -152,6 +166,7 @@ def get_playing():
         tmp_line = re.split(r'\s{2,}', line)
         print tmp_line
         date = tmp_line[-1]
+
         path = tmp_line[-3] + "/" + tmp_line[-2]
 
         new_playback = Playback(path)
