@@ -206,7 +206,10 @@ def artist_bio(name):
         return data
     except pylast.WSError as e:
         derp = list()
-        derp.append("Oh noes, an exception!\n" + str(e.message))
+        derp.append("Oh noes, an exception!")
+        derp.append(str(e.message))
+        derp.append(str(e.details))
+        derp.append(str(e.status))
         for a in e.args:
             derp.append(str(a) + ", ")
         # data = "There was an error or some shit, happy now SpyTec? (Translation: General Error)"
