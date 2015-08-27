@@ -103,7 +103,7 @@ def format_mediainfo(playback, criteria, args, format_list):
             format_list[criteria] = li[li.index(criteria) + 1]
             return format_list
         else:
-            return "<Criteria Mismatch>"
+            return format_list
     else:
         return None
 
