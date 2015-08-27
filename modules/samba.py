@@ -101,6 +101,7 @@ def format_mediainfo(playback, criteria, args, format_list):
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
         if criteria in li:
             format_list[criteria] = li[li.index(criteria) + 1]
+            print format_list
             return format_list
         else:
             return format_list
