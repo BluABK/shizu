@@ -178,6 +178,11 @@ def get_playing():
         print tmp_line
 
         path = tmp_line[-3] + "/" + tmp_line[-2]
+
+        print "debug 1:"
+        print tmp_line[-1]
+        print "debug 2:"
+        print (tmp_line[-2] + "  " + tmp_line[-1])
         try:
             test_playback = Playback(path)
             test_playback.set_date(tmp_line[-1])
@@ -185,6 +190,7 @@ def get_playing():
         except ValueError:
             # In case of one-numeric day, add next last item to last
             date = (tmp_line[-2] + "  " + tmp_line[-1])
+            print date
 
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
