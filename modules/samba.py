@@ -183,10 +183,10 @@ def get_playing():
         print tmp_line[-1]
         print "debug 2:"
         print (tmp_line[-2] + "  " + tmp_line[-1])
+        date = tmp_line[-1]
         try:
             test_playback = Playback(path)
             test_playback.set_date(tmp_line[-1])
-            date = tmp_line[-1]
         except ValueError:
             # In case of one-numeric day, add next last item to last
             date = (tmp_line[-2] + "  " + tmp_line[-1])
