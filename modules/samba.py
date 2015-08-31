@@ -176,9 +176,15 @@ def get_playing():
             continue
         tmp_line = re.split(r'\s{2,}', line)
         print tmp_line
-        date = tmp_line[-1]
 
         path = tmp_line[-3] + "/" + tmp_line[-2]
+        try:
+            test_playback = Playback(path)
+            test_playback.set_date(tmp_line[-1])
+            date = tmp_line[-1]
+        except ValueError:
+            # In case of one-numeric day, add next last item to last
+            date = tmp_line[-2]+tmp_line[-1]
 
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
@@ -190,7 +196,7 @@ def get_playing():
             tmp_playback = playback
     #try:
     print tmp_playback.get_path()
-    format_dict= {}
+    format_dict = {}
     format_dict = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Track name", "head -n1", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_dict)
@@ -202,7 +208,7 @@ def get_playing():
 
     return format_np(format_dict)
     #except:
-    return "Shell execute failed =/"
+    # return "Shell execute failed =/"
 
 
 def get_logins(msg):
