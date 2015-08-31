@@ -90,7 +90,12 @@ class Playback:
         return self.date
 
     def set_stringdate(self, new_date):
-        self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
+        try:
+            self.date = time.strptime(str(new_date), '%a %b %d %H:%M:%S %Y')
+        except ValueError:
+            self.date = "ValueError"
+            return False
+        return True
 
 
 class FileLock:
@@ -181,13 +186,14 @@ def get_playing():
         print tmp_line[-1]
         print "debug 2:"
         print (tmp_line[-2] + "  " + tmp_line[-1])
-        date = tmp_line[-1]
-        path = tmp_line[-3] + "/" + tmp_line[-2]
 
-        test_playback = Playback(path)
-        try:
-            test_playback.set_date(tmp_line[-1])
-        except:
+        test_playback = Playback("test")
+        if test_playback.set_date(tmp_line[-1]):
+            print "Two-numeric date"
+            date = tmp_line[-1]
+            path = tmp_line[-3] + "/" + tmp_line[-2]
+        else:
+            print "One-numeric date"
             # In case of one-numeric day, add next last item to last
             date = (tmp_line[-2] + "  " + tmp_line[-1])
             path = tmp_line[-4] + "/" + tmp_line[-3]
