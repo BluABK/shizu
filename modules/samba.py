@@ -184,7 +184,7 @@ def get_playing():
             date = tmp_line[-1]
         except ValueError:
             # In case of one-numeric day, add next last item to last
-            date = tmp_line[-2]+tmp_line[-1]
+            date = (tmp_line[-2] + "  " + tmp_line[-1])
 
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
