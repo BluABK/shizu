@@ -177,19 +177,21 @@ def get_playing():
         tmp_line = re.split(r'\s{2,}', line)
         print tmp_line
 
-        path = tmp_line[-3] + "/" + tmp_line[-2]
-
         print "debug 1:"
         print tmp_line[-1]
         print "debug 2:"
         print (tmp_line[-2] + "  " + tmp_line[-1])
         date = tmp_line[-1]
+        path = tmp_line[-3] + "/" + tmp_line[-2]
+
+        test_playback = Playback(path)
         try:
-            test_playback = Playback(path)
             test_playback.set_date(tmp_line[-1])
         except:
             # In case of one-numeric day, add next last item to last
             date = (tmp_line[-2] + "  " + tmp_line[-1])
+            path = tmp_line[-4] + "/" + tmp_line[-3]
+            print path
             print date
 
         new_playback = Playback(path)
