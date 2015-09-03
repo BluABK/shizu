@@ -1180,4 +1180,9 @@ class Client:
 
 # Main()
 if __name__ == "__main__":
-    instance = Client()
+    try:
+        instance = Client()
+    except Exception as e:
+        watch.notifier.stop()
+        raise
+
