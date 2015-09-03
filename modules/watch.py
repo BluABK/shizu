@@ -199,14 +199,6 @@ def helpcmd(cmdsym):
 
     return cmdlist
 
-
-wm = pyinotify.WatchManager()  # Watch Manager
-mask_add = pyinotify.IN_CREATE
-mask_mov = pyinotify.IN_MOVED_TO
-mask_del = pyinotify.IN_DELETE
-mask = pyinotify.IN_CREATE | pyinotify.IN_DELETE
-
-
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         print "\033[94mwatch.py: New file: %s\033[0m" % event.name
@@ -222,6 +214,12 @@ class EventHandler(pyinotify.ProcessEvent):
         print "\033[94mwatch.py: Moved file: %s\033[0m --> %s\033[0m" % (event.src_pathname, event.pathname)
         # add(event.name, 'del')
         move(event.src_pathname, event.pathname)
+
+wm = pyinotify.WatchManager()  # Watch Manager
+mask_add = pyinotify.IN_CREATE
+mask_mov = pyinotify.IN_MOVED_TO
+mask_del = pyinotify.IN_DELETE
+mask = mask_add | mask_del
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 notifier.start()

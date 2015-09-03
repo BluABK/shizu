@@ -818,6 +818,9 @@ def commands(usernick, msg, chan, ircsock):
                 for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                     sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan, ircsock)
 
+    elif cmd[0].lower() == "ragequit":
+        raise Exception("spam", "eggs")
+
     # Module: lastfm - shortcuts
     elif cmd[0].lower() == "np":
         try:
