@@ -97,7 +97,7 @@ def test_connection():
     # debug = list()
     # debug.append(network.get_user())
     try:
-        return network.get_authenticated_user()
+        return network.get_authenticated_user().get_name()
     except pylast.WSError as e:
         return e
 
