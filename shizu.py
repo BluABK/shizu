@@ -770,23 +770,24 @@ def commands(usernick, msg, chan, ircsock):
                             sendmsg(str(i), chan, ircsock)
             elif cmd[1] == "status":
                 auth = lastfm.test_connection()
-                # print auth + " is " + str(type(auth))
+                print auth
+                print type(auth)
 
                 if type(auth) is Exception:
                     sendmsg(str(auth.message), chan, ircsock)
                     sendmsg(str(auth.details), chan, ircsock)
                 else:
-                    net = str(lastfm.network)
-                    print net + " is " + str(type(net))
-                    auth = str(auth)
+                    net = lastfm.network
+                    print net
+                    print type(net)
 
                     if type(auth) is str and type(net) is str:
-                        if auth is not "" and net is not "":
+                        if auth is not None and net is not None:
                             sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
-                        elif auth is not "":
+                        elif auth is not None:
                             sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
                                     chan, ircsock) % str(auth)
-                        elif net is not "":
+                        elif net is not None:
                             sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % str(net)
                         else:
                             sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
