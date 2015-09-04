@@ -783,13 +783,14 @@ def commands(usernick, msg, chan, ircsock):
 
                     # if type(auth) is str and type(net) is str:
                     if type(auth) is lastfm.pylast.AuthenticatedUser and net is lastfm.pylast.LastFMNetwork:
-                        sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (str(auth), str(net))
+                        sendmsg("Currently authenticated as %s on %s", chan, ircsock) \
+                            % (str(auth.get_name()), str(net.name))
                     elif type(auth) is lastfm.pylast.AuthenticatedUser:
                         sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
-                                chan, ircsock) % str(auth)
+                                chan, ircsock) % str(auth.get_name())
                     elif net is lastfm.pylast.LastFMNetwork:
                         sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock)\
-                            % str(net)
+                            % str(net.name)
                     else:
                         sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
             elif cmd[1] == "set":
