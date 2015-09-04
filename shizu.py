@@ -781,16 +781,17 @@ def commands(usernick, msg, chan, ircsock):
                     print net
                     print type(net)
 
-                    if type(auth) is str and type(net) is str:
-                        if auth is not None and net is not None:
-                            sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
-                        elif auth is not None:
-                            sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
-                                    chan, ircsock) % str(auth)
-                        elif net is not None:
-                            sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % str(net)
-                        else:
-                            sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
+                    # if type(auth) is str and type(net) is str:
+                    if type(auth) is lastfm.pylast.AuthenticatedUser and net is lastfm.pylast.LastFMNetwork:
+                        sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (str(auth), str(net))
+                    elif type(auth) is lastfm.pylast.AuthenticatedUser:
+                        sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
+                                chan, ircsock) % str(auth)
+                    elif net is lastfm.pylast.LastFMNetwork:
+                        sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock)\
+                            % str(net)
+                    else:
+                        sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
             elif cmd[1] == "set":
                 if len(cmd) > 2:
                     if cmd[2] == "alias":
