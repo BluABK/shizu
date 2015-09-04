@@ -786,12 +786,12 @@ def commands(usernick, msg, chan, ircsock):
                     print type(net)
 
                     # if type(auth) is str and type(net) is str:
-                    if type(auth) is unicode and net is unicode:
+                    if type(auth) is str and net is str:
                         sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
-                    elif type(auth) is unicode:
+                    elif type(auth) is str:
                         sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
                                 chan, ircsock) % auth
-                    elif net is unicode:
+                    elif net is str:
                         sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % net
                     else:
                         sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
