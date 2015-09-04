@@ -131,7 +131,8 @@ def format_np(format_dict):
     output = ""
 
     if "Album/Performer" in format_dict:
-        output += "%s ft " % format_dict["Album/Performer"]
+        if format_dict.has_key("Performer") and format_dict["Album/Performer"] != format_dict["Performer"]:
+            output += "%s ft " % format_dict["Album/Performer"]
     if "Performer" in format_dict:
         output += "%s" % format_dict["Performer"]
     else:
