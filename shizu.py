@@ -770,7 +770,7 @@ def commands(usernick, msg, chan, ircsock):
                             sendmsg(str(i), chan, ircsock)
             elif cmd[1] == "status":
                 auth = lastfm.test_connection()
-                print auth + " is " + str(type(auth))
+                # print auth + " is " + str(type(auth))
 
                 if type(auth) is Exception:
                     sendmsg(str(auth.message), chan, ircsock)
