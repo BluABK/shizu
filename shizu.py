@@ -19,6 +19,7 @@ from random import randint
 from subprocess import *
 from collections import deque
 import os
+import unicodedata
 
 
 # Project-specific modules
@@ -777,20 +778,21 @@ def commands(usernick, msg, chan, ircsock):
                     sendmsg(str(auth.message), chan, ircsock)
                     sendmsg(str(auth.details), chan, ircsock)
                 else:
+                    auth = unicodedata.normalize('NFKD', auth).encode('ascii', 'ignore')
+                    print auth
+                    print type(auth)
                     net = lastfm.network.name
                     print net
                     print type(net)
 
                     # if type(auth) is str and type(net) is str:
                     if type(auth) is unicode and net is unicode:
-                        sendmsg("Currently authenticated as %s on %s", chan, ircsock) \
-                            % (str(auth), str(net))
+                        sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
                     elif type(auth) is unicode:
                         sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
-                                chan, ircsock) % str(auth)
+                                chan, ircsock) % auth
                     elif net is unicode:
-                        sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock)\
-                            % str(net)
+                        sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % net
                     else:
                         sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
             elif cmd[1] == "set":
