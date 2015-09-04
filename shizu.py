@@ -786,7 +786,7 @@ def commands(usernick, msg, chan, ircsock):
                     print type(net)
 
                     # if type(auth) is str and type(net) is str:
-                    if type(auth) is str and net is str:
+                    if type(auth) is str and type(net) is str:
                         sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
                     elif type(auth) is str:
                         sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
