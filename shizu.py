@@ -772,8 +772,10 @@ def commands(usernick, msg, chan, ircsock):
                 # for i in lastfm.test_connection():
                 auth = str(lastfm.test_connection())
                 net = str(lastfm.network)
+                print auth
+                print net
                 if auth is not "" and net is not "":
-                    sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (str(auth), str(net))
+                    sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
                 elif auth is not "":
                     sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
                             chan, ircsock) % str(auth)
