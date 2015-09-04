@@ -88,7 +88,7 @@ class Config:  # Shizu's config class
 
 cfg = Config()
 commandsavail_short = "np, npt"
-commandsavail = "imaginary, recent*, bio, self-test"
+commandsavail = "imaginary, recent*, bio, status"
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
 
