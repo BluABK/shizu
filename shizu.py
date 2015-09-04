@@ -769,20 +769,27 @@ def commands(usernick, msg, chan, ircsock):
                         for i in feedback:
                             sendmsg(str(i), chan, ircsock)
             elif cmd[1] == "status":
-                # for i in lastfm.test_connection():
-                auth = str(lastfm.test_connection())
-                net = str(lastfm.network)
-                print auth
-                print net
-                if auth is not "" and net is not "":
-                    sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
-                elif auth is not "":
-                    sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
-                            chan, ircsock) % str(auth)
-                elif net is not "":
-                    sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % str(net)
+                auth = lastfm.test_connection()
+                print auth + " is " + type(auth)
+
+                if type(auth) is Exception:
+                    sendmsg(str(auth.message), chan, ircsock)
+                    sendmsg(str(auth.details), chan, ircsock)
                 else:
-                    sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
+                    net = str(lastfm.network)
+                    print net + " is " + type(net)
+                    auth = str(auth)
+
+                    if type(auth) is str and type(net) is str:
+                        if auth is not "" and net is not "":
+                            sendmsg("Currently authenticated as %s on %s", chan, ircsock) % (auth, net)
+                        elif auth is not "":
+                            sendmsg("Currently authenticated as %s on *NO NETWORK*, how does that even work? =/",
+                                    chan, ircsock) % str(auth)
+                        elif net is not "":
+                            sendmsg("Somehow connected to %s, but not authenticated... Okay then!", chan, ircsock) % str(net)
+                        else:
+                            sendmsg("Unable to query network, is LastFM throwing a fit?", chan, ircsock)
             elif cmd[1] == "set":
                 if len(cmd) > 2:
                     if cmd[2] == "alias":

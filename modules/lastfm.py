@@ -96,7 +96,10 @@ network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(
 def test_connection():
     # debug = list()
     # debug.append(network.get_user())
-    return network.get_authenticated_user()
+    try:
+        return network.get_authenticated_user()
+    except pylast.WSError as e:
+        return e
 
 
 def test_playing(user):
