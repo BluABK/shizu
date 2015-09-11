@@ -184,7 +184,7 @@ def get_playing():
         print tmp_line
 
         test_playback = Playback("test")
-        if test_playback.set_date(tmp_line[-1]):
+        if test_playback.set_stringdate(tmp_line[-1]):
             print "Two-numeric date"
             date = tmp_line[-1]
             path = tmp_line[-3] + "/" + tmp_line[-2]
