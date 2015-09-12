@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import subprocess
+import ConfigParser
+import re
+# from sys import exc_info
+from subprocess import check_output
+import os
+import time
+import json
+import colours as clr
 
 __author__ = 'BluABK <abk@blucoders.net'
 
@@ -9,16 +16,8 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement path exemption
 # TODO: Add try and SomeReasonableExceptionHandler across code
 # TODO: Implement support for checking that samba installation is sane and contains all required binaries and libraries
-# TODO: Implement nowplaying() that fetches BATCH media files from smbstatus for SambaUsers, ex: !np Heretic121
-import ConfigParser
-import os
-import re
-# from sys import exc_info
-from subprocess import check_output
-import os
-import datetime
-import time
-import colours as clr
+# TODO: Implement now playing() that fetches BATCH media files from smbstatus for SambaUsers, ex: !np Heretic121
+
 
 # Define variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -115,6 +114,7 @@ def format_mediainfo(playback, criteria, args, format_list):
     shellex = check_output("mediainfo \"%s\" | grep \"%s\" | %s" % (playback.get_path(), criteria, args),
                            shell=True).strip('\n')
     if shellex is not None:
+        print "mediainfo dump:"
         print shellex
         li = re.split(r'\s{2,}: ', shellex.strip('\n'))
         if criteria in li:
@@ -127,11 +127,60 @@ def format_mediainfo(playback, criteria, args, format_list):
         return None
 
 
+def format_exiftool(playback, criteria, format_list):
+    shellex = check_output("exiftool -json \"%s\"" % (playback.get_path()), shell=True)
+    if shellex is not None:
+        print "exiftool dump:"
+        print shellex
+        dic = json.loads(shellex)[0]
+        if criteria in dic:
+            format_list[criteria] = dic.get(criteria)
+            return format_list
+        else:
+            return format_list
+    else:
+        return None
+
+
 def format_np(format_dict):
     output = ""
 
+    if "Albumartist" in format_dict:
+        if "Artist" in format_dict and format_dict["Albumartist"] != format_dict["Artist"]:
+            output += "%s ft " % format_dict["Albumartist"]
+    if "Artist" in format_dict:
+        output += "%s" % format_dict["Artist"]
+    else:
+        output += "No Artist"
+    if "Album" in format_dict:
+        output += " - %s" % format_dict["Album"]
+    else:
+        output += " - No Album"
+    if "Isbn" in format_dict:
+        output += " [%s]" % format_dict["Isbn"]
+    if "Title" in format_dict:
+        output += " - %s" % format_dict["Title"]
+    # Format metadata, ignore in case of No artist *and* no album
+    if "Artist" in format_dict or "Albumartist" in format_dict or "Album" in format_dict:
+        output += " <"
+        # TODO: Depends on mediainfo
+        if "Bit rate" in format_dict:
+            output += "%s" % format_dict["Bit rate"]
+        if "FileType" in format_dict:
+            output += " %s" % format_dict["FileType"]
+        if "BBitsPerSample" in format_dict:
+            output += " %s" % format_dict["BitsPerSample"]
+        output += ">"
+    print output
+
+    return output
+
+
+def format_np_mediainfo(format_dict):
+    output = ""
+
     if "Album/Performer" in format_dict:
-        if format_dict.has_key("Performer") and format_dict["Album/Performer"] != format_dict["Performer"]:
+        if "Performer" in format_dict and format_dict["Album/Performer"] != format_dict["Performer"]:
             output += "%s ft " % format_dict["Album/Performer"]
     if "Performer" in format_dict:
         output += "%s" % format_dict["Performer"]
@@ -208,27 +257,34 @@ def get_playing():
     for playback in li:
         if playback.get_date() > tmp_playback.get_date():
             tmp_playback = playback
-    #try:
+    # try:
     print tmp_playback.get_path()
     format_dict = {}
-    format_dict = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "Track name", "head -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "Format", "head -n1", format_dict)
-    format_dict = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Performer", "tail -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Track name", "head -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Album", "grep -v \"Album/Performer\" | tail -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Album/Performer", "tail -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "ISBN", "grep -v \"Comment\" | tail -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Format", "head -n1", format_dict)
+    # format_dict = format_mediainfo(tmp_playback, "Bit depth", "head -n1", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Artist", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Title", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Album", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Albumartist", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Isbn", format_dict)
+    format_dict = format_exiftool(tmp_playback, "FileType", format_dict)
+    format_dict = format_exiftool(tmp_playback, "BitsPerSample", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_dict)
 
     return format_np(format_dict)
-    #except:
+    # except:
     # return "Shell execute failed =/"
 
 
 def get_logins(msg):
     global cfg
     # TODO: cfg.loadconfig seems to have no effect according to PyCharm o0
-    cfg.loadconfig
+    # cfg.loadconfig
     login_handles_raw = check_output(cfg.rawlogins(), shell=True)
     login_handles = login_handles_raw.splitlines()
     samba_users = list()
@@ -242,7 +298,7 @@ def get_logins(msg):
         split_line = list()
 
         for test in tmp_line:
-            if not ' ' in test:
+            if ' ' not in test:
                 split_line.append(test)
 
         if len(split_line) < 4:
@@ -253,12 +309,12 @@ def get_logins(msg):
 
     login_list = list()
 
-    longestname = 0
+    longest_name = 0
     try:
         for item in xrange(len(samba_users)):
             if not len(msg) or samba_users[item].name in msg:
-                if len(samba_users[item].name) > longestname:
-                    longestname = len(samba_users[item].name)
+                if len(samba_users[item].name) > longest_name:
+                    longest_name = len(samba_users[item].name)
         login_list.append("[ID]        user@host")
         for item in xrange(len(samba_users)):
             if not len(msg) or samba_users[item].name in msg:
