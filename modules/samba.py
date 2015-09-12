@@ -189,7 +189,7 @@ def get_playing():
             date = tmp_line[-1]
             path = tmp_line[5] + "/"
             # Merge multiple path items to one
-            for path_item in tmp_line[6:-2]:
+            for path_item in tmp_line[6:-1]:
                 print path_item
                 path += path_item
         else:
@@ -198,7 +198,7 @@ def get_playing():
             date = (tmp_line[-2] + "  " + tmp_line[-1])
             path = tmp_line[5] + "/"
             # Merge multiple path items to one
-            for path_item in tmp_line[6:-3]:
+            for path_item in tmp_line[6:-2]:
                 path += path_item
 
         new_playback = Playback(path)
