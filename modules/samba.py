@@ -169,7 +169,7 @@ def format_np(format_dict):
         if "FileType" in format_dict:
             output += " %s" % format_dict["FileType"]
         if "BitsPerSample" in format_dict:
-            output += " %s" % format_dict["BitsPerSample"]
+            output += " %s-bit" % format_dict["BitsPerSample"]
         output += ">"
     print output
 
