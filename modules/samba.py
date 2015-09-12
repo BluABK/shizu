@@ -180,7 +180,7 @@ def get_playing():
         # throw out empty lines
         if not len(line):
             continue
-        tmp_line = re.split(r'\s{2,}', line)
+        tmp_line = re.split(r'\s{3,}', line)
         print tmp_line
 
         test_playback = Playback("test")
@@ -190,7 +190,6 @@ def get_playing():
             path = tmp_line[5] + "/"
             # Merge multiple path items to one
             for path_item in tmp_line[6:-1]:
-                print path_item
                 path += path_item
         else:
             print "One-numeric date"
