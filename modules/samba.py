@@ -187,12 +187,18 @@ def get_playing():
         if test_playback.set_stringdate(tmp_line[-1]):
             print "Two-numeric date"
             date = tmp_line[-1]
-            path = tmp_line[-3] + "/" + tmp_line[-2]
+            path = tmp_line[6] + "/"
+            # Merge multiple path items to one
+            for path_item in tmp_line[6:-2]:
+                path += path_item
         else:
             print "One-numeric date"
             # In case of one-numeric day, add next last item to last
             date = (tmp_line[-2] + "  " + tmp_line[-1])
-            path = tmp_line[-4] + "/" + tmp_line[-3]
+            path = tmp_line[6] + "/"
+            # Merge multiple path items to one
+            for path_item in tmp_line[6:-3]:
+                path += path_item
 
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
