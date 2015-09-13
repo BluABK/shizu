@@ -188,7 +188,10 @@ def recently_played(user, num):
             print ('%s[%s\t now_playing()]%s: User Alias was None, Using argument \'%s\' instead' %
                    (my_colour, my_name, clr.off, user))
             u = user
-        rplist = network.get_user(u).get_recent_tracks()
+        try:
+            rplist = network.get_user(u).get_recent_tracks()
+        except AttributeError as e:
+            return e.message
 #    except pylast.WSError.details == "Rate limit exceeded":
 #        return "Rate limit exceeded o0"
     except pylast.WSError:
