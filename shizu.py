@@ -828,7 +828,10 @@ def commands(usernick, msg, chan, ircsock):
                     test = lastfm.recently_played(nick, default_num)
 
                 # Test returned data integrity
-                if test is None:
+                # If the returned data is a string it is most likely an exception and should be handled as one
+                if type(test) is str:
+                    sendmsg(test, chan, ircsock)
+                elif test is None:
                     sendmsg("%s has not played anything in the given period" % nick, chan, ircsock)
                 elif test == "None":
                     sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan, ircsock)
