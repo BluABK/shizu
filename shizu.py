@@ -590,7 +590,13 @@ def nickname_proxy(irc_line):
     """Takes a proxy/relay user and returns the actual usernick"""
     # Case1 : Telegram relay
     global telegram_cur_nick
-    if irc_line[3][1] != '<':
+    real_nick = None
+    if irc_line[3][-2:] == ">:":
+        # Start of a continued sentence, but payload is useless to us
+        # if telegram_cur_nick is None:
+        telegram_cur_nick = irc_line[3].split('> ')[0][2:-2]
+        msg = ""
+    elif irc_line[3][1] != '<':
         # Continued sentence; doesn't start with a usernick identifier
         # TODO: Will fail is continued sentence starts with '<'
         real_nick = telegram_cur_nick
@@ -600,6 +606,7 @@ def nickname_proxy(irc_line):
         real_nick = irc_line[3].split('> ')[0][2:]
         msg = irc_line[3].split('> ')[1]
         telegram_cur_nick = real_nick
+
     return [real_nick, msg]
 
 
@@ -1162,8 +1169,8 @@ class Client:
             if tmpusernick.lower() in cfg.proxy_nicks().split(','):
                 print "DBG: nickname_proxy(%s)" % ircparts
                 tmp_chk = nickname_proxy(ircparts)
-                print "rmp_chk = %s" % tmp_chk
-                if tmp_chk is not None:
+                print "DBG: tmp_chk = %s" % tmp_chk
+                if tmp_chk[0] is not None:
                     print "DBG: tmp_chk != None"
                     tmpusernick = tmp_chk[0]
                     message = tmp_chk[1]
