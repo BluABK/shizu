@@ -103,6 +103,16 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def quitpro(self):
         return str(self.default.get('irc', 'quit-protection'))
 
+    def proxy_nicks(self):
+        # try:
+        return_dbg = self.default.get('irc', 'proxy-users')
+        print return_dbg
+        return return_dbg
+    #    except ConfigParser.NoSectionError:
+    #        return "That section does not seem to exist"
+    #    except ConfigParser.NoOptionError:
+    #        return "Option does not seem to exist"
+
     def su(self):
         return str(self.default.get('users', 'superusers'))
 
@@ -253,16 +263,6 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return "Option does not seem to exist"
         # except:
         #    return "An unknown exception occurred"
-
-    def get_proxy_nicks(self):
-        try:
-            return_dbg = self.default.items('proxy-users')
-            print return_dbg
-            return return_dbg
-        except ConfigParser.NoSectionError:
-            return "That section does not seem to exist"
-        except ConfigParser.NoOptionError:
-            return "Option does not seem to exist"
 
 
 # Variables declared by config file
@@ -1146,7 +1146,7 @@ class Client:
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
             print "DBG: tmpusernick = %s" % tmpusernick.lower()
-            if tmpusernick.lower() in cfg.get_proxy_nicks().split(','):
+            if tmpusernick.lower() in cfg.proxy_nicks().split(','):
                 print "DBG: nickname_proxy(%s)" % ircparts
                 tmp_chk = nickname_proxy(ircparts)
                 print "rmp_chk = %s" % tmp_chk
