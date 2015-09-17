@@ -256,7 +256,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def get_proxy_nicks(self):
         try:
-            return self.default.items('proxy-users')
+            return_dbg = self.default.items('proxy-users')
+            print return_dbg
+            return return_dbg
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
@@ -1143,9 +1145,13 @@ class Client:
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
+            print "DBG: tmpusernick = %s" % tmpusernick
             if tmpusernick in cfg.get_proxy_nicks().split(','):
+                print "DBG: nickname_proxy(%s)" % ircparts
                 tmp_chk = nickname_proxy(ircparts)
+                print "rmp_chk = %s" % tmp_chk
                 if tmp_chk is not None:
+                    print "DBG: tmp_chk != None"
                     tmpusernick = tmp_chk
             channel = ircparts[2]
             if channel[0] != '#':
