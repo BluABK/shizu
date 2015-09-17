@@ -67,6 +67,7 @@ running = True
 watch_enabled = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
 modulesavail = "samba*"
+telegram_cur_nick = None
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -587,9 +588,19 @@ def version():
 
 def nickname_proxy(irc_line):
     """Takes a proxy/relay user and returns the actual usernick"""
-    print irc_line
-    real_nick = None
-    return real_nick
+    # Case1 : Telegram relay
+    global telegram_cur_nick
+    if irc_line[3][1] != '<':
+        # Continued sentence; doesn't start with a usernick identifier
+        # TODO: Will fail is continued sentence starts with '<'
+        real_nick = telegram_cur_nick
+        msg = irc_line[3][1:]
+    else:
+        # Assume that sentence starts with a usernick
+        real_nick = irc_line[3].split('> ')[0][2:]
+        msg = irc_line[3].split('> ')[1]
+        telegram_cur_nick = real_nick
+    return [real_nick, msg]
 
 
 def commands(usernick, msg, chan, ircsock):
@@ -1144,20 +1155,22 @@ class Client:
         #    sendmsg("Oi, That was mean! T_T", channel[num])
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
+            message = ircparts[3].lstrip(":")
+
             tmpusernick = ircparts[0].split('!')[0]
-            print "DBG: tmpusernick = %s" % tmpusernick.lower()
+            # Check is message was received via proxy nickname
             if tmpusernick.lower() in cfg.proxy_nicks().split(','):
                 print "DBG: nickname_proxy(%s)" % ircparts
                 tmp_chk = nickname_proxy(ircparts)
                 print "rmp_chk = %s" % tmp_chk
                 if tmp_chk is not None:
                     print "DBG: tmp_chk != None"
-                    tmpusernick = tmp_chk
+                    tmpusernick = tmp_chk[0]
+                    message = tmp_chk[1]
+
             channel = ircparts[2]
             if channel[0] != '#':
                 channel = tmpusernick
-
-            message = ircparts[3].lstrip(":")
 
             commands(tmpusernick, message, channel, ircsock)
             triggers(tmpusernick, message, channel, ircsock)
