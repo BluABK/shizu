@@ -254,6 +254,14 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         # except:
         #    return "An unknown exception occurred"
 
+    def get_proxy_nicks(self):
+        try:
+            return self.default.items('proxy-users')
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+
 
 # Variables declared by config file
 cfg = Config()
@@ -573,6 +581,13 @@ def version():
     retv = c_date + " (" + c_hash_short + ")"
     print(retv)
     return retv
+
+
+def nickname_proxy(irc_line):
+    """Takes a proxy/relay user and returns the actual usernick"""
+    print irc_line
+    real_nick = None
+    return real_nick
 
 
 def commands(usernick, msg, chan, ircsock):
@@ -1128,9 +1143,14 @@ class Client:
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
+            if tmpusernick in cfg.get_proxy_nicks().split(','):
+                tmp_chk = nickname_proxy(ircparts)
+                if tmp_chk is not None:
+                    tmpusernick = tmp_chk
             channel = ircparts[2]
             if channel[0] != '#':
                 channel = tmpusernick
+
             message = ircparts[3].lstrip(":")
 
             commands(tmpusernick, message, channel, ircsock)
