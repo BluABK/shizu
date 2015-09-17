@@ -1145,8 +1145,8 @@ class Client:
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             tmpusernick = ircparts[0].split('!')[0]
-            print "DBG: tmpusernick = %s" % tmpusernick
-            if tmpusernick in cfg.get_proxy_nicks().split(','):
+            print "DBG: tmpusernick = %s" % tmpusernick.lower()
+            if tmpusernick.lower() in cfg.get_proxy_nicks().split(','):
                 print "DBG: nickname_proxy(%s)" % ircparts
                 tmp_chk = nickname_proxy(ircparts)
                 print "rmp_chk = %s" % tmp_chk
