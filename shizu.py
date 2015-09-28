@@ -53,6 +53,8 @@ if module_exists("modules.watch") is True:
 #    clr_selection.append(clr)
 if module_exists("modules.stats") is True:
     import modules.stats as stats
+if module_exists("modules.youtube") is True:
+    import modules.youtube as youtube
 #    clr = clr_selection.popleft()
 #    stats.my_colour = clr
 #    clr_selection.append(clr)
@@ -68,6 +70,7 @@ watch_enabled = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
 modulesavail = "samba*"
 telegram_cur_nick = None
+youtube_url = ""
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -1033,6 +1036,13 @@ def commands(usernick, msg, chan, ircsock):
         print "Executing custom rawcommand"
         custom_rawcommand(cmd, usernick, chan, ircsock)
 
+    # Module: YouTube
+    elif cmd[0].lower() == "ytt" and module_exists("modules.youtube"):
+        global youtube_url
+        if youtube_url != "":
+            sendmsg(youtube.get_title(youtube_url), chan, ircsock)
+            youtube_url = ""
+
 
 def triggers(usernick, msg, chan, ircsock):
     greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
@@ -1049,6 +1059,16 @@ def triggers(usernick, msg, chan, ircsock):
             sendmsg((getgreeting(usernick, ircsock)), chan, ircsock)
     except AttributeError:
         return
+
+
+def listeners(usernick, msg, chan, ircsock):
+    if module_exists("modules.youtube"):
+        global youtube_url
+        #if re.search(r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$', msg).group(0):
+        for item in msg.split():
+            if re.search('(http[s]?://)?(www.)?(youtube.com|youtu.?be)/+', item):
+                print "YouTube: current = %s" % item
+                youtube_url = item
 
 
 def watch_notify(files, chan, msg, ircsock):
@@ -1181,6 +1201,7 @@ class Client:
 
             commands(tmpusernick, message, channel, ircsock)
             triggers(tmpusernick, message, channel, ircsock)
+            listeners(tmpusernick, message, channel, ircsock)
 
             if watch.check_added():
                 if watch_enabled:
