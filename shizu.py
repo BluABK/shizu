@@ -110,7 +110,6 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def proxy_nicks(self):
         # try:
         return_dbg = self.default.get('irc', 'proxy-users')
-        print return_dbg
         return return_dbg
     #    except ConfigParser.NoSectionError:
     #        return "That section does not seem to exist"
