@@ -1055,8 +1055,11 @@ def commands(usernick, msg, chan, ircsock):
             try:
                 yr_init()
                 forecast = yr.weather_update(" ".join(map(str, cmd[1:])), debug=True)
+                prev = forecast
                 print forecast
                 if forecast is not None:
+                    sendmsg(forecast, chan, ircsock)
+                elif prev is not None:
                     sendmsg(forecast, chan, ircsock)
                 else:
                     sendmsg("No such weather station", chan, ircsock)
