@@ -1052,13 +1052,12 @@ def commands(usernick, msg, chan, ircsock):
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
         if len(cmd) > 1:
-            try:
-                yr.init()
-                forecast = yr.weather_update(" ".join(map(str, cmd[1:])))
-                sendmsg(forecast, chan, ircsock)
-
-            except:
-                sendmsg("https://www.konata.us/nope.gif", chan, ircsock)
+            #try:
+            yr.init()
+            forecast = yr.weather_update(" ".join(map(str, cmd[1:])), debug=True)
+            sendmsg(forecast, chan, ircsock)
+            #except:
+            #    sendmsg("https://www.konata.us/nope.gif", chan, ircsock)
 
 
 def triggers(usernick, msg, chan, ircsock):
