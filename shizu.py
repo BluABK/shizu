@@ -58,6 +58,8 @@ if module_exists("modules.youtube") is True:
 #    clr = clr_selection.popleft()
 #    stats.my_colour = clr
 #    clr_selection.append(clr)
+if module_exists("weather"):
+    import weather as yr
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -71,6 +73,7 @@ commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*,
 modulesavail = "samba*"
 telegram_cur_nick = None
 youtube_url = ""
+yr_stations = []
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -612,6 +615,10 @@ def nickname_proxy(irc_line):
     return [real_nick, msg]
 
 
+def yr_init():
+    yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
+
+
 def commands(usernick, msg, chan, ircsock):
     global watch_enabled
     # First of all, check if it is a command
@@ -1041,6 +1048,17 @@ def commands(usernick, msg, chan, ircsock):
         if youtube_url != "":
             sendmsg(youtube.get_title(youtube_url), chan, ircsock)
             youtube_url = ""
+
+    # Private Module: yr
+    elif cmd[0].lower() == "yr" and module_exists("weather"):
+        if len(cmd) > 1:
+            try:
+                yr.init()
+                forecast = yr.weather_update(" ".join(map(str, cmd[1:])))
+                sendmsg(forecast, chan, ircsock)
+
+            except:
+                sendmsg("https://www.konata.us/nope.gif", chan, ircsock)
 
 
 def triggers(usernick, msg, chan, ircsock):
