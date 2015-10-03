@@ -1053,7 +1053,7 @@ def commands(usernick, msg, chan, ircsock):
     elif cmd[0].lower() == "yr" and module_exists("weather"):
         if len(cmd) > 1:
             #try:
-            yr.init()
+            yr_init()
             forecast = yr.weather_update(" ".join(map(str, cmd[1:])), debug=True)
             sendmsg(forecast, chan, ircsock)
             #except:
