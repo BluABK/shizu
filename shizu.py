@@ -1055,6 +1055,7 @@ def commands(usernick, msg, chan, ircsock):
             #try:
             yr_init()
             forecast = yr.weather_update(" ".join(map(str, cmd[1:])), debug=True)
+            print forecast
             sendmsg(forecast, chan, ircsock)
             #except:
             #    sendmsg("https://www.konata.us/nope.gif", chan, ircsock)
