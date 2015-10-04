@@ -1058,7 +1058,7 @@ def commands(usernick, msg, chan, ircsock):
         if len(cmd) > 1:
             try:
                 yr_init()
-                forecast = yr.weather_update(" ".join(map(str, cmd[1:])), debug=True)
+                forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour, minute=0, debug=True)
                 prev = forecast
                 print forecast
                 if forecast is not None:
