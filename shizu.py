@@ -1056,6 +1056,14 @@ def commands(usernick, msg, chan, ircsock):
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
         if len(cmd) > 1:
+            if cmd[1] == "extreme":
+                if len(cmd) > 2:
+                    xtreme = yr.find_extreme_places(13, info=True, limit=int(cmd[2]))
+                else:
+                    xtreme = yr.find_extreme_places(13, info=True, limit=100)
+                sendmsg("%s: %02d C & %s: %02d" % (
+                    xtreme[0][0], xtreme[0][1], xtreme[1][0], xtreme[1][1]), chan, ircsock)
+        else:
             try:
                 yr_init()
                 forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour, minute=0, debug=True)
