@@ -1061,11 +1061,12 @@ def commands(usernick, msg, chan, ircsock):
             if cmd[1] == "extreme":
                 if len(cmd) > 2:
                     xtreme = yr.find_extreme_places(13, info=True, limit=int(cmd[2]))
-                    return
+
                 else:
                     xtreme = yr.find_extreme_places(13, info=True, limit=10)
-                    sendmsg("%s: %02d C & %s: %02d C" % (xtreme[0][0], xtreme[0][1], xtreme[1][0], xtreme[1][1]), chan, ircsock)
-                    return
+
+                sendmsg("%s: %02d C & %s: %02d C" % (xtreme[0][0], xtreme[0][1], xtreme[1][0], xtreme[1][1]), chan, ircsock)
+                return
 
             try:
                 forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour, minute=0, debug=True)
