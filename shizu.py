@@ -621,8 +621,7 @@ def nickname_proxy(irc_line):
 
 def yr_init():
     yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
-    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt'),
-                       coding="", limit=0, method=1, debug=True)
+    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt', coding="", limit=0), method=1, debug=True)
 
 
 def commands(usernick, msg, chan, ircsock):
@@ -1057,6 +1056,7 @@ def commands(usernick, msg, chan, ircsock):
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
+        yr_init()
         if len(cmd) > 1:
             if cmd[1] == "extreme":
                 if len(cmd) > 2:
@@ -1067,7 +1067,6 @@ def commands(usernick, msg, chan, ircsock):
                     xtreme[0][0], xtreme[0][1], xtreme[1][0], xtreme[1][1]), chan, ircsock)
         else:
             try:
-                yr_init()
                 forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour, minute=0, debug=True)
                 prev = forecast
                 print forecast
