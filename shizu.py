@@ -621,7 +621,7 @@ def nickname_proxy(irc_line):
 
 def yr_init():
     yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
-
+    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt', coding="", limit=0, debug=True))
 
 def commands(usernick, msg, chan, ircsock):
     global watch_enabled
