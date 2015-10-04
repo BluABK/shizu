@@ -157,6 +157,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             config.set('custom-cmd', name, function)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
+                configfile.close()
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -167,6 +168,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             config.set('custom-rawcmd', name, function)
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
+                configfile.close()
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -175,8 +177,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         try:
             config = Config.default
             config.remove_option('custom-cmd', name)
-            with open('config.ini', 'w') as confgfile:
-                config.write(confgfile)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+                configfile.close()
             # return self.config.remove_option('custom-cmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
@@ -186,8 +189,9 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         try:
             config = Config.default
             config.remove_option('custom-rawcmd', name)
-            with open('config.ini', 'w') as confgfile:
-                config.write(confgfile)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+                configfile.close()
             # return self.config.remove_option('custom-rawcmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"

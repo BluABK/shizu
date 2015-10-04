@@ -73,6 +73,7 @@ class Config:  # Shizu's config class
                 config.set('lastfm-alias', nick, user)
                 with open('config.ini', 'w') as configfile:
                     config.write(configfile)
+                    configfile.close()
                 return "Alias added"
             except:
                 return "Unable to open configuration"
