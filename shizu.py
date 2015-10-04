@@ -1056,7 +1056,6 @@ def commands(usernick, msg, chan, ircsock):
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
-        yr_init()
         if len(cmd) > 1:
             if cmd[1] == "extreme":
                 if len(cmd) > 2:
@@ -1164,7 +1163,8 @@ class Client:
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
 
     i = 1
-
+    if module_exists("weather"):
+        yr_init()
     for recvraw in ircsock.makefile():
         if not running:
             break
