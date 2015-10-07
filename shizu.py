@@ -1070,14 +1070,14 @@ def commands(usernick, msg, chan, ircsock):
                 return
 
             try:
-                forecast = yr.weather_update(" ".join(map(str, cmd[1:])),
-                                             hour=time.localtime().tm_hour, minute=0, debug=kittens)
+                forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour,
+                                             minute=time.localtime().tm_min, debug=kittens)
                 for item in cmd:
                     if '@' in item:
                         loc = " ".join(map(str, cmd[1:]))
                         t = re.sub(r'\s+', "", loc[loc.find('@')+1:len(loc)])[0:5].split(':')
                         forecast = yr.weather_update(loc[0:loc.find('@')].strip(' '),
-                                                     hour=t[0], minute=t[1], debug=kittens)
+                                                     hour=int(t[0]), minute=int(t[1]), debug=kittens)
                         break
 
                 prev = forecast
