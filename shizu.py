@@ -73,7 +73,7 @@ commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*,
 modulesavail = "samba*"
 telegram_cur_nick = None
 youtube_url = ""
-yr_stations = []
+#yr_stations = []
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -619,9 +619,9 @@ def nickname_proxy(irc_line):
     return [real_nick, msg]
 
 
-def yr_init():
-    yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
-    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt', coding="", limit=0), method=1, debug=True)
+#def yr_init():
+#    yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
+#    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt', coding="", limit=0), method=1, debug=True)
 
 
 def commands(usernick, msg, chan, ircsock):
@@ -1056,19 +1056,30 @@ def commands(usernick, msg, chan, ircsock):
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
+        kittens = True
         if len(cmd) > 1:
             if cmd[1] == "extreme":
                 if len(cmd) > 2:
-                    xtreme = yr.find_extreme_places(13, info=True, limit=int(cmd[2]))
+                    extreme = yr.find_extreme_places(info=True, limit=int(cmd[2]))
 
                 else:
-                    xtreme = yr.find_extreme_places(13, info=True, limit=10)
+                    extreme = yr.find_extreme_places(info=True, limit=10)
 
-                sendmsg("%s: %02d C & %s: %02d C" % (xtreme[0][0], xtreme[0][1], xtreme[1][0], xtreme[1][1]), chan, ircsock)
+                sendmsg("%s: %02d C & %s: %02d C" % (
+                    extreme[0][0], extreme[0][1], extreme[1][0], extreme[1][1]), chan, ircsock)
                 return
 
             try:
-                forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour, minute=0, debug=True)
+                forecast = yr.weather_update(" ".join(map(str, cmd[1:])),
+                                             hour=time.localtime().tm_hour, minute=0, debug=kittens)
+                for item in cmd:
+                    if '@' in item:
+                        loc = " ".join(map(str, cmd[1:]))
+                        t = re.sub(r'\s+', "", loc[loc.find('@')+1:len(loc)])[0:5].split(':')
+                        forecast = yr.weather_update(loc[0:loc.find('@')].strip(' '),
+                                                     hour=t[0], minute=t[1], debug=kittens)
+                        break
+
                 prev = forecast
                 print forecast
                 if forecast is not None:
@@ -1163,8 +1174,8 @@ class Client:
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
 
     i = 1
-    if module_exists("weather"):
-        yr_init()
+    #if module_exists("weather"):
+    #    yr_init()
     for recvraw in ircsock.makefile():
         if not running:
             break
