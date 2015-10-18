@@ -379,11 +379,17 @@ def ignored_nick(section, usernick):
 
 
 def date():
-    return check_output("date", shell=True)
+    try:
+        return check_output("date", shell=True)
+    except OSError as e:
+        return "Execution failed due to %s" % str(e.message)
 
 
 def ddate():
-    return check_output("ddate", shell=False)
+    try:
+        return check_output("ddate", shell=True)
+    except OSError as e:
+        return "Execution failed due to %s" % str(e.message)
 
 
 def whois(user, selection, raw_in, ircsock):
