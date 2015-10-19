@@ -73,6 +73,7 @@ commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*,
 modulesavail = "samba*"
 telegram_cur_nick = None
 youtube_url = ""
+ytt_trigger = True
 #yr_stations = []
 
 
