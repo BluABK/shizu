@@ -625,9 +625,10 @@ def nickname_proxy(irc_line):
     return [real_nick, msg]
 
 
-#def yr_init():
-#    yr.create_stations(yr.download(yr.station_loc_url, coding="", limit=0, debug=True))
-#    yr.create_stations(yr.download('http://fil.nrk.no/yr/viktigestader/verda.txt', coding="", limit=0), method=1, debug=True)
+def ytt_print(chan, ircsock):
+    global youtube_url
+    sendmsg(youtube.get_title(youtube_url), chan, ircsock)
+    youtube_url = ""
 
 
 def commands(usernick, msg, chan, ircsock):
@@ -1055,10 +1056,20 @@ def commands(usernick, msg, chan, ircsock):
 
     # Module: YouTube
     elif cmd[0].lower() == "ytt" and module_exists("modules.youtube"):
-        global youtube_url
-        if youtube_url != "":
-            sendmsg(youtube.get_title(youtube_url), chan, ircsock)
-            youtube_url = ""
+        global youtube_url, ytt_trigger
+        if len(cmd) > 1:
+            if cmd[1].lower() == "trigger":
+                if ytt_trigger is False:
+                    ytt_trigger = True
+                    sendmsg("YouTube Title: Changing to [trigger mode]", chan, ircsock)
+                    return
+                else:
+                    ytt_trigger = False
+                    sendmsg("YouTube Title: Changing to [command mode]", chan, ircsock)
+                    return
+        if youtube_url != "" and ytt_trigger is False:
+            ytt_print(chan, ircsock)
+            return
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
@@ -1107,12 +1118,19 @@ def triggers(usernick, msg, chan, ircsock):
         if s == cfg.nick():
             nick_match = True
 
+    """Greeting"""
     try:
         # if matches.group(0) != "":  # If someone greets me, I will greet back.
         if greet_match and nick_match:
             sendmsg((getgreeting(usernick, ircsock)), chan, ircsock)
     except AttributeError:
         return
+
+    """YouTube Title"""
+    if module_exists("modules.youtube"):
+        global youtube_url
+        if youtube_url != "":
+            ytt_print(chan, ircsock)
 
 
 def listeners(usernick, msg, chan, ircsock):
@@ -1229,12 +1247,6 @@ class Client:
         if ircmsg.find("KICK #") != -1:
             # TODO: HACK: Rejoin all channels
             join(cfg.chan(), ircsock)
-        #    for num in channel:
-        #        print "DEBUG: %s" % num
-        #        if ircmsg.find("KICK %s" % channel[num]):
-        #            join(channel[num])
-        #    sendmsg("Oi, That was mean! T_T")
-        #    sendmsg("Oi, That was mean! T_T", channel[num])
 
         if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
             message = ircparts[3].lstrip(":")
@@ -1255,8 +1267,8 @@ class Client:
                 channel = tmpusernick
 
             commands(tmpusernick, message, channel, ircsock)
-            triggers(tmpusernick, message, channel, ircsock)
             listeners(tmpusernick, message, channel, ircsock)
+            triggers(tmpusernick, message, channel, ircsock)
 
             if watch.check_added():
                 if watch_enabled:
@@ -1314,9 +1326,6 @@ class Client:
                         cap_list[watch.notify_limit()-1] += \
                             " ... and " + str(len(watch.get_moved()) - watch.notify_limit()) + " more unlisted entries"
                         watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_mov(), ircsock)
-                # else:
-                #    for test in watch.get_moved():
-                #        print ("\033[94mIgnored notify: %s\033[0m" % test)
 
                 watch.clear_moved()
 
