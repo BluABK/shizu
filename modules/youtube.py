@@ -1,12 +1,10 @@
-__author__ = 'BluABK <abk@blucoders.net'
-
-# This is a module specification, which contains everything you need to get started on writing a module.
-
 # Imports
 import ConfigParser
 import os
 from subprocess import check_output, CalledProcessError
 import colours as clr
+
+__author__ = 'BluABK <abk@blucoders.net'
 
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
