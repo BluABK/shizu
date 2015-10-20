@@ -9,7 +9,8 @@ __author__ = 'BluABK <abk@blucoders.net'
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = ""
-commandsavail = "ytt"
+commandsavail = "trigger"
+commandsavail_short = "ytt"
 
 # Classes
 
