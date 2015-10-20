@@ -628,7 +628,7 @@ def nickname_proxy(irc_line):
 
 def ytt_print(chan, ircsock):
     global youtube_url
-    sendmsg(youtube.get_title(youtube_url), chan, ircsock)
+    sendmsg(youtube.get_title("YouTube video: %s") % youtube_url, chan, ircsock)
     youtube_url = ""
 
 
