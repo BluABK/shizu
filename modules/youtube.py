@@ -5,7 +5,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 # Imports
 import ConfigParser
 import os
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 import colours as clr
 
 # Variables
@@ -31,7 +31,10 @@ cfg = Config()
 
 # Functions
 def get_title(url):
-    return check_output("youtube-dl --get-title %s" % url, shell=True).strip('\n')
+    try:
+        return check_output("youtube-dl --get-title %s" % url, shell=True).strip('\n')
+    except (OSError, CalledProcessError) as e:
+        return e.message
 
 
 def helpcmd(cmdsym):
