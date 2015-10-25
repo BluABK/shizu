@@ -5,12 +5,16 @@ __author__ = 'BluABK <abk@blucoders.net'
 # Imports
 import ConfigParser
 import os
+
 import colours as clr
+
 
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.purple
 commandsavail = "user, command, dump"
+
+
 # Classes
 
 
@@ -21,18 +25,18 @@ class Config:  # Mandatory Config class
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.config.read('config.ini')
 
-#    def loadconfig(self):
-#        configloc = os.getcwd() + '/' + "config.ini"
-#        print(configloc)
-#        self.config.read(configloc)
-#        return True
+    #    def loadconfig(self):
+    #        configloc = os.getcwd() + '/' + "config.ini"
+    #        print(configloc)
+    #        self.config.read(configloc)
+    #        return True
 
     def get_cmd(self, name):
         return int(self.config.get('stats-cmd', name))
 
     def get_user(self, user):
-        return [str(self.config.get('stats-user', str(user)+'-cmd')),
-                int(self.config.get('stats-user', str(user)+'-num'))]
+        return [str(self.config.get('stats-user', str(user) + '-cmd')),
+                int(self.config.get('stats-user', str(user) + '-num'))]
 
     def update_cmd(self, cmd, num):
         try:
@@ -40,12 +44,12 @@ class Config:  # Mandatory Config class
             if self.config.has_option('stats-cmd', str(cmd)) is False:
                 config.set('stats-cmd', str(cmd), str(num))
                 with open('config.ini', 'w') as configfile:
-                        config.write(configfile)
+                    config.write(configfile)
                 retv = "Updated num and cmd"
             else:
-                config.set('stats-cmd', str(cmd), str(self.get_cmd(cmd)+num))
+                config.set('stats-cmd', str(cmd), str(self.get_cmd(cmd) + num))
                 with open('config.ini', 'w') as configfile:
-                        config.write(configfile)
+                    config.write(configfile)
                 retv = "Updated num"
         except:
             retv = "Unable to open configuration"
@@ -56,25 +60,25 @@ class Config:  # Mandatory Config class
     def update_user(self, user, cmd, num):
         try:
             config = Config.config
-            if self.config.has_option(str(user)+'cmd', str(cmd)) is False:
-                    config.set('stats-user', str(user)+'-cmd', str(cmd))
-                    config.set('stats-user', str(user)+'-num', str(num))
-                    with open('config.ini', 'w') as configfile:
-                        config.write(configfile)
-                    retv = "Updated num and cmd"
+            if self.config.has_option(str(user) + 'cmd', str(cmd)) is False:
+                config.set('stats-user', str(user) + '-cmd', str(cmd))
+                config.set('stats-user', str(user) + '-num', str(num))
+                with open('config.ini', 'w') as configfile:
+                    config.write(configfile)
+                retv = "Updated num and cmd"
 
             else:
                 cnt = 0
-                for c in config.get('stats-user', str(user)+'-cmd').split(","):
+                for c in config.get('stats-user', str(user) + '-cmd').split(","):
                     if c == cmd:
                         break
                     cnt += 1
-                sl = config.get('stats-user', str(user)+'-num').split(",")
+                sl = config.get('stats-user', str(user) + '-num').split(",")
                 sl[cnt] += num
                 s = sl.toString()
-                config.set('stats-user', str(user)+'-num', s)
+                config.set('stats-user', str(user) + '-num', s)
                 with open('config.ini', 'w') as configfile:
-                        config.write(configfile)
+                    config.write(configfile)
                 retv = "Updated num"
         except:
             retv = "Unable to open configuration"
@@ -84,6 +88,7 @@ class Config:  # Mandatory Config class
 
     def dump_cmd(self):
         return self.config.items('stats-cmd')
+
 
 cfg = Config()
 

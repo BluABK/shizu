@@ -17,8 +17,9 @@ def module_exists(module_name):
     else:
         return True
 
+
 if module_exists("pylast") is True:
-   import pylast
+    import pylast
 
 # if module_exists("modules.forklast") is True:
 #    import modules.forklast as pylast
@@ -190,11 +191,11 @@ def recently_played(user, num):
                    (my_colour, my_name, clr.off, user))
             u = user
         try:
-            rplist = network.get_user(u).get_recent_tracks(limit=int(num)+1)
+            rplist = network.get_user(u).get_recent_tracks(limit=int(num) + 1)
         except (AttributeError, ValueError) as e:
             return e.message
-#    except pylast.WSError.details == "Rate limit exceeded":
-#        return "Rate limit exceeded o0"
+        #    except pylast.WSError.details == "Rate limit exceeded":
+        #        return "Rate limit exceeded o0"
     except pylast.WSError:
         # err = "No user with that name was found"
         return None

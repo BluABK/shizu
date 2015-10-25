@@ -29,7 +29,9 @@ class Config:  # Mandatory Config class
     def sample(self):
         return str(self.config.get('db', 'file'))
 
+
 cfg = Config()
+
 
 # Functions
 

@@ -2,6 +2,7 @@
 import ConfigParser
 import os
 from subprocess import check_output, CalledProcessError
+
 import colours as clr
 
 __author__ = 'BluABK <abk@blucoders.net'
@@ -11,6 +12,7 @@ my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = ""
 commandsavail = "trigger"
 commandsavail_short = "ytt"
+
 
 # Classes
 
@@ -24,6 +26,7 @@ class Config:  # Mandatory Config class
 
     def sample(self):
         return str(self.config.get('sample', 'sampleitem'))
+
 
 cfg = Config()
 

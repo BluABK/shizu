@@ -10,9 +10,9 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
 # Import necessary modules
-import socket           # A rather *useful* network tool
-import time             # For time-based greeting functionality
-import re               # Regex for the win.
+import socket  # A rather *useful* network tool
+import time  # For time-based greeting functionality
+import re  # Regex for the win.
 import ConfigParser
 from random import randint
 # from subprocess import check_output
@@ -24,6 +24,7 @@ import unicodedata
 
 # Project-specific modules
 import colours as clr
+
 clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
 
@@ -36,26 +37,27 @@ def module_exists(module_name):
     else:
         return True
 
+
 if module_exists("modules.samba") is True:
-    import modules.samba as samba            # for server-side samba functionality
-#    clr = clr_selection.popleft()
+    import modules.samba as samba  # for server-side samba functionality
+# clr = clr_selection.popleft()
 #    samba.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.lastfm") is True:
     import modules.lastfm as lastfm
-#    clr = clr_selection.popleft()
+# clr = clr_selection.popleft()
 #    lastfm.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.watch") is True:
     import modules.watch as watch
-#    clr = clr_selection.popleft()
+# clr = clr_selection.popleft()
 #    watch.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("modules.stats") is True:
     import modules.stats as stats
 if module_exists("modules.youtube") is True:
     import modules.youtube as youtube
-#    clr = clr_selection.popleft()
+# clr = clr_selection.popleft()
 #    stats.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("weather"):
@@ -74,7 +76,9 @@ modulesavail = "samba*"
 telegram_cur_nick = None
 youtube_url = ""
 ytt_trigger = True
-#yr_stations = []
+
+
+# yr_stations = []
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
@@ -115,6 +119,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         # try:
         return_dbg = self.default.get('irc', 'proxy-users')
         return return_dbg
+
     #    except ConfigParser.NoSectionError:
     #        return "That section does not seem to exist"
     #    except ConfigParser.NoOptionError:
@@ -181,7 +186,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
                 configfile.close()
-            # return self.config.remove_option('custom-cmd', name)
+                # return self.config.remove_option('custom-cmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -193,7 +198,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
                 configfile.close()
-            # return self.config.remove_option('custom-rawcmd', name)
+                # return self.config.remove_option('custom-rawcmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
@@ -202,32 +207,32 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return str(self.default.get('custom-cmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def get_rawcommand(self, name):
         try:
             return str(self.default.get('custom-rawcmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def chk_command(self, name):
         try:
             return str(self.default.has_option('custom-cmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def chk_rawcommand(self, name):
         try:
             return str(self.default.has_option('custom-rawcmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def lst_command(self):
         try:
@@ -236,8 +241,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def lst_rawcommand(self):
         try:
@@ -246,8 +251,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def lst_command_option(self):
         try:
@@ -259,8 +264,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
     def lst_rawcommand_option(self):
         try:
@@ -272,8 +277,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
-        # except:
-        #    return "An unknown exception occurred"
+            # except:
+            #    return "An unknown exception occurred"
 
 
 # Variables declared by config file
@@ -520,7 +525,7 @@ def add_custom_cmd(name, function, usernick):
             return "That name collides with something =/"
         else:
             test = cfg.add_command(name, function)
-    #        test = add_command(name, function)
+            #        test = add_command(name, function)
             if isinstance(test, str):
                 return test
             else:
@@ -545,7 +550,7 @@ def add_custom_rawcmd(name, function, usernick):
             return "That name collides with something =/"
         else:
             test = cfg.add_rawcommand(name, function)
-    #        test = add_command(name, function)
+            #        test = add_command(name, function)
             if isinstance(test, str):
                 return test
             else:
@@ -774,7 +779,7 @@ def commands(usernick, msg, chan, ircsock):
             else:
                 ircsock.send("JOIN #%s\r\n" % newchan)
     elif cmd[0].lower() == "quit" and usernick in cfg.su():  # and cmd[1] == cfg.quitpro():
-            ircquit(ircsock)
+        ircquit(ircsock)
 
     elif cmd[0].lower() == "host":
         if len(cmd) > 1:
@@ -846,10 +851,12 @@ def commands(usernick, msg, chan, ircsock):
                     if type(auth) is str and type(net) is str:
                         sendmsg("I am currently authenticated as " + auth + " on " + net, chan, ircsock)
                     elif type(auth) is str:
-                        sendmsg("I am currently authenticated as " + auth + " on *NO NETWORK*, how does that even work? =/",
-                                chan, ircsock)
+                        sendmsg(
+                            "I am currently authenticated as " + auth + " on *NO NETWORK*, how does that even work? =/",
+                            chan, ircsock)
                     elif net is str:
-                        sendmsg("I am somehow connected to " + net + ", but not authenticated... Okay then!", chan, ircsock)
+                        sendmsg("I am somehow connected to " + net + ", but not authenticated... Okay then!", chan,
+                                ircsock)
                     else:
                         sendmsg("I am unable to query the network, is LastFM throwing a fit?", chan, ircsock)
             elif cmd[1] == "set":
@@ -863,17 +870,17 @@ def commands(usernick, msg, chan, ircsock):
                 default_num = 3
                 # !lastfm recent nick num
                 if len(cmd) > 3:
-                        num = cmd[3]
-                        nick = cmd[2]
-                        # !lastfm recent nick num
-                        try:
-                            if 0 > num <= 10:
-                                test = lastfm.recently_played(nick, num)
-                            # !lastfm recent nick 3 (num was out of bounds)
-                            else:
-                                test = lastfm.recently_played(nick, default_num)
-                        except TypeError:
+                    num = cmd[3]
+                    nick = cmd[2]
+                    # !lastfm recent nick num
+                    try:
+                        if 0 > num <= 10:
+                            test = lastfm.recently_played(nick, num)
+                        # !lastfm recent nick 3 (num was out of bounds)
+                        else:
                             test = lastfm.recently_played(nick, default_num)
+                    except TypeError:
+                        test = lastfm.recently_played(nick, default_num)
                 # !lastfm recent num
                 elif len(cmd) > 2:
                     num = cmd[2]
@@ -1093,7 +1100,7 @@ def commands(usernick, msg, chan, ircsock):
                 for item in cmd:
                     if '@' in item:
                         loc = " ".join(map(str, cmd[1:]))
-                        t = re.sub(r'\s+', "", loc[loc.find('@')+1:len(loc)])[0:5].split(':')
+                        t = re.sub(r'\s+', "", loc[loc.find('@') + 1:len(loc)])[0:5].split(':')
                         forecast = yr.weather_update(loc[0:loc.find('@')].strip(' '),
                                                      hour=int(t[0]), minute=int(t[1]), debug=kittens)
                         break
@@ -1114,7 +1121,7 @@ def triggers(usernick, msg, chan, ircsock):
     greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
     greet_match = re.match(greet_pat, msg)
     nick_match = False
-# TODO: HACK: Actually regex match against msg having exactly triggers_words() + cfg.nick()
+    # TODO: HACK: Actually regex match against msg having exactly triggers_words() + cfg.nick()
     for s in msg.split(" "):
         if s == cfg.nick():
             nick_match = True
@@ -1137,7 +1144,7 @@ def triggers(usernick, msg, chan, ircsock):
 def listeners(usernick, msg, chan, ircsock):
     if module_exists("modules.youtube"):
         global youtube_url
-        #if re.search(r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$', msg).group(0):
+        # if re.search(r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$', msg).group(0):
         for item in msg.split():
             if re.search('(http[s]?://)?(www.)?(youtube.com|youtu.?be)/+', item):
                 print "YouTube: current = %s" % item
@@ -1174,17 +1181,16 @@ def sendraw(buf, ircsock):
 
     ircbacklog.append(sent)
     if len(ircbacklog) > maxbacklog:
-            # Delete first entry
-            ircbacklog = ircbacklog[1:]
+        # Delete first entry
+        ircbacklog = ircbacklog[1:]
 
     ircbacklog_in.append(sent)
     if len(ircbacklog_out) > maxbacklog:
-            # Delete first entry
-            ircbacklog_out = ircbacklog_out[1:]
+        # Delete first entry
+        ircbacklog_out = ircbacklog_out[1:]
 
 
 class Client:
-
     def __init__(self):
         print "Spawned client instance"
 
@@ -1199,7 +1205,7 @@ class Client:
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
 
     i = 1
-    #if module_exists("weather"):
+    # if module_exists("weather"):
     #    yr_init()
     for recvraw in ircsock.makefile():
         if not running:
@@ -1220,9 +1226,9 @@ class Client:
             # Delete first entry
             ircbacklog_in = ircbacklog_in[1:]
 
-        ircmsg = recvraw.strip("\n\r")          # Remove protocol junk (linebreaks and return carriage)
-        ircmsg = ircmsg.lstrip(":")             # Remove first colon. Useless, waste of space >_<
-        print("%s: %s" % (i, ircmsg))           # Print received data
+        ircmsg = recvraw.strip("\n\r")  # Remove protocol junk (linebreaks and return carriage)
+        ircmsg = ircmsg.lstrip(":")  # Remove first colon. Useless, waste of space >_<
+        print("%s: %s" % (i, ircmsg))  # Print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
@@ -1282,7 +1288,7 @@ class Client:
                         for item in watch.get_added()[0:(watch.notify_limit())]:
                             cap_list.append(item)
 
-                        cap_list[watch.notify_limit()-1] += \
+                        cap_list[watch.notify_limit() - 1] += \
                             " ... and " + str(len(watch.get_added()) - watch.notify_limit()) + " more unlisted entries"
                         watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_add(), ircsock)
                 else:
@@ -1303,7 +1309,7 @@ class Client:
                         for item in watch.get_erased()[0:(watch.notify_limit())]:
                             cap_list.append(item)
 
-                        cap_list[watch.notify_limit()-1] += \
+                        cap_list[watch.notify_limit() - 1] += \
                             " ... and " + str(len(watch.get_erased()) - watch.notify_limit()) + " more unlisted entries"
                         print "Debug2 del sign is %s" % watch.cfg.msg_del()
                         watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_del(), ircsock)
@@ -1324,7 +1330,7 @@ class Client:
                         for item in watch.get_moved()[0:(watch.notify_limit())]:
                             cap_list.append(item)
 
-                        cap_list[watch.notify_limit()-1] += \
+                        cap_list[watch.notify_limit() - 1] += \
                             " ... and " + str(len(watch.get_moved()) - watch.notify_limit()) + " more unlisted entries"
                         watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_mov(), ircsock)
 
@@ -1336,6 +1342,7 @@ class Client:
     # See ya!
     ircquit(ircsock)
 
+
 # Main()
 if __name__ == "__main__":
     try:
@@ -1343,4 +1350,3 @@ if __name__ == "__main__":
     except Exception as e:
         watch.notifier.stop()
         raise
-

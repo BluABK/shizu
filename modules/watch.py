@@ -4,6 +4,7 @@ __author__ = 'BluABK'
 #
 import ConfigParser
 import os
+
 import colours as clr
 
 
@@ -14,6 +15,7 @@ def module_exists(module_name):
         return False
     else:
         return True
+
 
 if module_exists("pyinotify") is True:
     import pyinotify
@@ -31,6 +33,8 @@ files_erased = list()
 files_moved = list()
 files_moved_src = list()
 files_moved_dst = list()
+
+
 # Classes
 
 
@@ -47,8 +51,8 @@ class Config:  # Mandatory Config class
         dir_s = str(self.config.get('watch', 'dir'))
         print "watch: " + str(self.config.get('watch', 'dir'))
         for s in dir_s.split(" "):
-                print "watch: Added path: " + s
-                dir_l.append(s)
+            print "watch: Added path: " + s
+            dir_l.append(s)
         return dir_l
         # except:
         #    print "Config not implemented"
@@ -67,16 +71,18 @@ class Config:  # Mandatory Config class
 
     def notify_limit(self):
         return int(self.config.get('watch', 'limit'))
+
     # TODO: May be static
     def set_notify_limit(self, i):
-            # try:
-            config = Config.config
-            config.set('watch', 'limit', i)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-            return "limit set"
-            # except:
-            #    return "Unable to open configuration"
+        # try:
+        config = Config.config
+        config.set('watch', 'limit', i)
+        with open('config.ini', 'w') as configfile:
+            config.write(configfile)
+        return "limit set"
+        # except:
+        #    return "Unable to open configuration"
+
 
 cfg = Config()
 
@@ -199,6 +205,7 @@ def helpcmd(cmdsym):
 
     return cmdlist
 
+
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         print "\033[94mwatch.py: New file: %s\033[0m" % event.name
@@ -214,6 +221,7 @@ class EventHandler(pyinotify.ProcessEvent):
         print "\033[94mwatch.py: Moved file: %s\033[0m --> %s\033[0m" % (event.src_pathname, event.pathname)
         # add(event.name, 'del')
         move(event.src_pathname, event.pathname)
+
 
 wm = pyinotify.WatchManager()  # Watch Manager
 mask_add = pyinotify.IN_CREATE

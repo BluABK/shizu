@@ -5,12 +5,15 @@ __author__ = 'BluABK <abk@blucoders.net'
 # Imports
 import ConfigParser
 import os
+
 import colours as clr
+
 
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = ""
 commandsavail = "wishfulthinking, pipedreams, 42, imagination"
+
 
 # Classes
 
@@ -25,7 +28,9 @@ class Config:  # Mandatory Config class
     def sample(self):
         return str(self.config.get('sample', 'sampleitem'))
 
+
 cfg = Config()
+
 
 # Functions
 

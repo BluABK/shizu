@@ -30,6 +30,7 @@ import sys
 import collections
 import warnings
 import re
+
 import six
 
 __version__ = '1.3.0'
@@ -41,6 +42,7 @@ __email__ = 'amr.hassan@gmail.com'
 
 def _deprecation_warning(message):
     warnings.warn(message, DeprecationWarning)
+
 
 if sys.version_info[0] == 3:
     from http.client import HTTPConnection
@@ -102,7 +104,6 @@ COVER_MEGA = 4
 
 IMAGES_ORDER_POPULARITY = "popularity"
 IMAGES_ORDER_DATE = "dateadded"
-
 
 USER_MALE = 'Male'
 USER_FEMALE = 'Female'
@@ -187,7 +188,7 @@ class _Network(object):
 
         # Generate a session_key if necessary
         if ((self.api_key and self.api_secret) and not self.session_key and
-           (self.username and self.password_hash)):
+                (self.username and self.password_hash)):
             sk_gen = SessionKeyGenerator(self)
             self.session_key = sk_gen.get_session_key(
                 self.username, self.password_hash)
@@ -708,10 +709,10 @@ class _Network(object):
         """
 
         return self.scrobble_many(({
-            "artist": artist, "title": title, "timestamp": timestamp,
-            "album": album, "album_artist": album_artist,
-            "track_number": track_number, "duration": duration,
-            "stream_id": stream_id, "context": context, "mbid": mbid},))
+                                       "artist": artist, "title": title, "timestamp": timestamp,
+                                       "album": album, "album_artist": album_artist,
+                                       "track_number": track_number, "duration": duration,
+                                       "stream_id": stream_id, "context": context, "mbid": mbid},))
 
     def scrobble_many(self, tracks):
         """
@@ -736,9 +737,9 @@ class _Network(object):
                 "timestamp", "album", "album_artist", "context",
                 "stream_id", "track_number", "mbid", "duration")
             args_map_to = {  # so friggin lazy
-                "album_artist": "albumArtist",
-                "track_number": "trackNumber",
-                "stream_id": "streamID"}
+                             "album_artist": "albumArtist",
+                             "track_number": "trackNumber",
+                             "stream_id": "streamID"}
 
             for arg in additional_args:
 
@@ -791,7 +792,6 @@ class _Network(object):
 
 
 class LastFMNetwork(_Network):
-
     """A Last.fm network object
 
     api_key: a provided API_KEY
@@ -910,7 +910,6 @@ class LibreFMNetwork(_Network):
     def __init__(
             self, api_key="", api_secret="", session_key="", username="",
             password_hash=""):
-
         _Network.__init__(
             self,
             name="Libre.fm",
@@ -984,6 +983,7 @@ def get_librefm_network(
 
 class _ShelfCacheBackend(object):
     """Used as a backend for caching cacheable requests."""
+
     def __init__(self, file_path=None):
         self.shelf = shelve.open(file_path)
 
@@ -1209,8 +1209,8 @@ class SessionKeyGenerator(object):
         token = self._get_web_auth_token()
 
         url = '%(homepage)s/api/auth/?api_key=%(api)s&token=%(token)s' % \
-            {"homepage": self.network.homepage,
-             "api": self.network.api_key, "token": token}
+              {"homepage": self.network.homepage,
+               "api": self.network.api_key, "token": token}
 
         self.web_auth_tokens[url] = token
 
@@ -1255,6 +1255,7 @@ class SessionKeyGenerator(object):
         doc = request.execute()
 
         return _extract(doc, "key")
+
 
 TopItem = collections.namedtuple("TopItem", ["item", "weight"])
 SimilarItem = collections.namedtuple("SimilarItem", ["item", "match"])
@@ -1379,7 +1380,7 @@ class _BaseObject(object):
         """
 
         # Last.fm currently accepts a max of 10 recipient at a time
-        while(len(users) > 10):
+        while (len(users) > 10):
             section = users[0:9]
             users = users[9:]
             self.share(section, message)
@@ -1446,7 +1447,7 @@ class _BaseObject(object):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getShouts",
+                        self.ws_prefix + ".getShouts",
                 cacheable):
             shouts.append(
                 Shout(
@@ -1871,14 +1872,14 @@ class Album(_Opus):
 
         return self.network._get_url(
             domain_name, self.ws_prefix) % {
-            'artist': artist, 'album': title}
+                   'artist': artist, 'album': title}
 
     def get_the_sodding_name(self, limit=None, cacheable=True):
-        #return _extract_all(self._request(
-            #self.ws_prefix + ".getInfo", cacheable=True), "album")
+        # return _extract_all(self._request(
+        # self.ws_prefix + ".getInfo", cacheable=True), "album")
         params = self._get_params()
         print params
-        #params['period'] = period
+        # params['period'] = period
         if limit:
             params['limit'] = limit
 
@@ -2632,7 +2633,7 @@ class Library(_BaseObject):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getAlbums",
+                        self.ws_prefix + ".getAlbums",
                 cacheable,
                 params):
             name = _extract(node, "name")
@@ -2655,7 +2656,7 @@ class Library(_BaseObject):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getArtists",
+                        self.ws_prefix + ".getArtists",
                 cacheable):
             name = _extract(node, "name")
 
@@ -2683,7 +2684,7 @@ class Library(_BaseObject):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getTracks",
+                        self.ws_prefix + ".getTracks",
                 cacheable,
                 params):
             name = _extract(node, "name")
@@ -3075,7 +3076,7 @@ class Track(_Opus):
 
         return self.network._get_url(
             domain_name, self.ws_prefix) % {
-            'artist': artist, 'title': title}
+                   'artist': artist, 'title': title}
 
 
 class Group(_BaseObject, _Chartable):
@@ -3264,7 +3265,7 @@ class User(_BaseObject, _Chartable):
         for track in _collect_nodes(
                 None,
                 self,
-                self.ws_prefix + ".getArtistTracks",
+                        self.ws_prefix + ".getArtistTracks",
                 cacheable,
                 params):
             title = _extract(track, "name")
@@ -3286,7 +3287,7 @@ class User(_BaseObject, _Chartable):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getFriends",
+                        self.ws_prefix + ".getFriends",
                 cacheable):
             seq.append(User(_extract(node, "name"), self.network))
 
@@ -3314,7 +3315,7 @@ class User(_BaseObject, _Chartable):
         for track in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getLovedTracks",
+                        self.ws_prefix + ".getLovedTracks",
                 cacheable,
                 params):
             title = _extract(track, "name")
@@ -3356,7 +3357,7 @@ class User(_BaseObject, _Chartable):
         for node in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getPastEvents",
+                        self.ws_prefix + ".getPastEvents",
                 cacheable):
             seq.append(Event(_extract(node, "id"), self.network))
 
@@ -3435,7 +3436,7 @@ class User(_BaseObject, _Chartable):
         for track in _collect_nodes(
                 limit,
                 self,
-                self.ws_prefix + ".getRecentTracks",
+                        self.ws_prefix + ".getRecentTracks",
                 cacheable,
                 params):
 
@@ -3733,7 +3734,7 @@ class AuthenticatedUser(User):
     def get_name(self):
         """Returns the name of the authenticated user."""
 
-        doc = self._request("user.getInfo", True, {"user": ""})    # hack
+        doc = self._request("user.getInfo", True, {"user": ""})  # hack
 
         self.name = _extract(doc, "name")
         return self.name
@@ -3809,7 +3810,6 @@ class AlbumSearch(_Search):
     """Search for an album by name."""
 
     def __init__(self, album_name, network):
-
         _Search.__init__(self, "album", {"album": album_name}, network)
 
     def get_next_page(self):
@@ -3851,7 +3851,6 @@ class TagSearch(_Search):
     """Search for a tag by tag name."""
 
     def __init__(self, tag_name, network):
-
         _Search.__init__(self, "tag", {"tag": tag_name}, network)
 
     def get_next_page(self):
@@ -3875,7 +3874,6 @@ class TrackSearch(_Search):
     """
 
     def __init__(self, artist_name, track_title, network):
-
         _Search.__init__(
             self,
             "track",
@@ -3906,7 +3904,6 @@ class VenueSearch(_Search):
     """
 
     def __init__(self, venue_name, country_name, network):
-
         _Search.__init__(
             self,
             "venue",
@@ -4054,7 +4051,7 @@ def _collect_nodes(limit, sender, method_name, cacheable, params=None):
 
         for node in main.childNodes:
             if not node.nodeType == xml.dom.Node.TEXT_NODE and (
-                    not limit or (len(nodes) < limit)):
+                        not limit or (len(nodes) < limit)):
                 nodes.append(node)
 
         if page >= total_pages:
@@ -4203,7 +4200,6 @@ def _number(string):
 
 
 def _unescape_htmlentity(string):
-
     # string = _unicode(string)
 
     mapping = htmlentitydefs.name2codepoint
@@ -4260,7 +4256,6 @@ class BadSessionError(ScrobblingError):
 
 
 class _ScrobblerRequest(object):
-
     def __init__(self, url, params, network, request_type="POST"):
 
         for key in params:
@@ -4348,7 +4343,7 @@ class Scrobbler(object):
         elif self.network.api_key and self.network.api_secret and \
                 self.network.session_key:
             if not self.username:
-                self.username = self.network.get_authenticated_user()\
+                self.username = self.network.get_authenticated_user() \
                     .get_name()
             token = md5(self.network.api_secret + timestamp)
 
