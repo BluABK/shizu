@@ -190,7 +190,7 @@ def recently_played(user, num):
                    (my_colour, my_name, clr.off, user))
             u = user
         try:
-            rplist = network.get_user(u).get_recent_tracks()
+            rplist = network.get_user(u).get_recent_tracks(limit=int(num))
         except AttributeError as e:
             return e.message
 #    except pylast.WSError.details == "Rate limit exceeded":
