@@ -1221,6 +1221,7 @@ class Client:
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
     if cfg.has_oper():
         sendraw("OPER %s %s\n" % (cfg.oper_name(), cfg.oper_pass()), ircsock)
+
     i = 1
     # if module_exists("weather"):
     #    yr_init()
