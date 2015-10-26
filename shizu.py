@@ -106,6 +106,22 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def realname(self):
         return str(self.default.get('irc', 'real name'))
 
+    def has_oper(self):
+        try:
+            if self.default.has_option('irc', 'oper name') and self.default.has_option('irc', 'oper password'):
+                if self.oper_pass() != "" and self.oper_name() != "":
+                    return True
+            else:
+                return False
+        except:
+            return False
+
+    def oper_name(self):
+        return str(self.default.get('irc', 'oper name'))
+
+    def oper_pass(self):
+        return str(self.default.get('irc', 'oper password'))
+
     def cmdsym(self):
         return str(self.default.get('irc', 'cmdsymbol'))
 
@@ -1203,7 +1219,8 @@ class Client:
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     sendraw("NICK " + cfg.nick() + "\n", ircsock)
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
-
+    if cfg.has_oper():
+        sendraw("OPER %s %s\n" % (cfg.oper_name(), cfg.oper_pass()), ircsock)
     i = 1
     # if module_exists("weather"):
     #    yr_init()
