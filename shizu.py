@@ -1219,8 +1219,6 @@ class Client:
     # Register with the server [RFC2812 section-3.1 Connection Registration]
     sendraw("NICK " + cfg.nick() + "\n", ircsock)
     sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()), ircsock)
-    if cfg.has_oper():
-        sendraw("OPER %s %s\n" % (cfg.oper_name(), cfg.oper_pass()), ircsock)
 
     i = 1
     # if module_exists("weather"):
@@ -1263,6 +1261,8 @@ class Client:
             sendraw("PRIVMSG NickServ :identify %s\r\n" % cfg.nspass(), ircsock)
 
         if ircmsg.find("NOTICE Auth :Welcome") != -1:
+            if cfg.has_oper():
+                sendraw("OPER %s %s\n" % (cfg.oper_name(), cfg.oper_pass()), ircsock)
             join(cfg.chan(), ircsock)
 
         # Run some checks
