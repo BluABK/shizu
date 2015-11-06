@@ -1079,7 +1079,8 @@ def commands(usernick, msg, chan, ircsock):
                     return sendmsg("YouTube Title: Print urls as they appear (trigger mode)", chan, ircsock)
                 else:
                     return sendmsg("YouTube Title: Print urls if asked to (command mode)", chan, ircsock)
-        if youtube.get_url() is not None and youtube.get_trigger() is True:
+        # Command mode (see triggers() for trigger mode)
+        if youtube.get_url() is not None and youtube.get_trigger() is False:
             return sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
     # Private Module: yr
