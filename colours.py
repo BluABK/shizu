@@ -1,5 +1,7 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
+# TODO: Fix colours to also work on IRC not just bash
+
 # This is a colour palette for use in other scripts to make beautiful colourful prompts ~
 
 clr_default = ""

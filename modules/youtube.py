@@ -8,6 +8,8 @@ import colours as clr
 
 __author__ = 'BluABK <abk@blucoders.net'
 
+# TODO: Fix fancy (ref: TODO in colours.py)
+
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = ""
