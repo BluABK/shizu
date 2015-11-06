@@ -1080,7 +1080,7 @@ def commands(usernick, msg, chan, ircsock):
                 else:
                     return sendmsg("YouTube Title: Print urls if asked to (command mode)", chan, ircsock)
         if youtube.get_url() is not None and youtube.get_trigger() is True:
-            return sendmsg(youtube.printable_title(fancy=True), chan, ircsock)
+            return sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
@@ -1140,7 +1140,7 @@ def triggers(usernick, msg, chan, ircsock):
     """YouTube Title"""
     if module_exists("modules.youtube"):
         if youtube.get_url() is not None:
-            sendmsg(youtube.printable_title(fancy=True), chan, ircsock)
+            sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
 
 def listeners(usernick, msg, chan, ircsock):

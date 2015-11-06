@@ -60,7 +60,7 @@ def set_url(url):
     :return:
     """
     global youtube_url
-    youtube_url = str(url)
+    youtube_url = url
 
 
 def get_url():
