@@ -114,8 +114,8 @@ def parse_url(msg):
     for item in msg.split():
         if re.search('(http[s]?://)?(www.)?(youtube.com|youtu.?be)/+', item):
             print "YouTube: current = %s" % item
-        # TODO: add_url(item)
-        set_url(item)
+            # TODO: add_url(item)
+            set_url(item)
 
 
 def printable_title(fancy=True):
