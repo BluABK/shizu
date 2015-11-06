@@ -74,8 +74,6 @@ watch_enabled = True
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
 modulesavail = "samba*"
 telegram_cur_nick = None
-youtube_url = ""
-ytt_trigger = True
 
 
 # yr_stations = []
@@ -647,12 +645,6 @@ def nickname_proxy(irc_line):
     return [real_nick, msg]
 
 
-def ytt_print(chan, ircsock):
-    global youtube_url
-    sendmsg("YouTube video: %s" % youtube.get_title(youtube_url), chan, ircsock)
-    youtube_url = ""
-
-
 def commands(usernick, msg, chan, ircsock):
     global watch_enabled
     # First of all, check if it is a command
@@ -1080,20 +1072,15 @@ def commands(usernick, msg, chan, ircsock):
 
     # Module: YouTube
     elif cmd[0].lower() == "ytt" and module_exists("modules.youtube"):
-        global youtube_url, ytt_trigger
         if len(cmd) > 1:
             if cmd[1].lower() == "trigger":
-                if ytt_trigger is False:
-                    ytt_trigger = True
-                    sendmsg("YouTube Title: Changing to [trigger mode]", chan, ircsock)
-                    return
+                new_state = youtube.toggle_trigger()
+                if new_state is True:
+                    return sendmsg("YouTube Title: Print urls as they appear (trigger mode)", chan, ircsock)
                 else:
-                    ytt_trigger = False
-                    sendmsg("YouTube Title: Changing to [command mode]", chan, ircsock)
-                    return
-        if youtube_url != "" and ytt_trigger is False:
-            ytt_print(chan, ircsock)
-            return
+                    return sendmsg("YouTube Title: Print urls if asked to (command mode)", chan, ircsock)
+        if youtube.get_url() is not None and youtube.get_trigger() is True:
+            return sendmsg(youtube.printable_title(fancy=True), chan, ircsock)
 
     # Private Module: yr
     elif cmd[0].lower() == "yr" and module_exists("weather"):
@@ -1152,19 +1139,13 @@ def triggers(usernick, msg, chan, ircsock):
 
     """YouTube Title"""
     if module_exists("modules.youtube"):
-        global youtube_url
-        if youtube_url != "":
-            ytt_print(chan, ircsock)
+        if youtube.get_url() is not None:
+            sendmsg(youtube.printable_title(fancy=True), chan, ircsock)
 
 
 def listeners(usernick, msg, chan, ircsock):
     if module_exists("modules.youtube"):
-        global youtube_url
-        # if re.search(r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$', msg).group(0):
-        for item in msg.split():
-            if re.search('(http[s]?://)?(www.)?(youtube.com|youtu.?be)/+', item):
-                print "YouTube: current = %s" % item
-                youtube_url = item
+        youtube.parse_url(msg)
 
 
 def watch_notify(files, chan, msg, ircsock):
