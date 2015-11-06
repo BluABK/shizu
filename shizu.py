@@ -1139,7 +1139,7 @@ def triggers(usernick, msg, chan, ircsock):
 
     """YouTube Title"""
     if module_exists("modules.youtube"):
-        if youtube.get_url() is not None:
+        if youtube.get_url() is not None and youtube.get_trigger() is True:
             sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
 
