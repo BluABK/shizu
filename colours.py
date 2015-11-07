@@ -1,3 +1,5 @@
+from collections import deque
+
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Fix colours to also work on IRC not just bash
@@ -78,3 +80,8 @@ intense_bg_blue = '\033[104m'  # Blue
 intense_bg_purple = '\033[105m'  # Purple
 intense_bg_cyan = '\033[106m'  # Cyan
 intense_bg_white = '\033[107m'  # White
+
+
+def pool():
+    clr_li = [green, red, blue, purple, cyan, white, yellow]
+    return deque(clr_li)
