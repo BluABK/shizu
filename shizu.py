@@ -1,5 +1,23 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+# Import necessary modules
+import socket  # A rather *useful* network tool
+import time  # For time-based greeting functionality
+import re  # Regex for the win.
+from random import randint
+import ConfigParser
+# from subprocess import check_output
+from subprocess import *
+from collections import deque
+import os
+import unicodedata
+import imp
+
+# TODO: Make colours.py optional
+import colours as clr
+# import modules.config as config
+
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
@@ -9,59 +27,8 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Implement command to trigger server-side permission-sentinel.sh - and assign this to a server-side features mod
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
-# Import necessary modules
-import socket  # A rather *useful* network tool
-import time  # For time-based greeting functionality
-import re  # Regex for the win.
-import ConfigParser
-from random import randint
-# from subprocess import check_output
-from subprocess import *
-from collections import deque
-import os
-import unicodedata
-
-
-# Project-specific modules
-import colours as clr
-
-clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
-
-
-def module_exists(module_name):
-    try:
-        __import__(module_name)
-    except ImportError:
-        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
-        return False
-    else:
-        return True
-
-
-if module_exists("modules.samba") is True:
-    import modules.samba as samba  # for server-side samba functionality
-# clr = clr_selection.popleft()
-#    samba.my_colour = clr
-#    clr_selection.append(clr)
-if module_exists("modules.lastfm") is True:
-    import modules.lastfm as lastfm
-# clr = clr_selection.popleft()
-#    lastfm.my_colour = clr
-#    clr_selection.append(clr)
-if module_exists("modules.watch") is True:
-    import modules.watch as watch
-# clr = clr_selection.popleft()
-#    watch.my_colour = clr
-#    clr_selection.append(clr)
-if module_exists("modules.stats") is True:
-    import modules.stats as stats
-if module_exists("modules.youtube") is True:
-    import modules.youtube as youtube
-# clr = clr_selection.popleft()
-#    stats.my_colour = clr
-#    clr_selection.append(clr)
-if module_exists("weather"):
-    import weather as yr
+# Core features
+modules = ['triggers', 'samba', 'lastfm', 'watch', 'stats', 'youtube']
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -71,15 +38,15 @@ ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
 watch_enabled = True
+# TODO: Make commandsavail reflect reality
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
-modulesavail = "samba*"
 telegram_cur_nick = None
 
 
-# yr_stations = []
-
-
-class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
+class Config:
+    """
+    Shizu configuration handler
+    """
     default = ConfigParser.RawConfigParser()
 
     def __init__(self):
@@ -145,17 +112,8 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def nspass(self):
         return str(self.default.get('nickserv', 'password'))
 
-    def backlog(self):
-        return str(self.default.getint('irc', 'backlog-limit'))
-
-    def triggers_words(self):
-        return str(self.default.get('triggers', 'words'))
-
-    def triggers_badwords(self):
-        return str(self.default.get('triggers', 'badwords'))
-
-    def triggers_ignorednicks(self):
-        return str(self.default.get('triggers', 'ignored-nicks'))
+    def get_backlog(self):
+        return int(self.default.getint('irc', 'backlog-limit'))
 
     def commands_ignorednicks(self):
         return str(self.default.get('commands', 'ignored-nicks'))
@@ -295,9 +253,40 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             #    return "An unknown exception occurred"
 
 
+def module_exists(module_name):
+    try:
+        imp.find_module(module_name)
+        return True
+    except ImportError:
+        print "[shizu/import]:\t %sWARNING: Unable to import module: %s!%s" % (clr.yellow, module_name, clr.off)
+        return False
+
+
+def import_module(module_name):
+    """
+    Imports module_name if module_exists(modules.module_name)
+    :param module_name: str
+    :return: imported module or None
+    """
+    if module_exists("modules.%s" % module_name) is True:
+        return __import__(module_name)
+    else:
+        return None
+
+# Import modules
+for m in modules:
+    import_module(m)
+
+# Import private modules
+if module_exists("weather"):
+    import weather as yr
+
+
 # Variables declared by config file
+#cfg = config.Config()
 cfg = Config()
-maxbacklog = int(cfg.backlog())
+# TODO: make maxbacklog a config property
+maxbacklog = cfg.get_backlog()
 
 
 def ian(s):  # is a number
@@ -334,25 +323,6 @@ def debug(msg, ircsock):
 
 def join(chan, ircsock):
     ircsock.send("JOIN " + chan + "\n")
-
-
-def getgreeting(greeter, ircsock):
-    t = int(time.strftime("%H"))
-
-    if t >= 17 or t < 4:
-        greeting = "Konbanwa"
-    elif t >= 12:
-        greeting = "Konnichiwa"
-    elif t >= 4:
-        greeting = "Ohayou gozaimasu"
-    elif t <= -1:
-        debug("Negative time returned", ircsock)
-        greeting = "ohi"
-    else:
-        debug("Time returned had no valid integer value.", ircsock)
-        greeting = "ohi"
-
-    return "%s %s~" % (greeting, greeter)
 
 
 def replay(lines, chan, direction, ircsock):
@@ -1119,29 +1089,6 @@ def commands(usernick, msg, chan, ircsock):
                     sendmsg("No such weather station", chan, ircsock)
             except:
                 sendmsg("https://www.konata.us/nope.gif", chan, ircsock)
-
-
-def triggers(usernick, msg, chan, ircsock):
-    greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
-    greet_match = re.match(greet_pat, msg)
-    nick_match = False
-    # TODO: HACK: Actually regex match against msg having exactly triggers_words() + cfg.nick()
-    for s in msg.split(" "):
-        if s == cfg.nick():
-            nick_match = True
-
-    """Greeting"""
-    try:
-        # if matches.group(0) != "":  # If someone greets me, I will greet back.
-        if greet_match and nick_match:
-            sendmsg((getgreeting(usernick, ircsock)), chan, ircsock)
-    except AttributeError:
-        return
-
-    """YouTube Title"""
-    if module_exists("modules.youtube"):
-        if youtube.get_url() is not None and youtube.get_trigger() is True:
-            sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
 
 def listeners(usernick, msg, chan, ircsock):
