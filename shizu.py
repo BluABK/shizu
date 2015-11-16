@@ -31,11 +31,10 @@ clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.w
 def module_exists(module_name):
     try:
         __import__(module_name)
+        return True
     except ImportError:
         print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
         return False
-    else:
-        return True
 
 
 if module_exists("modules.samba") is True:
@@ -319,7 +318,6 @@ def sendmsg(msg, chan, ircsock):
                 ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
             except ValueError:
                 ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
-                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Hey... Are you trying to kill me?!"))
         else:
             # Don't check, errors from here are raised
             for item in msg:
