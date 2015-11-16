@@ -954,7 +954,6 @@ def commands(usernick, msg, chan, ircsock):
                 sendmsg(samba.get_logins(cmd[2:]), chan, ircsock)
             elif cmd[1] == "np":
                     sendmsg(samba.get_playing(), chan, ircsock)
-
             elif cmd[1] == "np2":
                     sendmsg(samba.get_playing2(), chan, ircsock)
         else:
