@@ -276,7 +276,7 @@ def get_playing():
     format_dict = format_exiftool(tmp_playback, "BitsPerSample", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_dict)
 
-    return format_np(format_dict).encode('ascii')
+    return format_np(format_dict).encode('utf-8')
     # except:
     # return "Shell execute failed =/"
 
