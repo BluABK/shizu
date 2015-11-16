@@ -640,6 +640,9 @@ def nickname_proxy(irc_line):
         msg = irc_line[3].split('> ')[1]
         telegram_cur_nick = real_nick
 
+    # Strip any fancy smancy unicode as it won't be a valid IRC nickname
+    real_nick = real_nick.decode('ascii', 'ignore')
+
     return [real_nick, msg]
 
 
