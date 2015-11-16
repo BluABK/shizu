@@ -642,7 +642,7 @@ def nickname_proxy(irc_line):
 
     # Strip any fancy smancy unicode as it won't be a valid IRC nickname
     if real_nick is not None:
-        real_nick = real_nick.decode('ascii', 'ignore')
+        real_nick = real_nick.decode('ascii', 'ignore').encode('utf-8')
 
     return [real_nick, msg]
 
