@@ -641,7 +641,8 @@ def nickname_proxy(irc_line):
         telegram_cur_nick = real_nick
 
     # Strip any fancy smancy unicode as it won't be a valid IRC nickname
-    real_nick = real_nick.decode('ascii', 'ignore')
+    if real_nick is not None:
+        real_nick = real_nick.decode('ascii', 'ignore')
 
     return [real_nick, msg]
 
