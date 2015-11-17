@@ -316,8 +316,8 @@ def sendmsg(msg, chan, ircsock):
         if isinstance(msg, basestring):
             try:
                 ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
-            except ValueError:
-                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "Oi! That's not a string OwO Are you trying to kill me?!"))
+            except ValueError as e:
+                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "sendmsg(): %s" % e))
         else:
             # Don't check, errors from here are raised
             for item in msg:
