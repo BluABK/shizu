@@ -43,6 +43,7 @@ class Config:  # Mandatory Config class
 
     def update_cmd(self, cmd, num):
         try:
+            self.config.read('config.ini')
             if self.config.has_option('stats-cmd', str(cmd)) is False:
                 self.config.set('stats-cmd', str(cmd), str(num))
                 with open('config.ini', 'w') as configfile:
@@ -61,6 +62,7 @@ class Config:  # Mandatory Config class
 
     def update_user(self, user, cmd, num):
         try:
+            self.config.read('config.ini')
             if self.config.has_option(str(user) + 'cmd', str(cmd)) is False:
                 self.config.set('stats-user', str(user) + '-cmd', str(cmd))
                 self.config.set('stats-user', str(user) + '-num', str(num))
