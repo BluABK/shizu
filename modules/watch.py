@@ -74,6 +74,7 @@ class Config:  # Mandatory Config class
 
     def set_notify_limit(self, i):
         try:
+            self.config.read('config.ini')
             self.config.set('watch', 'limit', i)
             with open('config.ini', 'w') as configfile:
                 self.config.write(configfile)

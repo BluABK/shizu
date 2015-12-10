@@ -171,6 +171,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def add_command(self, name, function):
         try:
+            self.config.read('config.ini')
             self.config.set('custom-cmd', name, function)
             with open('config.ini', 'wb') as configfile:
                 self.config.write(configfile)
@@ -179,6 +180,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def add_rawcommand(self, name, function):
         try:
+            self.config.read('config.ini')
             self.config.set('custom-rawcmd', name, function)
             with open('config.ini', 'wb') as configfile:
                 self.config.write(configfile)
@@ -187,6 +189,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def del_command(self, name):
         try:
+            self.config.read('config.ini')
             self.config.remove_option('custom-cmd', name)
             with open('config.ini', 'wb') as configfile:
                 self.config.write(configfile)
@@ -196,6 +199,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def del_rawcommand(self, name):
         try:
+            self.config.read('config.ini')
             self.config.remove_option('custom-rawcmd', name)
             with open('config.ini', 'wb') as configfile:
                 self.config.write(configfile)

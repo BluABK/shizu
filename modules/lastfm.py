@@ -70,10 +70,10 @@ class Config:  # Shizu's config class
     def add_alias(self, nick, user):
         if self.config.has_option('lastfm-alias', nick) is False:
             try:
-                config = Config.config
-                config.set('lastfm-alias', nick, user)
+                self.config.read('config.ini')
+                self.config.set('lastfm-alias', nick, user)
                 with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
+                    self.config.write(configfile)
                     configfile.close()
                 return "Alias added"
             except:

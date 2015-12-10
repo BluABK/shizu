@@ -25,8 +25,17 @@ class Config:  # Mandatory Config class
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.config.read('config.ini')
 
-    def sample(self):
+    def get_sample(self):
         return str(self.config.get('sample', 'sampleitem'))
+
+    def set_sample(self, arg):
+        try:
+            self.config.read('config.ini')
+            self.config.set('sample', 'sampleitem', str(arg))
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
+        except:
+            print "It failed."
 
 
 cfg = Config()
