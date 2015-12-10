@@ -25,6 +25,9 @@ class Config:  # Mandatory Config class
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.config.read('config.ini')
 
+    def __call__(self):
+        self.config.read('config.ini')
+
     #    def loadconfig(self):
     #        configloc = os.getcwd() + '/' + "config.ini"
     #        print(configloc)

@@ -79,33 +79,33 @@ telegram_cur_nick = None
 
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
-    default = ConfigParser.RawConfigParser()
+    config = ConfigParser.RawConfigParser()
 
     def __init__(self):
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
-        self.default.read('config.ini')
+        self.config.read('config.ini')
 
     def server(self):
-        return str(self.default.get('irc', 'server'))
+        return str(self.config.get('irc', 'server'))
 
     def spass(self):
-        return str(self.default.get('irc', 'password'))
+        return str(self.config.get('irc', 'password'))
 
     def port(self):
-        return int(self.default.get('irc', 'port'))
+        return int(self.config.get('irc', 'port'))
 
     def chan(self):
-        return str(self.default.get('irc', 'channel'))
+        return str(self.config.get('irc', 'channel'))
 
     def nick(self):
-        return str(self.default.get('irc', 'nickname'))
+        return str(self.config.get('irc', 'nickname'))
 
     def realname(self):
-        return str(self.default.get('irc', 'real name'))
+        return str(self.config.get('irc', 'real name'))
 
     def has_oper(self):
         try:
-            if self.default.has_option('irc', 'oper name') and self.default.has_option('irc', 'oper password'):
+            if self.config.has_option('irc', 'oper name') and self.config.has_option('irc', 'oper password'):
                 if self.oper_pass() != "" and self.oper_name() != "":
                     return True
             else:
@@ -114,23 +114,23 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return False
 
     def oper_name(self):
-        return str(self.default.get('irc', 'oper name'))
+        return str(self.config.get('irc', 'oper name'))
 
     def oper_pass(self):
-        return str(self.default.get('irc', 'oper password'))
+        return str(self.config.get('irc', 'oper password'))
 
     def cmdsym(self):
-        return str(self.default.get('irc', 'cmdsymbol'))
+        return str(self.config.get('irc', 'cmdsymbol'))
 
     def quitmsg(self):
-        return str(self.default.get('irc', 'quit-message'))
+        return str(self.config.get('irc', 'quit-message'))
 
     def quitpro(self):
-        return str(self.default.get('irc', 'quit-protection'))
+        return str(self.config.get('irc', 'quit-protection'))
 
     def proxy_nicks(self):
         # try:
-        return_dbg = self.default.get('irc', 'proxy-users')
+        return_dbg = self.config.get('irc', 'proxy-users')
         return return_dbg
 
     #    except ConfigParser.NoSectionError:
@@ -139,29 +139,29 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     #        return "Option does not seem to exist"
 
     def su(self):
-        return str(self.default.get('users', 'superusers'))
+        return str(self.config.get('users', 'superusers'))
 
     def nspass(self):
-        return str(self.default.get('nickserv', 'password'))
+        return str(self.config.get('nickserv', 'password'))
 
     def backlog(self):
-        return str(self.default.getint('irc', 'backlog-limit'))
+        return str(self.config.getint('irc', 'backlog-limit'))
 
     def triggers_words(self):
-        return str(self.default.get('triggers', 'words'))
+        return str(self.config.get('triggers', 'words'))
 
     def triggers_badwords(self):
-        return str(self.default.get('triggers', 'badwords'))
+        return str(self.config.get('triggers', 'badwords'))
 
     def triggers_ignorednicks(self):
-        return str(self.default.get('triggers', 'ignored-nicks'))
+        return str(self.config.get('triggers', 'ignored-nicks'))
 
     def commands_ignorednicks(self):
-        return str(self.default.get('commands', 'ignored-nicks'))
+        return str(self.config.get('commands', 'ignored-nicks'))
 
     def chk_command_perms(self, user, inst):
         try:
-            allowed = str(self.default.get('custom-cmd-cfg', inst))
+            allowed = str(self.config.get('custom-cmd-cfg', inst))
             if user in allowed:
                 return True
             else:
@@ -169,66 +169,43 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
-    # TODO: May be static
     def add_command(self, name, function):
         try:
-            config = Config.default
-            config.set('custom-cmd', name, function)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-                configfile.close()
+            self.config.set('custom-cmd', name, function)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
-    # TODO: May be static
     def add_rawcommand(self, name, function):
         try:
-            config = Config.default
-            config.set('custom-rawcmd', name, function)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-                configfile.close()
+            self.config.set('custom-rawcmd', name, function)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
-    # TODO: May be static
     def del_command(self, name):
         try:
-            config = Config.default
-            config.remove_option('custom-cmd', name)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-                configfile.close()
+            self.config.remove_option('custom-cmd', name)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
                 # return self.config.remove_option('custom-cmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
-    # TODO: May be static
     def del_rawcommand(self, name):
         try:
-            config = Config.default
-            config.remove_option('custom-rawcmd', name)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-                configfile.close()
-                # return self.config.remove_option('custom-rawcmd', name)
-        except ConfigParser.NoSectionError:
-            return "That section does not seem to exist"
-
-    def del_rawcommand2(self, name):
-        try:
-            config = Config.default
-            config.remove_option('custom-rawcmd', name)
-            with open('config.ini', 'w') as configfile:
-                config.write(configfile)
-                # configfile.close()
+            self.config.remove_option('custom-rawcmd', name)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
                 # return self.config.remove_option('custom-rawcmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
     def get_command(self, name):
         try:
-            return str(self.default.get('custom-cmd', name))
+            return str(self.config.get('custom-cmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
             # except:
@@ -236,7 +213,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def get_rawcommand(self, name):
         try:
-            return str(self.default.get('custom-rawcmd', name))
+            return str(self.config.get('custom-rawcmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
             # except:
@@ -244,7 +221,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def chk_command(self, name):
         try:
-            return str(self.default.has_option('custom-cmd', name))
+            return str(self.config.has_option('custom-cmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
             # except:
@@ -252,7 +229,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def chk_rawcommand(self, name):
         try:
-            return str(self.default.has_option('custom-rawcmd', name))
+            return str(self.config.has_option('custom-rawcmd', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
             # except:
@@ -260,7 +237,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def lst_command(self):
         try:
-            return self.default.items('custom-cmd')
+            return self.config.items('custom-cmd')
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
@@ -270,7 +247,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def lst_rawcommand(self):
         try:
-            return self.default.items('custom-rawcmd')
+            return self.config.items('custom-rawcmd')
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
@@ -281,7 +258,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def lst_command_option(self):
         try:
             optlist = list()
-            for item in self.default.items('custom-cmd'):
+            for item in self.config.items('custom-cmd'):
                 optlist.append(item[0])
             return optlist
         except ConfigParser.NoSectionError:
@@ -294,7 +271,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def lst_rawcommand_option(self):
         try:
             optlist = list()
-            for item in self.default.items('custom-rawcmd'):
+            for item in self.config.items('custom-rawcmd'):
                 optlist.append(item[0])
             return optlist
         except ConfigParser.NoSectionError:
@@ -599,14 +576,6 @@ def del_custom_rawcmd(name, usernick):
     if usernick.lower() == "bluabk":
         cfg.del_rawcommand(name)
         return "Command removed"
-    else:
-        return "Unable to remove given command"
-
-
-def del_custom_rawcmd2(name, usernick):
-    if usernick.lower() == "bluabk":
-        cfg.del_rawcommand2(name)
-        return "Command quite possibly maybe removed, perhaps?"
     else:
         return "Unable to remove given command"
 
@@ -1031,11 +1000,6 @@ def commands(usernick, msg, chan, ircsock):
     elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
         if len(cmd) > 1:
             ret = del_custom_rawcmd(str(cmd[1]), usernick)
-            sendmsg(ret, chan, ircsock)
-
-    elif cmd[0].lower() == "trulyremoverawcommandmaybe" and usernick.lower() == "bluabk":
-        if len(cmd) > 1:
-            ret = del_custom_rawcmd2(str(cmd[1]), usernick)
             sendmsg(ret, chan, ircsock)
 
     elif cmd[0].lower() == "listcustom":
