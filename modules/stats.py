@@ -25,8 +25,8 @@ class Config:  # Mandatory Config class
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
         self.config.read('config.ini')
 
-    def __call__(self):
-        self.config.read('config.ini')
+    # def __call__(self):
+    #    self.config.read('config.ini')
 
     #    def loadconfig(self):
     #        configloc = os.getcwd() + '/' + "config.ini"
@@ -43,16 +43,15 @@ class Config:  # Mandatory Config class
 
     def update_cmd(self, cmd, num):
         try:
-            config = Config.config
             if self.config.has_option('stats-cmd', str(cmd)) is False:
-                config.set('stats-cmd', str(cmd), str(num))
+                self.config.set('stats-cmd', str(cmd), str(num))
                 with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
+                    self.config.write(configfile)
                 retv = "Updated num and cmd"
             else:
-                config.set('stats-cmd', str(cmd), str(self.get_cmd(cmd) + num))
+                self.config.set('stats-cmd', str(cmd), str(self.get_cmd(cmd) + num))
                 with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
+                    self.config.write(configfile)
                 retv = "Updated num"
         except:
             retv = "Unable to open configuration"
@@ -62,26 +61,25 @@ class Config:  # Mandatory Config class
 
     def update_user(self, user, cmd, num):
         try:
-            config = Config.config
             if self.config.has_option(str(user) + 'cmd', str(cmd)) is False:
-                config.set('stats-user', str(user) + '-cmd', str(cmd))
-                config.set('stats-user', str(user) + '-num', str(num))
+                self.config.set('stats-user', str(user) + '-cmd', str(cmd))
+                self.config.set('stats-user', str(user) + '-num', str(num))
                 with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
+                    self.config.write(configfile)
                 retv = "Updated num and cmd"
 
             else:
                 cnt = 0
-                for c in config.get('stats-user', str(user) + '-cmd').split(","):
+                for c in self.config.get('stats-user', str(user) + '-cmd').split(","):
                     if c == cmd:
                         break
                     cnt += 1
-                sl = config.get('stats-user', str(user) + '-num').split(",")
+                sl = self.config.get('stats-user', str(user) + '-num').split(",")
                 sl[cnt] += num
                 s = sl.toString()
-                config.set('stats-user', str(user) + '-num', s)
+                self.config.set('stats-user', str(user) + '-num', s)
                 with open('config.ini', 'w') as configfile:
-                    config.write(configfile)
+                    self.config.write(configfile)
                 retv = "Updated num"
         except:
             retv = "Unable to open configuration"
