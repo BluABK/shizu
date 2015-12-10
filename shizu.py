@@ -219,7 +219,10 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         try:
             config = Config.default
             config.remove_option('custom-rawcmd', name)
-            # return self.config.remove_option('custom-rawcmd', name)
+            with open('config.ini', 'w') as configfile:
+                config.write(configfile)
+                # configfile.close()
+                # return self.config.remove_option('custom-rawcmd', name)
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
