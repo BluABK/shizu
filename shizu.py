@@ -215,6 +215,14 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
+    def del_rawcommand2(self, name):
+        try:
+            config = Config.default
+            config.remove_option('custom-rawcmd', name)
+            # return self.config.remove_option('custom-rawcmd', name)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
     def get_command(self, name):
         try:
             return str(self.default.get('custom-cmd', name))
@@ -588,6 +596,14 @@ def del_custom_rawcmd(name, usernick):
     if usernick.lower() == "bluabk":
         cfg.del_rawcommand(name)
         return "Command removed"
+    else:
+        return "Unable to remove given command"
+
+
+def del_custom_rawcmd2(name, usernick):
+    if usernick.lower() == "bluabk":
+        cfg.del_rawcommand2(name)
+        return "Command quite possibly maybe removed, perhaps?"
     else:
         return "Unable to remove given command"
 
@@ -1012,6 +1028,11 @@ def commands(usernick, msg, chan, ircsock):
     elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
         if len(cmd) > 1:
             ret = del_custom_rawcmd(str(cmd[1]), usernick)
+            sendmsg(ret, chan, ircsock)
+
+    elif cmd[0].lower() == "trulyremoverawcommandmaybe" and usernick.lower() == "bluabk":
+        if len(cmd) > 1:
+            ret = del_custom_rawcmd2(str(cmd[1]), usernick)
             sendmsg(ret, chan, ircsock)
 
     elif cmd[0].lower() == "listcustom":
