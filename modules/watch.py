@@ -72,16 +72,14 @@ class Config:  # Mandatory Config class
     def notify_limit(self):
         return int(self.config.get('watch', 'limit'))
 
-    # TODO: May be static
     def set_notify_limit(self, i):
-        # try:
-        config = Config.config
-        config.set('watch', 'limit', i)
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-        return "limit set"
-        # except:
-        #    return "Unable to open configuration"
+        try:
+            self.config.set('watch', 'limit', i)
+            with open('config.ini', 'w') as configfile:
+                self.config.write(configfile)
+            return "limit set"
+        except:
+            return "Unable to open configuration"
 
 
 cfg = Config()
