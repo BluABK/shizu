@@ -28,7 +28,9 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
 # Core features
+
 modules = ['triggers', 'samba', 'lastfm', 'watch', 'stats', 'youtube']
+mods_avail = list()
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -269,6 +271,7 @@ def import_module(module_name):
     :return: imported module or None
     """
     if module_exists("modules.%s" % module_name) is True:
+        mods_avail.append(module_name)
         return __import__(module_name)
     else:
         return None
@@ -301,6 +304,7 @@ def ping(ircsock):
     ircsock.send("PONG :Pong\n")
 
 
+# TODO: Make imported from core.py
 def sendmsg(msg, chan, ircsock):
     try:
         if isinstance(msg, basestring):
@@ -1220,9 +1224,10 @@ class Client:
             if channel[0] != '#':
                 channel = tmpusernick
 
-            commands(tmpusernick, message, channel, ircsock)
-            listeners(tmpusernick, message, channel, ircsock)
-            triggers(tmpusernick, message, channel, ircsock)
+            commands(tmpusernick, message, channel, ircsock, mods_avail)
+            listeners(tmpusernick, message, channel, ircsock, mods_avail)
+            for m in modules
+            triggers.triggers(tmpusernick, message, channel, ircsock, mods_avail, youtube)
 
             if watch.check_added():
                 if watch_enabled:
