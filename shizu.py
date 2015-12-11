@@ -1040,8 +1040,15 @@ def commands(usernick, msg, chan, ircsock):
                 if len(cmd) > 2:
                     sendmsg(str(stats.get_cmd(cmd[2])), chan, ircsock)
                 else:
-                    for item in stats.get_cmd_all():
-                        sendmsg("%s = %s" % (item[0], item[1]), chan, ircsock)
+                    cmd_list = stats.get_cmd_all()
+                    cmd_string = ""
+                    cnt = 0
+                    for item in cmd_list:
+                        cmd_string += ("%s: %s" % (item[0], item[1]))
+                        cnt += 1
+                        if cnt <= len(cmd_list)-1:
+                            cmd_string += ", "
+
 
             elif cmd[1] == "user":
                 # TODO: Code user stats get command
