@@ -1038,7 +1038,7 @@ def commands(usernick, msg, chan, ircsock):
         if len(cmd) > 1:
             if cmd[1] == "cmd" or cmd[1] == "command":
                 if len(cmd) > 2:
-                    sendmsg(stats.get_cmd(cmd[2]), chan, ircsock)
+                    sendmsg(stats.get_cmd(str(cmd[2])), chan, ircsock)
                 else:
                     for item in stats.get_cmd_all():
                         sendmsg("%s = %s" % (item[0], item[1]), chan, ircsock)
