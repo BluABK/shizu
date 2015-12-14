@@ -60,7 +60,10 @@ if module_exists("modules.youtube") is True:
 #    stats.my_colour = clr
 #    clr_selection.append(clr)
 if module_exists("weather"):
-    import weather as yr
+    try:
+        import weather as yr
+    except Exception as shenanigans:
+        print shenanigans
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
