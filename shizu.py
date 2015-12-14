@@ -1050,7 +1050,6 @@ def commands(usernick, msg, chan, ircsock):
                             cmd_string += ", "
                     sendmsg(cmd_list, chan, ircsock)
 
-
             elif cmd[1] == "user":
                 # TODO: Code user stats get command
                 sendmsg("Dummy function", chan, ircsock)
@@ -1268,10 +1267,18 @@ class Client:
             channel = ircparts[2]
             if channel[0] != '#':
                 channel = tmpusernick
-
-            commands(tmpusernick, message, channel, ircsock)
-            listeners(tmpusernick, message, channel, ircsock)
-            triggers(tmpusernick, message, channel, ircsock)
+            try:
+                commands(tmpusernick, message, channel, ircsock)
+            except Exception as e:
+                sendmsg(e, channel, ircsock)
+            try:
+                listeners(tmpusernick, message, channel, ircsock)
+            except Exception as e:
+                sendmsg(e, channel, ircsock)
+            try:
+                triggers(tmpusernick, message, channel, ircsock)
+            except Exception as e:
+                sendmsg(e, channel, ircsock)
 
             if watch.check_added():
                 if watch_enabled:
