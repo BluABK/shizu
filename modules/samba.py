@@ -3,7 +3,7 @@
 import ConfigParser
 import re
 # from sys import exc_info
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 import os
 import time
 import json
@@ -219,10 +219,18 @@ def get_playing2():
 
 
 def get_playing():
-    tmp = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
-                       shell=True)
-    print tmp
-    handles = tmp.splitlines()
+    try:
+        status = check_output("sudo smbstatus -L -vvv | grep BATCH | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
+                           shell=True)
+    except CalledProcessError as cpe:
+        # Sometimes BATCH mode isn't set, most cases seem to be ressume playback after the handle is gone
+        print "smbstatus: grep BATCH failed, trying without."
+        status = check_output("sudo smbstatus -L -vvv | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
+                           shell=True)
+    except Exception as e:
+        raise e
+    print status
+    handles = status.splitlines()
 
     li = list()
     for index, line in enumerate(handles):
