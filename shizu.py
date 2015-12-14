@@ -35,6 +35,9 @@ def module_exists(module_name):
     except ImportError:
         print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
         return False
+    except Exception as shenanigans:
+        print shenanigans
+        return False
 
 
 if module_exists("modules.samba") is True:
