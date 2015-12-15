@@ -345,6 +345,19 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             # except:
             #    return "An unknown exception occurred"
 
+    def lst_trigger_option(self):
+        try:
+            optlist = list()
+            for item in self.config.items('custom-trg'):
+                optlist.append(item[0])
+            return optlist
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+            # except:
+            #    return "An unknown exception occurred"
+
 
 # Variables declared by config file
 cfg = Config()
@@ -714,6 +727,10 @@ def del_custom_trg(name, usernick):
 
 def custom_command(name, chan, ircsock):
     sendmsg(cfg.get_command(name), chan, ircsock)
+
+
+def custom_trigger(name, chan, ircsock):
+    sendmsg(cfg.get_trigger(name), chan, ircsock)
 
 
 def custom_rawcommand(cmd, usernick, chan, ircsock):
@@ -1302,6 +1319,9 @@ def triggers(usernick, msg, chan, ircsock):
             sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
 
     # Custom Triggers
+    if msg.lower() in cfg.lst_trigger_option():
+        print "Executing custom trigger"
+        custom_trigger(msg.lower(), chan, ircsock)
 
 
 def listeners(usernick, msg, chan, ircsock):
