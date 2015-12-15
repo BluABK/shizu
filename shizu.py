@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-__author__ = 'BluABK <abk@blucoders.net'
+
 
 # TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
 # TODO: Support multiple IRC channels
@@ -64,6 +64,8 @@ if module_exists("modules.youtube") is True:
 #    clr_selection.append(clr)
 if module_exists("weather"):
         import weather as yr
+
+__author__ = 'BluABK <abk@blucoders.net'
 
 # Global variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
