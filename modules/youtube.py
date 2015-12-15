@@ -45,13 +45,18 @@ def get_title(keep=False):
     Grabs title of a YouTube video
     :return:
     """
+    cmd = None
     if keep:
         url = get_url()
     else:
         url = pop_url()
     try:
-        return check_output("youtube-dl --get-title %s" % url, shell=True).strip('\n')
+        print "youtube.py: retrieving video for url: %s" % url.strip('\n')
+        cmd = "youtube-dl --get-title %s" % url.strip('\n')
+        out = check_output(cmd, shell=True)
+        return out
     except (OSError, CalledProcessError) as e:
+        print cmd
         return e.message
 
 
