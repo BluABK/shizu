@@ -305,7 +305,11 @@ def ian(s):  # is a number
 
 
 def ping(ircsock):
-    ircsock.send("PONG :Pong\n")
+    global ircbacklog_out
+    data = "PONG :Pong\n"
+    ircsock.send(data)
+    ircbacklog_out.append(data)
+    print "--> [%s] %s" % (len(ircbacklog_out), data)
 
 
 def sendmsg(msg, chan, ircsock):
