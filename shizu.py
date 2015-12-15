@@ -174,10 +174,29 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
+    def chk_trigger_perms(self, user, inst):
+        try:
+            allowed = str(self.config.get('custom-trg-cfg', inst))
+            if user in allowed:
+                return True
+            else:
+                return False
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
     def add_command(self, name, function):
         try:
             self.config.read('config.ini')
             self.config.set('custom-cmd', name, function)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
+    def add_trigger(self, name, function):
+        try:
+            self.config.read('config.ini')
+            self.config.set('custom-trg', name, function)
             with open('config.ini', 'wb') as configfile:
                 self.config.write(configfile)
         except ConfigParser.NoSectionError:
@@ -202,6 +221,16 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
 
+    def del_trigger(self, name):
+        try:
+            self.config.read('config.ini')
+            self.config.remove_option('custom-trg', name)
+            with open('config.ini', 'wb') as configfile:
+                self.config.write(configfile)
+                # return self.config.remove_option('custom-cmd', name)
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+
     def del_rawcommand(self, name):
         try:
             self.config.read('config.ini')
@@ -215,6 +244,14 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def get_command(self, name):
         try:
             return str(self.config.get('custom-cmd', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+            # except:
+            #    return "An unknown exception occurred"
+
+    def get_trigger(self, name):
+        try:
+            return str(self.config.get('custom-trg', name))
         except ConfigParser.NoOptionError:
             return "Option does not seem to exist"
             # except:
@@ -236,6 +273,14 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             # except:
             #    return "An unknown exception occurred"
 
+    def chk_trigger(self, name):
+        try:
+            return str(self.config.has_option('custom-trg', name))
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+            # except:
+            #    return "An unknown exception occurred"
+
     def chk_rawcommand(self, name):
         try:
             return str(self.config.has_option('custom-rawcmd', name))
@@ -247,6 +292,16 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def lst_command(self):
         try:
             return self.config.items('custom-cmd')
+        except ConfigParser.NoSectionError:
+            return "That section does not seem to exist"
+        except ConfigParser.NoOptionError:
+            return "Option does not seem to exist"
+            # except:
+            #    return "An unknown exception occurred"
+
+    def lst_trigger(self):
+        try:
+            return self.config.items('custom-trg')
         except ConfigParser.NoSectionError:
             return "That section does not seem to exist"
         except ConfigParser.NoOptionError:
@@ -585,6 +640,40 @@ def add_custom_rawcmd(name, function, usernick):
                 return "Command %s added successfully! ^_^" % name
 
 
+def add_custom_trg(name, function, usernick):
+    can_add = False
+    if usernick in cfg.su():
+        can_add = True
+    check_everyone = cfg.chk_trigger_perms("everyone", "add-allow")
+    if check_everyone:
+        can_add = True
+
+    # sendmsg("DEBUG: %s" % check_everyone, chan)
+
+    if can_add:
+        print str(function)
+        print "Adding custom trigger: %s with function %s, requested by %s" % (name, function, usernick)
+        print cfg.chk_command(name)
+        # if name not in commandsavail and cfg.chk_command(name) is False:
+        collision = False
+        if name in cfg.triggers_words():
+            collision = True
+
+        print "collision is %s" % collision
+        # if collision is False and cfg.chk_command(name) is False:
+        if collision is True:
+            return "That name collides with something =/"
+        elif cfg.chk_trigger(name) is True:
+            return "That name collides with something =/"
+        else:
+            test = cfg.add_trigger(name, function)
+            #        test = add_command(name, function)
+            if isinstance(test, str):
+                return test
+            else:
+                return "Trigger %s added successfully! ^_^" % name
+
+
 def del_custom_cmd(name, usernick):
     can_del = False
     if usernick in cfg.su():
@@ -606,6 +695,21 @@ def del_custom_rawcmd(name, usernick):
         return "Command removed"
     else:
         return "Unable to remove given command"
+
+
+def del_custom_trg(name, usernick):
+    can_del = False
+    if usernick in cfg.su():
+        can_del = True
+    check_everyone = cfg.chk_trigger_perms("everyone", "del-allow")
+    if check_everyone:
+        can_del = True
+
+    if can_del:  # and cfg.chk_command(name) is True:
+        cfg.del_trigger(name)
+        return "Trigger removed"
+    else:
+        return "Unable to remove given trigger"
 
 
 def custom_command(name, chan, ircsock):
@@ -1038,6 +1142,39 @@ def commands(usernick, msg, chan, ircsock):
             string_list += (item[0] + "* ")
         sendmsg(string_list, chan, ircsock)
 
+    # Custom triggers
+    elif cmd[0].lower() == "addtrigger":
+        if ignored_nick("commands", usernick) is True:
+            sendmsg("%s:ಠ_ಠ" % usernick, chan, ircsock)
+            return
+        if len(cmd) > 1:
+            arg = list()
+            for item in xrange(len(cmd)):
+                if item > 1:
+                    if item != "\n":
+                        arg.append(cmd[item])
+                        print "arg = %s" % arg
+            fstr = " ".join(str(x) for x in arg)
+            ret = add_custom_trg(str(cmd[1]), fstr, usernick)
+            sendmsg(ret, chan, ircsock)
+
+    elif cmd[0].lower() == "removetrigger":
+        if ignored_nick("commands", usernick) is True:
+            sendmsg("%s:ಠ_ಠ" % usernick, chan, ircsock)
+            return
+        if len(cmd) > 1:
+            ret = del_custom_trg(str(cmd[1]), usernick)
+            sendmsg(ret, chan, ircsock)
+
+    # TODO: Raw triggers
+
+    elif cmd[0].lower() == "customtriggers":
+        string_list = ""
+        for item in cfg.lst_trigger():
+            string_list += (item[0] + " ")
+        sendmsg(string_list, chan, ircsock)
+
+
     # Module: Watch
     elif cmd[0].lower() == "watch":
         if len(cmd) > 1:
@@ -1163,6 +1300,8 @@ def triggers(usernick, msg, chan, ircsock):
     if module_exists("modules.youtube"):
         if youtube.get_url() is not None and youtube.get_trigger() is True:
             sendmsg(youtube.printable_title(fancy=False), chan, ircsock)
+
+    # Custom Triggers
 
 
 def listeners(usernick, msg, chan, ircsock):
