@@ -1230,7 +1230,7 @@ class Client:
 
         ircmsg = recvraw.strip("\n\r")  # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")  # Remove first colon. Useless, waste of space >_<
-        print("%s: %s" % (i, ircmsg))  # Print received data
+        print("--> [%s] %s" % (i, ircmsg))  # Print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
