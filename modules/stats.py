@@ -1,5 +1,3 @@
-__author__ = 'BluABK <abk@blucoders.net'
-
 # This is a module specification, which contains everything you need to get started on writing a module.
 
 # Imports
@@ -8,6 +6,15 @@ import os
 
 import colours as clr
 
+try:
+    from wordcloud import WordCloud
+    import matplotlib.pyplot as plt
+except (ImportError, ImportWarning) as e:
+    print "[stats/import]:\t ERROR: Unable to import wordcloud, feature will be disabled.\nDetails: %s" % e
+    WordCloud = None
+    plt = None
+
+__author__ = 'BluABK <abk@blucoders.net'
 
 # Variables
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -16,8 +23,6 @@ commandsavail = "user, command, dump"
 
 
 # Classes
-
-
 class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
@@ -96,6 +101,9 @@ class Config:  # Mandatory Config class
 cfg = Config()
 
 
+# if WordCloud is not None:
+
+
 # Functions
 def update_user(user, cmd, num):
     return cfg.update_user(str(user), str(cmd), int(num))
@@ -115,6 +123,31 @@ def get_cmd(cmd):
 
 def get_cmd_all():
     return cfg.dump_cmd()
+
+
+#TODO: Implement
+def wc_generate(mode):
+    if WordCloud is None or plt is None:
+        # Die immediately if wordcloud or matplot module is not present
+        return
+
+    if mode is "commands":
+        text = None
+        text = cfg.dump_cmd()
+        # Generate a word cloud image
+        wordcloud = WordCloud().generate(text)
+
+        # Produce plot
+        plt.imshow(wordcloud)
+        plt.axis("off")
+
+        # take relative word frequencies into account, lower max_font_size
+        wordcloud = WordCloud(max_font_size=40, relative_scaling=.5).generate(text)
+        plt.figure()
+        plt.imshow(wordcloud)
+        plt.axis("off")
+        plt.show()
+
 
 
 def helpcmd(cmdsym):
