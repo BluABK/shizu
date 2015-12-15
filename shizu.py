@@ -309,20 +309,33 @@ def ping(ircsock):
 
 
 def sendmsg(msg, chan, ircsock):
+    global ircbacklog_out
     try:
         if isinstance(msg, basestring):
             try:
-                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, msg))
-            except ValueError as e:
-                ircsock.send("PRIVMSG %s :%s\r\n" % (chan, "sendmsg(): %s" % e))
+                data = "PRIVMSG %s :%s\r\n" % (chan, msg)
+                ircsock.send(data)
+                ircbacklog_out.append(data)
+                print "--> [%s] %s" % (len(ircbacklog_out), data)
+            except ValueError as ve:
+                data = "PRIVMSG %s :%s\r\n" % (chan, "sendmsg(): %s" % ve)
+                ircsock.send(data)
+                ircbacklog_out.append(data)
+                print "--> [%s] %s" % (len(ircbacklog_out), data)
         else:
             # Don't check, errors from here are raised
             for item in msg:
                 sendmsg(item, chan, ircsock)
     except TypeError as te:
-        ircsock.send("PRIVMSG %s :A TypeError occurred, that's annoying: %s\r\n" % (chan, te))
+        data = "PRIVMSG %s :A TypeError occurred, that's annoying: %s\r\n" % (chan, te)
+        ircsock.send(data)
+        ircbacklog_out.append(data)
+        print "--> [%s] %s" % (len(ircbacklog_out), data)
     except Exception as ex:
-        ircsock.send("PRIVMSG %s :An Exception occurred, that's annoying: %s\r\n" % (chan, ex))
+        data = "PRIVMSG %s :An Exception occurred, that's annoying: %s\r\n" % (chan, ex)
+        ircsock.send(data)
+        ircbacklog_out.append(data)
+        print "--> [%s] %s" % (len(ircbacklog_out), data)
 
 
 def debug(msg, ircsock):
@@ -1179,9 +1192,13 @@ def helpcmd(user, chan, ircsock):
 def sendraw(buf, ircsock):
     global ircbacklog, ircbacklog_out
 
-    sent = ircsock.sendall(buf)
+    ircsock.sendall(buf)
+    ircbacklog_in.append(buf)
+    print "--> [%s] %s" % (len(ircbacklog_out), buf)
 
+    """
     ircbacklog.append(sent)
+
     if len(ircbacklog) > maxbacklog:
         # Delete first entry
         ircbacklog = ircbacklog[1:]
@@ -1190,6 +1207,7 @@ def sendraw(buf, ircsock):
     if len(ircbacklog_out) > maxbacklog:
         # Delete first entry
         ircbacklog_out = ircbacklog_out[1:]
+    """
 
 
 class Client:
@@ -1230,7 +1248,7 @@ class Client:
 
         ircmsg = recvraw.strip("\n\r")  # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")  # Remove first colon. Useless, waste of space >_<
-        print("--> [%s] %s" % (i, ircmsg))  # Print received data
+        print("<-- [%s] %s" % (i, ircmsg))  # Print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
