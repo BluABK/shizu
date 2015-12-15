@@ -1053,6 +1053,8 @@ def commands(usernick, msg, chan, ircsock):
                         cnt += 1
                         if cnt <= len(cmd_list)-1:
                             cmd_string += ", "
+                        cmd_string.strip('\n')
+                    print repr(cmd_string)
                     sendmsg(cmd_list, chan, ircsock)
 
             elif cmd[1] == "user":
