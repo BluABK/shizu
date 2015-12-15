@@ -309,7 +309,7 @@ def ping(ircsock):
     data = "PONG :Pong\n"
     ircsock.send(data)
     ircbacklog_out.append(data)
-    print "--> [%s] %s" % (len(ircbacklog_out), data)
+    print "--> %s" % data
 
 
 def sendmsg(msg, chan, ircsock):
@@ -320,12 +320,12 @@ def sendmsg(msg, chan, ircsock):
                 data = "PRIVMSG %s :%s\r\n" % (chan, msg)
                 ircsock.send(data)
                 ircbacklog_out.append(data)
-                print "--> [%s] %s" % (len(ircbacklog_out), data)
+                print "--> %s" % data
             except ValueError as ve:
                 data = "PRIVMSG %s :%s\r\n" % (chan, "sendmsg(): %s" % ve)
                 ircsock.send(data)
                 ircbacklog_out.append(data)
-                print "--> [%s] %s" % (len(ircbacklog_out), data)
+                print "--> %s" % data
         else:
             # Don't check, errors from here are raised
             for item in msg:
@@ -334,7 +334,7 @@ def sendmsg(msg, chan, ircsock):
         data = "PRIVMSG %s :A TypeError occurred, that's annoying: %s\r\n" % (chan, te)
         ircsock.send(data)
         ircbacklog_out.append(data)
-        print "--> [%s] %s" % (len(ircbacklog_out), data)
+        print "--> %s" % data
     except Exception as ex:
         data = "PRIVMSG %s :An Exception occurred, that's annoying: %s\r\n" % (chan, ex)
         ircsock.send(data)
@@ -1198,7 +1198,7 @@ def sendraw(buf, ircsock):
 
     ircsock.sendall(buf)
     ircbacklog_in.append(buf)
-    print "--> [%s] %s" % (len(ircbacklog_out), buf)
+    print "--> %s" % buf
 
     """
     ircbacklog.append(sent)
@@ -1252,7 +1252,7 @@ class Client:
 
         ircmsg = recvraw.strip("\n\r")  # Remove protocol junk (linebreaks and return carriage)
         ircmsg = ircmsg.lstrip(":")  # Remove first colon. Useless, waste of space >_<
-        print("<-- [%s] %s" % (i, ircmsg))  # Print received data
+        print("<-- %s" % ircmsg)  # Print received data
 
         ircparts = re.split("\s", ircmsg, 3)
 
