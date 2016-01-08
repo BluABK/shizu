@@ -748,10 +748,11 @@ def custom_rawcommand(cmd, usernick, chan, ircsock):
 
 
 def version():
-    c_date = str(check_output("git show -s --format=%ci", shell=True)).strip("\n")
-    c_hash_short = str(check_output("git rev-parse --short HEAD", shell=True)).strip("\n")
-
-    retv = c_date + " (" + c_hash_short + ")"
+    # c_date = str(check_output("git show -s --format=%ci", shell=True)).strip("\n")
+    # c_hash_short = str(check_output("git rev-parse --short HEAD", shell=True)).strip("\n")
+    # retv = c_date + " (" + c_hash_short + ")"
+    retv = str(check_output("git log -n 1 --pretty=format:'%h - %an, %ar: %s [' --shortstat", shell=True))
+    retv = retv.split('\n')[0][0:] + retv.split('\n')[1][1:] + ']'
     print(retv)
     return retv
 
