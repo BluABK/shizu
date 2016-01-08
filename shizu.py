@@ -62,8 +62,8 @@ if module_exists("modules.youtube") is True:
 # clr = clr_selection.popleft()
 #    stats.my_colour = clr
 #    clr_selection.append(clr)
-if module_exists("weather"):
-        import weather as yr
+if module_exists("modules.weather"):
+        import modules.weather as yr
 
 __author__ = 'BluABK <abk@blucoders.net'
 
