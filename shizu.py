@@ -964,6 +964,12 @@ def commands(usernick, msg, chan, ircsock):
                 if len(cmd) > 2:
                     if cmd[2] == "recent":
                         sendmsg("%s: Syntax: %slastfm recent <user> <num>" % (usernick, cfg.cmdsym()), chan, ircsock)
+                    if cmd[2] == "alias":
+                        sendmsg("%s: Syntax: %slastfm alias [set|unset] <user>" %
+                                (usernick, cfg.cmdsym()), chan, ircsock)
+                    if cmd[2] == "bio":
+                        sendmsg("%s: Syntax: %slastfm bio <artist>" %
+                                (usernick, cfg.cmdsym()), chan, ircsock)
                 else:
                     for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
                         sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan, ircsock)
