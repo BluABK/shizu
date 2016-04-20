@@ -81,6 +81,20 @@ class Config:  # Shizu's config class
         else:
             return "Alias already exists"
 
+    def del_alias(self, nick):
+        if self.config.has_option('lastfm-alias', nick) is False:
+            try:
+                self.config.read('config.ini')
+                self.config.remove_option('lastfm-alias', nick)
+                with open('config.ini', 'w') as configfile:
+                    self.config.write(configfile)
+                    configfile.close()
+                return "Alias added"
+            except:
+                return "Unable to open configuration"
+        else:
+            return "Alias already exists"
+
     def list_alias(self):
         if self.config.has_section('lastfm-alias') is True:
             return str(self.config.items('lastfm-alias'))
@@ -90,7 +104,7 @@ class Config:  # Shizu's config class
 
 cfg = Config()
 commandsavail_short = "np, npt"
-commandsavail = "imaginary, recent*, bio, status"
+commandsavail = "imaginary, recent*, bio, status, set alias"
 network = pylast.LastFMNetwork(api_key=cfg.api_key(), api_secret=cfg.api_secret(),
                                username=cfg.username(), password_hash=cfg.password_hash())
 
@@ -236,7 +250,9 @@ def add_alias(nick, user):
     return cfg.add_alias(nick, user)
 
 
-# def del_alias(nick, user):
+def del_alias(nick):
+    return cfg.del_alias(nick)
+
 
 
 def helpcmd(cmdsym):

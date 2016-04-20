@@ -838,6 +838,9 @@ def commands(usernick, msg, chan, ircsock):
         sendmsg(date(), chan, ircsock)
     elif cmd[0].lower() == "ddate":
         sendmsg(ddate(), chan, ircsock)
+    elif cmd[0].lower() == "showtopic":
+        topic(None, chan, ircsock)
+        sendmsg("Nyaa~", chan, ircsock)
     elif cmd[0].lower() == "dump":
         try:
             if cmd[1] == "cmd":
@@ -1007,12 +1010,19 @@ def commands(usernick, msg, chan, ircsock):
                                 ircsock)
                     else:
                         sendmsg("I am unable to query the network, is LastFM throwing a fit?", chan, ircsock)
-            elif cmd[1] == "set":
+            elif cmd[1] == "alias":
                 if len(cmd) > 2:
-                    if cmd[2] == "alias":
+                    if cmd[2] == "set":
                         if len(cmd) > 3:
                             tmp = lastfm.add_alias(usernick, cmd[3])
                             sendmsg(tmp, chan, ircsock)
+                    elif cmd[2] == "unset":
+                        if len(cmd) > 3:
+                            tmp = lastfm.del_alias(usernick)
+                            sendmsg(tmp, chan, ircsock)
+                    else:
+                        tmp = lastfm.add_alias(usernick, cmd[2])
+                        sendmsg(tmp, chan, ircsock)
 
             elif cmd[1] == "recent":
                 default_num = 3
@@ -1372,6 +1382,12 @@ def sendraw(buf, ircsock):
         # Delete first entry
         ircbacklog_out = ircbacklog_out[1:]
     """
+
+
+def topic(newtopic, chan, ircsock):
+    if newtopic is None:
+        sendraw("TOPIC %s" % chan, ircsock)
+
 
 
 class Client:
