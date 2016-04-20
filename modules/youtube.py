@@ -15,7 +15,7 @@ my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = ""
 commandsavail = "trigger"
 commandsavail_short = "ytt"
-youtube_url = ""
+youtube_url = None
 ytt_trigger = True
 
 
@@ -119,7 +119,7 @@ def toggle_trigger():
 def parse_url(msg):
     # if re.search(r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$', msg).group(0):
     for item in msg.split():
-        if re.search('(http[s]?://)?(www.)?(youtube.com|youtu.?be)/+', item):
+        if re.search('(http[s]?://)?(www\.)?(youtube\.com|youtu\.be)/[^ ]+', item):
             print "YouTube: current = %s" % item
             # TODO: add_url(item)
             set_url(item)
