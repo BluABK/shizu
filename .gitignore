@@ -5,3 +5,14 @@ config.ini
 # Pycharm
 .idea/
 .idea/inspectionProfiles/profiles_settings.xml
+
+# Local
+config.ini-20150527
+config.ini.bkup
+config.ini.localbackup
+config.ini.mostrecent
+iteration
+launch-bot.sh
+test.py
+weather.py
+
