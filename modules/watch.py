@@ -1,43 +1,11 @@
-__author__ = 'BluABK'
-
-# Example: loops monitoring events forever.
-#
 import ConfigParser
 import os
-
 import colours as clr
+import pyinotify
 
-
-def module_exists(module_name):
-    try:
-        __import__(module_name)
-    except ImportError:
-        return False
-    else:
-        return True
-
-
-if module_exists("pyinotify") is True:
-    import pyinotify
-else:
-    print "IMPORT ERROR: Unable to import pyinotify, expect issues!"
-
-# Variables
-my_name = os.path.basename(__file__).split('.', 1)[0]
-my_colour = clr.blue
-commandsavail_short = ""  # "enable, disable stopwatch"
-commandsavail = "enable, disable, limit"
-# watchdir = cfg.watch()
-files = list()
-files_erased = list()
-files_moved = list()
-files_moved_src = list()
-files_moved_dst = list()
-
+__author__ = 'BluABK'
 
 # Classes
-
-
 class Config:  # Mandatory Config class
     config = ConfigParser.RawConfigParser()
 
@@ -81,9 +49,6 @@ class Config:  # Mandatory Config class
             return "limit set"
         except:
             return "Unable to open configuration"
-
-
-cfg = Config()
 
 
 # Functions
@@ -186,11 +151,6 @@ def set_notify_limit(i):
     return cfg.set_notify_limit(i)
 
 
-def stop():
-    # asyncore.close_all()
-    notifier.stop()
-
-
 def helpcmd(cmdsym):
     cmdlist = list()
     if len(commandsavail) > 0 or len(commandsavail_short) > 0:
@@ -222,18 +182,42 @@ class EventHandler(pyinotify.ProcessEvent):
         move(event.src_pathname, event.pathname)
 
 
+def start():
+    global wdd
+    notifier.start()
+
+    mask_add = pyinotify.IN_CREATE
+    mask_mov = pyinotify.IN_MOVED_TO
+    mask_del = pyinotify.IN_DELETE
+    mask = mask_add | mask_del
+    wdd = wm.add_watch(cfg.watch(), mask, rec=True, auto_add=True, do_glob=True)
+    # wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
+    # wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
+    # wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
+    # asyncore.loop()
+
+
+def shutdown():
+    for k,i in wdd.iteritems():
+        wm.del_watch(i)
+    notifier.stop()
+
+cfg = Config()
+
+# Variables
+my_name = os.path.basename(__file__).split('.', 1)[0]
+my_colour = clr.blue
+commandsavail_short = ""  # "enable, disable stopwatch"
+commandsavail = "enable, disable, limit"
+# watchdir = cfg.watch()
+files = list()
+files_erased = list()
+files_moved = list()
+files_moved_src = list()
+files_moved_dst = list()
+
+
 wm = pyinotify.WatchManager()  # Watch Manager
-mask_add = pyinotify.IN_CREATE
-mask_mov = pyinotify.IN_MOVED_TO
-mask_del = pyinotify.IN_DELETE
-mask = mask_add | mask_del
-
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
-notifier.start()
+wdd = None
 
-wdd = wm.add_watch(cfg.watch(), mask, rec=True, auto_add=True, do_glob=True)
-# wdd_add = wm.add_watch(cfg.watch(), mask_add, rec=True, do_glob=True)
-# wdd_mov = wm.add_watch(cfg.watch(), mask_mov, rec=True, do_glob=True)
-# wdd_del = wm.add_watch(cfg.watch(), mask_del, rec=True, do_glob=True)
-
-# asyncore.loop()
