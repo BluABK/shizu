@@ -1,6 +1,5 @@
 __author__ = 'BluABK <abk@blucoders.net'
 
-# This module requires pylast to be installed https://github.com/pylast/pylast
 import ConfigParser
 import os
 import re
@@ -24,6 +23,7 @@ if module_exists("pylast") is True:
 # if module_exists("modules.forklast") is True:
 #    import modules.forklast as pylast
 else:
+    print "This module requires pylast to be installed https://github.com/pylast/pylast"
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
 
 my_name = os.path.basename(__file__).split('.', 1)[0]
