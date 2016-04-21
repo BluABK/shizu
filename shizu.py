@@ -34,6 +34,7 @@ README module interface:
     help(user, chan)            generate help information, see module_help()
     dump(user, chan, cmd, irc)  dump data from a module
     commands()                  see module_commands.
+    listener(nick, chan, msg, irc) Triggerless actions go here
     start()                     Initialize the module (To be removed?)
     shutdown()                  Destruct a module
     ping(irc)                   Called regularly (default: 1 sec)
@@ -997,21 +998,7 @@ def commands(usernick, msg, chan, irc):
         print "Executing custom rawcommand"
         custom_rawcommand(cmd, usernick, chan, irc)
 
-    # TODO: Move into module/youtube.py
-    # Module: YouTube
-    elif cmd[0] == "ytt" and module_exists("modules.youtube"):
-        if len(cmd) > 1:
-            if cmd[1].lower() == "trigger":
-                new_state = youtube.toggle_trigger()
-                if new_state is True:
-                    return irc.sendmsg("YouTube Title: Print urls as they appear (trigger mode)", chan)
-                else:
-                    return irc.sendmsg("YouTube Title: Print urls if asked to (command mode)", chan)
-        # Command mode (see triggers() for trigger mode)
-        if youtube.get_url() is not None and youtube.get_trigger() is False:
-            return irc.sendmsg(youtube.printable_title(fancy=False), chan)
-
-    # TODO: Move into module/yr.py
+    # TODO: Move into modules/weather.py
     # Private Module: yr
     elif cmd[0] == "yr" and module_exists("weather"):
         kittens = True
@@ -1059,6 +1046,7 @@ def triggers(usernick, msg, chan, irc):
         if s == cfg.nick():
             nick_match = True
 
+
     """Greeting"""
     try:
         # if matches.group(0) != "":  # If someone greets me, I will greet back.
@@ -1067,21 +1055,10 @@ def triggers(usernick, msg, chan, irc):
     except AttributeError:
         return
 
-    """YouTube Title"""
-    if "youtube" in modules:
-        youtube = modules["youtube"]
-        if youtube.get_url() is not None and youtube.get_trigger() is True:
-            irc.sendmsg(youtube.printable_title(fancy=False), chan)
-
     # Custom Triggers
     if msg.lower() in cfg.lst_trigger_option():
         print "Executing custom trigger"
         custom_trigger(msg.lower(), chan, irc)
-
-
-def listeners(usernick, msg, chan, irc):
-    if "youtube" in modules:
-        modules["youtube"].parse_url(msg)
 
 
 class Client:
@@ -1211,12 +1188,13 @@ class Client:
                     traceback.print_exc()
 
                 try:
-                    listeners(tmpusernick, message, channel, self)
+                    module_listeners(tmpusernick, channel, message, self)
                 except Exception as e:
                     self.sendmsg(e, channel)
                     traceback.print_exc()
 
                 try:
+                    # TODO merge into listeners (modules cannot know the difference anyway)
                     triggers(tmpusernick, message, channel, self)
                 except Exception as e:
                     self.sendmsg(e, channel)
@@ -1356,13 +1334,16 @@ def module_ping(irc):
         if function_exists(mod, "ping"):
             mod.ping(irc)
 
+def module_listeners(nick, chan, msg, irc):
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "listener"):
+            mod.listener(nick, chan, msg, irc)
+
 # This:
 # No modules
 module_import_list(["samba", "lastfm", "watch", "stats", "youtube", "weather"])
 
 # Replaces
-#if module_exists("modules.youtube"):
-#    import modules.youtube as youtube
 #if module_exists("modules.weather"):
 #    import modules.weather as yr
 

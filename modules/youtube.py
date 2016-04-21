@@ -3,25 +3,12 @@ import ConfigParser
 import os
 from subprocess import check_output, CalledProcessError
 import re
-
 import colours as clr
 
 __author__ = 'BluABK <abk@blucoders.net'
 
 # TODO: Fix fancy (ref: TODO in colours.py)
-
-# Variables
-my_name = os.path.basename(__file__).split('.', 1)[0]
-my_colour = ""
-commandsavail = "trigger"
-commandsavail_short = "ytt"
-youtube_url = None
-ytt_trigger = True
-
-
 # Classes
-
-
 class Config:  # Mandatory Config class
     """
     Shizu module configuration
@@ -34,9 +21,6 @@ class Config:  # Mandatory Config class
 
     def sample(self):
         return str(self.config.get('sample', 'sampleitem'))
-
-
-cfg = Config()
 
 
 # Functions
@@ -54,10 +38,11 @@ def get_title(keep=False):
         print "youtube.py: retrieving video for url: %s" % url.strip('\n')
         cmd = "youtube-dl --get-title %s" % url.strip('\n')
         out = check_output(cmd, shell=True)
+        out = out.rstrip("\r\n")
         return out
     except (OSError, CalledProcessError) as e:
         print cmd
-        return e.message
+        return None
 
 
 def set_url(url):
@@ -125,7 +110,7 @@ def parse_url(msg):
             set_url(item)
 
 
-def printable_title(fancy=True):
+def printable_title(chan, irc, fancy=True):
     """
     Returns a string ready for printing
     (does not print on its own)
@@ -136,11 +121,41 @@ def printable_title(fancy=True):
         name = clr.red + "You" + clr.off + clr.white + "Tube" + clr.off
     else:
         name = "YouTube"
-    return "%s: %s" % (name, get_title())
+    title = get_title()
+    if title is not None:
+        irc.sendmsg(name+": "+title, chan)
 
 
-def helpcmd(cmdsym):
-    cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
-    return cmdlist
+def help(chan, irc):
+    """ public """
+    return { "ytt" : "", "ytt trigger" : "" }
+
+def commands():
+    return { "ytt" : command_ytt }
+
+def command_ytt(nick, chan, cmd, irc):
+    # Command mode (see triggers() for trigger mode)
+    if len(cmd) >= 1 and cmd[0].lower() == "trigger":
+        new_state = toggle_trigger()
+        if new_state is True:
+            irc.sendmsg("YouTube Title: Print urls as they appear (trigger mode)", chan)
+        else:
+            irc.sendmsg("YouTube Title: Print urls if asked to (command mode)", chan)
+    elif get_url() is not None and get_trigger() is False:
+        printable_title(chan, irc, fancy=False)
+
+
+def listener(nick, chan, msg, irc):
+    """ public """
+    parse_url(msg)
+
+    if get_url() is not None and get_trigger() is True:
+        printable_title(chan, irc, fancy=False)
+
+# Variables
+my_name = os.path.basename(__file__).split('.', 1)[0]
+my_colour = ""
+youtube_url = None
+ytt_trigger = True
+
+cfg = Config()
