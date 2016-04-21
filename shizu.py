@@ -998,44 +998,6 @@ def commands(usernick, msg, chan, irc):
         print "Executing custom rawcommand"
         custom_rawcommand(cmd, usernick, chan, irc)
 
-    # TODO: Move into modules/weather.py
-    # Private Module: yr
-    elif cmd[0] == "yr" and module_exists("weather"):
-        kittens = True
-        if len(cmd) > 1:
-            if cmd[1] == "extreme":
-                if len(cmd) > 2:
-                    extreme = yr.find_extreme_places(info=True, limit=int(cmd[2]))
-
-                else:
-                    extreme = yr.find_extreme_places(info=True, limit=10)
-
-                irc.sendmsg("%s: %02d C & %s: %02d C" % (
-                    extreme[0][0], extreme[0][1], extreme[1][0], extreme[1][1]), chan)
-                return
-
-            try:
-                forecast = yr.weather_update(" ".join(map(str, cmd[1:])), hour=time.localtime().tm_hour,
-                                             minute=time.localtime().tm_min, debug=kittens)
-                for item in cmd:
-                    if '@' in item:
-                        loc = " ".join(map(str, cmd[1:]))
-                        t = re.sub(r'\s+', "", loc[loc.find('@') + 1:len(loc)])[0:5].split(':')
-                        forecast = yr.weather_update(loc[0:loc.find('@')].strip(' '),
-                                                     hour=int(t[0]), minute=int(t[1]), debug=kittens)
-                        break
-
-                prev = forecast
-                print forecast
-                if forecast is not None:
-                    irc.sendmsg(forecast, chan)
-                elif prev is not None:
-                    irc.sendmsg(forecast, chan)
-                else:
-                    irc.sendmsg("No such weather station", chan)
-            except:
-                irc.sendmsg("https://www.konata.us/nope.gif", chan)
-
 
 def triggers(usernick, msg, chan, irc):
     greet_pat = re.compile((cfg.triggers_words() + " "), flags=re.IGNORECASE)
@@ -1045,7 +1007,6 @@ def triggers(usernick, msg, chan, irc):
     for s in msg.split(" "):
         if s == cfg.nick():
             nick_match = True
-
 
     """Greeting"""
     try:
@@ -1342,11 +1303,6 @@ def module_listeners(nick, chan, msg, irc):
 # This:
 # No modules
 module_import_list(["samba", "lastfm", "watch", "stats", "youtube", "weather"])
-
-# Replaces
-#if module_exists("modules.weather"):
-#    import modules.weather as yr
-
 
 # Global variables
 

@@ -464,3 +464,49 @@ def find_extreme_places(hour=13, limit=100, debug=False, info=False):
         print "\tColdest: %s, %02d deg C" % (coldest[0], coldest[1])
 
     return [warmest, coldest]
+
+def help(nick, chan):
+    """ public """
+    return {
+        "yr":         "<station>",
+        "yr extreme": "[limit=10]"
+    }
+
+def commands():
+    return { "yr": command_yr }
+
+def command_yr(nick, chan, cmd, irc):
+    # Private Module: yr
+    kittens = True
+    if len(cmd) >= 1:
+        if cmd[0].lower() == "extreme":
+            if len(cmd) >= 2:
+                extreme = find_extreme_places(info=True, limit=int(cmd[1]))
+            else:
+                extreme = find_extreme_places(info=True, limit=10)
+
+            irc.sendmsg("%s: %02d C & %s: %02d C" % (
+                extreme[0][0], extreme[0][1], extreme[1][0], extreme[1][1]), chan)
+            return
+
+        try:
+            forecast = weather_update(" ".join(map(str, cmd)), hour=time.localtime().tm_hour,
+                                         minute=time.localtime().tm_min, debug=kittens)
+            for item in cmd:
+                if '@' in item:
+                    loc = " ".join(map(str, cmd[1:]))
+                    t = re.sub(r'\s+', "", loc[loc.find('@') + 1:len(loc)])[0:5].split(':')
+                    forecast = weather_update(loc[0:loc.find('@')].strip(' '),
+                                                 hour=int(t[0]), minute=int(t[1]), debug=kittens)
+                    break
+
+            prev = forecast
+            print forecast
+            if forecast is not None:
+                irc.sendmsg(forecast, chan)
+            elif prev is not None:
+                irc.sendmsg(forecast, chan)
+            else:
+                irc.sendmsg("No such weather station", chan)
+        except:
+            irc.sendmsg("https://www.konata.us/nope.gif", chan)
