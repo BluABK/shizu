@@ -61,6 +61,10 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
     def port(self):
         return int(self.config.get('irc', 'port'))
 
+    def ping_interval(self):
+        """ The amount of time in seconds between module_ping calls. Supports float """
+        return int(self.config.get('irc', 'ping interval'))
+
     def chan(self):
         return str(self.config.get('irc', 'channel'))
 
@@ -686,69 +690,6 @@ def nickname_proxy(irc_line):
 
     return [real_nick, msg]
 
-# TODO bring the module_* closer together
-def module_commands(lst=None):
-    """
-    Build a dictionary of {"command": function}.
-    Argument lst can be used to reserve commands for shizu itself.
-
-    For the module:
-
-    It is also possible to register the same function many times, for example aliases..
-
-    def handle_a(user, chan, cmd, irc): # Handle command a
-        ....
-    def handle_b(user, chan, cmd, irc): # Handle command b
-        ....
-    def commands():     # Register the commands with shizu
-       return {
-            "a": handle_a,
-            "b": handle_b,
-            etc
-       }
-    """
-    if lst is None:
-        lst = {}
-    for name,mod in modules.iteritems():
-        if function_exists(mod, "commands"):
-            for cmd,func in mod.commands().iteritems():
-                if cmd in lst:
-                    print "Two modules both tried to register the command "+cmd+", one of them is "+name
-                else:
-                    lst[cmd] = func
-    return lst
-
-
-def module_dump(usernick, chan, cmd, irc):
-    if cmd[0] in modules:
-        m = modules[cmd[0]]
-        if function_exists(m, "dump"):
-            m.dump(usernick, chan, cmd[1:], irc)
-
-def module_help(nick, chan, usage_list={}):
-    """
-    The strings returned by modules should be the part of the usage after the command, i.e. for:
-       lastfm alias [set|unset] <user>, the dict entry returned would be:
-       "lastfm alias": "[set|unset] <user>".
-    """
-    for name,mod in modules.iteritems():
-        try:
-            if function_exists(mod, "help"):
-                retval = mod.help(nick, chan)
-                if not isinstance(retval, dict):
-                    raise ValueError("help() should return a dict")
-
-                for cmdname,usage in retval.iteritems():
-                    if cmdname in usage_list:
-                        raise ValueError("Command "+cmdname+" is already in use")
-                    if not isinstance(usage, basestring):
-                        raise ValueError("if help() returns a dict, it has to be a dict of purely strings")
-                    usage_list[cmdname] = usage
-        except ValueError as e:
-            print "Module "+name+" has an error with the help() interface: "+str(e)
-
-    print usage_list
-    return usage_list
 
 
 
@@ -1026,9 +967,11 @@ class Client:
     def __init__(self):
         print "Spawned client instance"
 
+    def connect(self):
         # Connect to the the server
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((cfg.server(), cfg.port()))
+        self.sock.settimeout(cfg.ping_interval())
         # Send password before registration [RFC2812 section-3.1.1 Password message]
         if cfg.spass() != "":
             self.sendraw("PASS " + cfg.spass())
@@ -1041,7 +984,6 @@ class Client:
         # Get at least a line
         while self.buf.find("\n") == -1:
             data = self.sock.recv(65536)
-            # TODO check values
             self.buf += data
         idx = self.buf.find("\n")
 
@@ -1064,21 +1006,20 @@ class Client:
 
         last_ping = None
 
-
         #for recvraw in self.sock.makefile():
         while self.sock and running:
-            recvraw = self.readline()
+            try:
+                recvraw = self.readline()
+            except socket.timeout:
+                recvraw = None
 
             # Module ping()
             # The last one is for backwards jumps in time
-            # TODO: the +1 part should be a configurable time interval in seconds
-            # Subseconds are also possible with floating point. Also configure self.sock to
-            # have a timeout equivalent with this number.
-            if last_ping is None or last_ping+1 < time.time() or time.time() < last_ping:
+            if last_ping is None or last_ping+cfg.ping_interval() < time.time() or time.time() < last_ping:
                 last_ping = time.time()
                 module_ping(self)
 
-            if recvraw == '': # TODO: Or socket timeout errors
+            if recvraw == '' or recvraw is None:
                 continue
 
             recvmsg = self.raw_parse(recvraw)
@@ -1170,6 +1111,7 @@ class Client:
     def quit(self):
         self.sendraw("QUIT %s" % cfg.quitmsg())
         self.sock.close()
+        self.running = False
 
     def join(self, chan):
         self.sendraw("JOIN " + chan)
@@ -1236,19 +1178,6 @@ def signal_exit(sig, frame):
 
 # ============== MODULE CODE ======================
 
-def module_exists(module_name):
-    try:
-        __import__(module_name)
-        return True
-    except ImportError:
-        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
-        return False
-    except Exception as shenanigans:
-        print shenanigans
-        return False
-
-
-modules = {}
 
 # hawken proposal thing:
 def function_exists(thing, name):
@@ -1300,12 +1229,75 @@ def module_listeners(nick, chan, msg, irc):
         if function_exists(mod, "listener"):
             mod.listener(nick, chan, msg, irc)
 
-# This:
-# No modules
+
+def module_commands(lst=None):
+    """
+    Build a dictionary of {"command": function}.
+    Argument lst can be used to reserve commands for shizu itself.
+
+    For the module:
+
+    It is also possible to register the same function many times, for example aliases..
+
+    def handle_a(user, chan, cmd, irc): # Handle command a
+        ....
+    def handle_b(user, chan, cmd, irc): # Handle command b
+        ....
+    def commands():     # Register the commands with shizu
+       return {
+            "a": handle_a,
+            "b": handle_b,
+            etc
+       }
+    """
+    if lst is None:
+        lst = {}
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "commands"):
+            for cmd,func in mod.commands().iteritems():
+                if cmd in lst:
+                    print "Two modules both tried to register the command "+cmd+", one of them is "+name
+                else:
+                    lst[cmd] = func
+    return lst
+
+
+def module_dump(usernick, chan, cmd, irc):
+    if cmd[0] in modules:
+        m = modules[cmd[0]]
+        if function_exists(m, "dump"):
+            m.dump(usernick, chan, cmd[1:], irc)
+
+
+def module_help(nick, chan, usage_list={}):
+    """
+    The strings returned by modules should be the part of the usage after the command, i.e. for:
+       lastfm alias [set|unset] <user>, the dict entry returned would be:
+       "lastfm alias": "[set|unset] <user>".
+    """
+    for name,mod in modules.iteritems():
+        try:
+            if function_exists(mod, "help"):
+                retval = mod.help(nick, chan)
+                if not isinstance(retval, dict):
+                    raise ValueError("help() should return a dict")
+
+                for cmdname,usage in retval.iteritems():
+                    if cmdname in usage_list:
+                        raise ValueError("Command "+cmdname+" is already in use")
+                    if not isinstance(usage, basestring):
+                        raise ValueError("if help() returns a dict, it has to be a dict of purely strings")
+                    usage_list[cmdname] = usage
+        except ValueError as e:
+            print "Module "+name+" has an error with the help() interface: "+str(e)
+
+    print usage_list
+    return usage_list
+
+modules = {}
 module_import_list(["samba", "lastfm", "watch", "stats", "youtube", "weather"])
 
 # Global variables
-
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.yellow
 ircbacklog = list()
@@ -1331,6 +1323,8 @@ if __name__ == "__main__":
 
     signal.signal(signal.SIGINT,  signal_exit)
     signal.signal(signal.SIGTERM, signal_exit)
+
+    instance.connect()
 
     try:
         instance.eventloop()

@@ -9,6 +9,7 @@ channel = <channel>
 cmdsymbol = <trigger char, typically . or @ or !>
 quit-message = <message to send on quit>
 quit-protection = <string to append to quit for the bot to actually quit: quit-protection = aaaa -> !quitaaaa>
+ping interval = <Time between module_ping calls in seconds. Default to 1. Supports float>
 
 [nickserv]
 password = <optional>
