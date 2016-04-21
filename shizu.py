@@ -28,18 +28,21 @@ import traceback # traceback.print_exc()
 # Project-specific modules
 import colours as clr
 
-clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
-# hawken proposal thing:
-#def try_import(module_name):
-#    try:
-#        return __import__(module_name)
-#    except ImportError:
-#        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % module_name
-#        return None
-#    except Exception as shenanigans:
-#        print shenanigans
-#        return None
+"""
+README module interface:
+    help(user, chan)            generate help information, see module_help()
+    dump(user, chan, cmd, irc)  dump data from a module
+    commands()                  see module_commands.
+    start()                     Initialize the module (To be removed?)
+    shutdown()                  Destruct a module
+    ping(irc)                   Called regularly (default: 1 sec)
+
+Debug function_exists if you suspect there are undocumented functionality here
+"""
+
+
+clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
@@ -324,11 +327,6 @@ def ian(s):  # is a number
     except ValueError:
         return False
 
-
-def debug(msg, irc):
-    irc.sendraw("PRIVMSG %s :DEBUG: %s\r\n" % (cfg.chan(), msg))
-
-
 def getgreeting(greeter, irc):
     t = int(time.strftime("%H"))
 
@@ -339,10 +337,10 @@ def getgreeting(greeter, irc):
     elif t >= 4:
         greeting = "Ohayou gozaimasu"
     elif t <= -1:
-        debug("Negative time returned", irc)
+        irc.debug("Negative time returned")
         greeting = "ohi"
     else:
-        debug("Time returned had no valid integer value.", irc)
+        irc.debug("Time returned had no valid integer value.")
         greeting = "ohi"
 
     return "%s %s~" % (greeting, greeter)
@@ -400,7 +398,7 @@ def ddate():
 
 def whois(user, selection, raw_in, irc):
     global ircbacklog, ircbacklog_out
-    irc.sendraw("WHOIS %s\n" % user)
+    irc.sendraw("WHOIS %s" % user)
     data = list()
 
     prevmsg = ""
@@ -647,7 +645,6 @@ def custom_rawcommand(cmd, usernick, chan, irc):
         if "$nick" in c and len(cmd) > 1:
             c = c.replace("$nick", cmd[1])
         print "Sending command as raw: %s" % c
-        c += "\r\n"
         irc.sendraw(c)
 
 
@@ -688,9 +685,73 @@ def nickname_proxy(irc_line):
 
     return [real_nick, msg]
 
+# TODO bring the module_* closer together
+def module_commands(lst=None):
+    """
+    Build a dictionary of {"command": function}.
+    Argument lst can be used to reserve commands for shizu itself.
+
+    For the module:
+
+    It is also possible to register the same function many times, for example aliases..
+
+    def handle_a(user, chan, cmd, irc): # Handle command a
+        ....
+    def handle_b(user, chan, cmd, irc): # Handle command b
+        ....
+    def commands():     # Register the commands with shizu
+       return {
+            "a": handle_a,
+            "b": handle_b,
+            etc
+       }
+    """
+    if lst is None:
+        lst = {}
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "commands"):
+            for cmd,func in mod.commands().iteritems():
+                if cmd in lst:
+                    print "Two modules both tried to register the command "+cmd+", one of them is "+name
+                else:
+                    lst[cmd] = func
+    return lst
+
+
+def module_dump(usernick, chan, cmd, irc):
+    if cmd[0] in modules:
+        m = modules[cmd[0]]
+        if function_exists(m, "dump"):
+            m.dump(usernick, chan, cmd[1:], irc)
+
+def module_help(nick, chan, usage_list={}):
+    """
+    The strings returned by modules should be the part of the usage after the command, i.e. for:
+       lastfm alias [set|unset] <user>, the dict entry returned would be:
+       "lastfm alias": "[set|unset] <user>".
+    """
+    for name,mod in modules.iteritems():
+        try:
+            if function_exists(mod, "help"):
+                retval = mod.help(nick, chan)
+                if not isinstance(retval, dict):
+                    raise ValueError("help() should return a dict")
+
+                for cmdname,usage in retval.iteritems():
+                    if cmdname in usage_list:
+                        raise ValueError("Command "+cmdname+" is already in use")
+                    if not isinstance(usage, basestring):
+                        raise ValueError("if help() returns a dict, it has to be a dict of purely strings")
+                    usage_list[cmdname] = usage
+        except ValueError as e:
+            print "Module "+name+" has an error with the help() interface: "+str(e)
+
+    print usage_list
+    return usage_list
+
+
 
 def commands(usernick, msg, chan, irc):
-    global watch_enabled
     # First of all, check if it is a command
     if chan[0] == "#":
         # If message starts in trigger
@@ -700,82 +761,56 @@ def commands(usernick, msg, chan, irc):
         # else it is not a command
         else:
             return
+    else:
+        return
 
+    mod_commands = module_commands()
     cmd = msg.split(' ')
-    # Stats
-    if cmd[0].lower() in commandsavail or cmd[0].lower() in lastfm.commandsavail_short or cmd[0].lower() in \
-            watch.commandsavail_short or cmd[0].lower() in cfg.lst_command_option() or cmd[0].lower() in \
-            cfg.lst_rawcommand_option():
-        print "stats: matched regular command"
-        stats.update_cmd(cmd[0], 1)
-        stats.update_user(usernick, cmd[0], 1)
-    elif len(cmd) > 1:
-        if cmd[0].lower() == "stats":
-            print "stats: matched stats module command"
-            if cmd[1] in lastfm.commandsavail:
-                stats.update_cmd(('stats ' + cmd[1]), 1)
-                stats.update_user(usernick, ('stats ' + cmd[1]), 1)
-        elif cmd[0].lower() == "lastfm":
-            print "stats: matched lastfm module command"
-            if cmd[1] in lastfm.commandsavail:
-                stats.update_cmd(('lastfm ' + cmd[1]), 1)
-                stats.update_user(usernick, ('lastfm ' + cmd[1]), 1)
-        elif cmd[0].lower() == "watch":
-            print "stats: matched watch module command"
-            if cmd[1] in watch.commandsavail:
-                stats.update_cmd(('watch ' + cmd[1]), 1)
-                stats.update_user(usernick, ('watch ' + cmd[1]), 1)
-        elif cmd[0].lower() == "samba":
-            print "stats: matched samba module command"
-            if cmd[1] in samba.commandsavail:
-                stats.update_cmd(('samba ' + cmd[1]), 1)
-                stats.update_user(usernick, ('samba ' + cmd[1]), 1)
+    cmd[0] = cmd[0].lower()
+
+    if cmd[0] in mod_commands:
+        # TODO: If it gets popular to spy on other commands, make an interface for this
+        if "stats" in modules:
+            modules["stats"].update_cmd(cmd[0], 1)
+            #stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
+        mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
+        return
 
     # General commands
-    if cmd[0].lower() == "awesome":
+    if cmd[0] == "awesome":
         irc.sendmsg("Everything is awesome!", chan)
-    elif cmd[0].lower() == "version":
+        return
+    elif cmd[0] == "version":
         irc.sendmsg("%s" % version(), chan)
-    elif cmd[0].lower() == "nyaa":
+        return
+    elif cmd[0] == "nyaa":
         irc.sendmsg("Nyaa~", chan)
-    elif cmd[0].lower() == "date":
+        return
+    elif cmd[0] == "date":
         irc.sendmsg(date(), chan)
-    elif cmd[0].lower() == "ddate":
+        return
+    elif cmd[0] == "ddate":
         irc.sendmsg(ddate(), chan)
-    elif cmd[0].lower() == "showtopic":
-        topic(None, chan, irc)
+        return
+    elif cmd[0] == "showtopic":
+        irc.topic(None, chan)
         irc.sendmsg("Nyaa~", chan)
-    elif cmd[0].lower() == "dump":
-        try:
-            if cmd[1] == "cmd":
-                if len(cmd) > 1:
-                    if cmd[2] == "ignorednicks":
-                        irc.sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
-            elif cmd[1] == "trg":
-                if len(cmd) > 1:
-                    if cmd[2] == "ignorednicks":
-                        try:
-                            irc.sendmsg("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan)
-                        except TypeError:
-                            irc.sendmsg("An error occurred, sue me", chan)
-            elif cmd[1] == "lastfm":
-                if len(cmd) > 1:
-                    if cmd[2] == "alias":
-                        # try:
-                        da_list = lastfm.cfg.list_alias()
-                        # for i in range(len(da_list[0])):
-                        #    for item in da_list:
-                        #        print item[i]
-                        # print da_list
-                        irc.sendmsg(da_list, chan)
-                        # except:
-                        #    irc.sendmsg("An error occurred, sue me", chan)
-            else:
-                irc.sendmsg("Available parameters for this debug function:"
-                        " {cmd ignorednicks, trg ignorednicks, lastfm alias}", chan)
-        except IndexError:
-            irc.sendmsg("INFODUMP: Invalid argument(s)", chan)
-    elif cmd[0].lower() == "kick":
+        return
+    elif cmd[0] == "dump":
+        cmd[1] = cmd[1].lower()
+
+        if cmd[1] == "cmd":
+            if len(cmd) > 1:
+                if cmd[2] == "ignorednicks":
+                    irc.sendmsg("Ignored nicks: %s" % cfg.commands_ignorednicks(), chan)
+        elif cmd[1] == "trg":
+            if len(cmd) > 1:
+                if cmd[2] == "ignorednicks":
+                    irc.sendmsg("Ignored nicks: %s" % cfg.triggers_ignorednicks(), chan)
+        else:
+            module_dump(usernick, chan, cmd[1:], irc)
+        return
+    elif cmd[0] == "kick":
 
         # Make sure that it is an actual user
         if ignored_nick("commands", usernick) is True:
@@ -788,20 +823,20 @@ def commands(usernick, msg, chan, irc):
                 try:
                     try:
                         # KICK <user> <reason>
-                        irc.sendraw("KICK %s %s %s\n" % (chan, cmd[1], cmd[2]))
+                        irc.sendraw("KICK %s %s %s" % (chan, cmd[1], cmd[2]))
                         return
                     except IndexError:
                         # KICK <user> <static reason> (fallback if no reason given)
-                        irc.sendraw("KICK %s %s *shove*\n" % (chan, cmd[1]))
+                        irc.sendraw("KICK %s %s *shove*" % (chan, cmd[1]))
                         return
                 except IndexError:
                     print("IndexError in authorisation check")
                     return
 
         # If all else fails, user was probably not authorised and must be punished for abuse
-        irc.sendraw("KICK %s %s Backfired, oh the irony! ~\n" % (chan, usernick))
+        irc.sendraw("KICK %s %s Backfired, oh the irony! ~" % (chan, usernick))
 
-    elif cmd[0].lower() == "replay":
+    elif cmd[0] == "replay":
         # TODO not 100% sure here, debug the backlog list a little and find out if this is safe
         if len(cmd) > 2 and ian(cmd[1]) and int(cmd[1]) <= maxbacklog:
             try:
@@ -816,27 +851,27 @@ def commands(usernick, msg, chan, irc):
                 replay(int(cmd[1]), chan, 0, irc)
         else:
             replay(maxbacklog, chan, 0, irc)
-    elif cmd[0].lower() == "say":
+    elif cmd[0] == "say":
         if len(cmd) > 1:
             # Secure outgoing message
             if (re.match(r"^\x01[^\s]*", cmd[1]) is None) and (re.match(r"^![^\s]+", cmd[1]) is None):
                 irc.sendmsg(" ".join(cmd[1:]), chan)
         else:
             irc.sendmsg("Syntax: %ssay <string>" % cfg.cmdsym(), chan)
-    elif cmd[0].lower() == "act":
+    elif cmd[0] == "act":
         irc.sendmsg("\x01ACTION %s\x01" % " ".join(cmd[1:]), chan)
-    elif cmd[0].lower() == "join":
+    elif cmd[0] == "join":
         # Ability to join multiple channels
         newchans = cmd[1:]
         for newchan in newchans:
             if newchan[0] == '#':
-                irc.sendraw("JOIN %s\r\n" % newchan)
+                irc.sendraw("JOIN %s" % newchan)
             else:
-                irc.sendraw("JOIN #%s\r\n" % newchan)
-    elif cmd[0].lower() == "quit" and usernick in cfg.su():  # and cmd[1] == cfg.quitpro():
+                irc.sendraw("JOIN #%s" % newchan)
+    elif cmd[0] == "quit" and usernick in cfg.su():  # and cmd[1] == cfg.quitpro():
         irc.quit()
 
-    elif cmd[0].lower() == "host":
+    elif cmd[0] == "host":
         if len(cmd) > 1:
             try:
                 retval = check_output("host %s" % cmd[1], shell=True)
@@ -847,191 +882,34 @@ def commands(usernick, msg, chan, irc):
                 irc.sendmsg("Invalid argument.... (and you *know* it)", chan)
 
     # Help calls
-    if cmd[0].lower() == "help":
-        try:
-            if cmd[1] == "triggers":
-                irc.sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
-                irc.sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
-            elif cmd[1] == "replay":
-                irc.sendmsg("%s: Syntax: %sreplay <lines> <direction>" % (usernick, cfg.cmdsym()), chan)
-                irc.sendmsg("Available commands: recv, send, duplex", chan)
-            elif cmd[1] == "kick":
-                irc.sendmsg("%s: Syntax: %skick <user>" % (usernick, cfg.cmdsym()), chan)
-            elif cmd[1] == "samba":
-                if len(cmd) > 2:
-                    if cmd[2] == "logins":
-                        irc.sendmsg("%s: Syntax: %ssamba logins <user>" % (usernick, cfg.cmdsym()), chan)
-                else:
-                    for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
-                        irc.sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
-            elif cmd[1] == "lastfm":
-                if len(cmd) > 2:
-                    if cmd[2] == "recent":
-                        irc.sendmsg("%s: Syntax: %slastfm recent <user> <num>" % (usernick, cfg.cmdsym()), chan)
-                    if cmd[2] == "alias":
-                        irc.sendmsg("%s: Syntax: %slastfm alias [set|unset] <user>" %
-                                (usernick, cfg.cmdsym()), chan)
-                    if cmd[2] == "bio":
-                        irc.sendmsg("%s: Syntax: %slastfm bio <artist>" %
-                                (usernick, cfg.cmdsym()), chan)
-                else:
-                    for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
-                        irc.sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
-        except IndexError:
-            helpcmd(usernick, chan, irc)
+    if cmd[0] == "help":
+        # All of cmd to lower
+        cmd = [x.lower() for x in cmd]
 
-    # module lastfm
-    elif cmd[0].lower() == "lastfm":
-        if len(cmd) > 1:
-            if cmd[1] == "bio":
-                if len(cmd) > 2:
-                    feedback = lastfm.artist_bio(cmd[2])
-                    if isinstance(feedback, str):
-                        irc.sendmsg(str(feedback), chan)
-                    # elif isinstance(feedback, list):
-                    else:
-                        for i in feedback:
-                            irc.sendmsg(str(i), chan)
-            elif cmd[1] == "status":
-                auth = lastfm.test_connection()
-                print auth
-                print type(auth)
+        mhelp = {
+                "replay": "<lines> <direction:recv|send|duplex>",
+                "kick":   "<user>",
+                "help":   "[full command]"
+        }
+        mhelp = module_help(usernick, chan, mhelp)
+        item = ' '.join(cmd[1:])
 
-                if type(auth) is Exception:
-                    irc.sendmsg(str(auth.message), chan)
-                    irc.sendmsg(str(auth.details), chan)
-                else:
-                    auth = unicodedata.normalize('NFKD', auth).encode('ascii', 'ignore')
-                    print auth
-                    print type(auth)
-                    net = lastfm.network.name
-                    print net
-                    print type(net)
+        if len(cmd) > 2 and cmd[1] == "triggers":
+            irc.sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
+            irc.sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
+        elif item in mhelp:
+            irc.sendmsg(usernick+": Syntax: "+cfg.cmdsym()+item+" "+mhelp[item], chan)
+        else:
+            items = [cfg.cmdsym()+x for x in mhelp.keys()+["triggers"]]
+            items.sort()
+            irc.sendmsg(usernick+": Available commands: "+', '.join(items), chan)
+        return
 
-                    # if type(auth) is str and type(net) is str:
-                    if type(auth) is str and type(net) is str:
-                        irc.sendmsg("I am currently authenticated as " + auth + " on " + net, chan)
-                    elif type(auth) is str:
-                        irc.sendmsg(
-                            "I am currently authenticated as " + auth + " on *NO NETWORK*, how does that even work? =/",
-                            chan)
-                    elif net is str:
-                        irc.sendmsg("I am somehow connected to " + net + ", but not authenticated... Okay then!", chan)
-                    else:
-                        irc.sendmsg("I am unable to query the network, is LastFM throwing a fit?", chan)
-            elif cmd[1] == "alias":
-                if len(cmd) > 2:
-                    if cmd[2] == "set":
-                        if len(cmd) > 3:
-                            tmp = lastfm.add_alias(usernick, cmd[3])
-                            irc.sendmsg(tmp, chan)
-                    elif cmd[2] == "unset":
-                        if len(cmd) > 3:
-                            tmp = lastfm.del_alias(usernick)
-                            irc.sendmsg(tmp, chan)
-                    else:
-                        tmp = lastfm.add_alias(usernick, cmd[2])
-                        irc.sendmsg(tmp, chan)
-
-            elif cmd[1] == "recent":
-                default_num = 3
-                # !lastfm recent nick num
-                if len(cmd) > 3:
-                    num = cmd[3]
-                    nick = cmd[2]
-                    # !lastfm recent nick num
-                    try:
-                        if 0 > num <= 10:
-                            test = lastfm.recently_played(nick, num)
-                        # !lastfm recent nick 3 (num was out of bounds)
-                        else:
-                            test = lastfm.recently_played(nick, default_num)
-                    except TypeError:
-                        test = lastfm.recently_played(nick, default_num)
-                # !lastfm recent num
-                elif len(cmd) > 2:
-                    num = cmd[2]
-                    nick = usernick
-                    test = lastfm.recently_played(nick, num)
-                # !lastfm recent
-                else:
-                    nick = usernick
-                    test = lastfm.recently_played(nick, default_num)
-
-                # Test returned data integrity
-                # If the returned data is a string it is most likely an exception and should be handled as one
-                if type(test) is str:
-                    irc.sendmsg(test, chan)
-                elif test is None:
-                    irc.sendmsg("%s has not played anything in the given period" % nick, chan)
-                elif test == "None":
-                    irc.sendmsg("%s: No user named '%s' was found =/" % (nick, test), chan)
-                else:
-                    irc.sendmsg("%s has recently played:" % nick, chan)
-                    for item in xrange(len(test)):
-                        irc.sendmsg(str(test[item]), chan)
-            # Print help
-            else:
-                for item in xrange(len(lastfm.helpcmd(cfg.cmdsym()))):
-                    irc.sendmsg(str(lastfm.helpcmd(cfg.cmdsym())[item]), chan)
-
-    elif cmd[0].lower() == "ragequit":
+    elif cmd[0] == "ragequit":
         raise Exception("spam", "eggs")
 
-    # Module: lastfm - shortcuts
-    elif cmd[0].lower() == "np":
-        try:
-            test = lastfm.now_playing(cmd[1])
-            if test is None:
-                irc.sendmsg("%s is not currently playing anything" % cmd[1], chan)
-            elif test == "None":
-                irc.sendmsg("No user named '%s' was found =/" % cmd[1], chan)
-            elif test == "timeout":
-                irc.sendmsg("Request timed out =/", chan)
-            else:
-                irc.sendmsg("%s is currently playing: %s" % (cmd[1], test), chan)
-        except IndexError:
-            test = lastfm.now_playing(usernick)
-            if test is None:
-                irc.sendmsg("%s is not currently playing anything" % usernick, chan)
-            elif test == "None":
-                irc.sendmsg("%s: No user named '%s' was found =/ "
-                        "You can set an alias with !lastfm set alias <lastfmuser>" % (usernick, test), chan)
-            elif test == "timeout":
-                irc.sendmsg("Request timed out =/", chan)
-            else:
-                irc.sendmsg("%s is currently playing: %s" % (usernick, test), chan)
-
-    elif cmd[0].lower() == "npt":
-        try:
-            irc.sendmsg("%s is currently playing; %s" % (usernick, lastfm.test_playing(cmd[1])), chan)
-        except IndexError:
-            irc.sendmsg("Index derp", chan)
-
-    # Module: samba
-    elif cmd[0].lower() == "samba":
-        if len(cmd) > 1:
-            if cmd[1] == "logins":
-                irc.sendmsg(samba.get_logins(cmd[2:]), chan)
-            elif cmd[1] == "np":
-                irc.sendmsg(samba.get_playing(), chan)
-            elif cmd[1] == "np2":
-                irc.sendmsg(samba.get_playing2(), chan)
-        else:
-            for item in xrange(len(samba.helpcmd(cfg.cmdsym()))):
-                irc.sendmsg(str(samba.helpcmd(cfg.cmdsym())[item]), chan)
-
-    # Debug commands
-    elif cmd[0].lower() == "debug":
-        if len(cmd) >= 2 and cmd[1] == "logins":
-            dbg = samba.get_logins(cmd[2:])
-            debug("Passed variable of length:" + str(len(dbg)), irc)
-            for itr in range(len(dbg)):
-                debug("Iteration: %s/%s" % (str(itr), str(len(dbg))), irc)
-                debug(dbg[itr], irc)
-
     # Custom commands
-    elif cmd[0].lower() == "addcommand":
+    elif cmd[0] == "addcommand":
         if ignored_nick("commands", usernick) is True:
             irc.sendmsg("%s:ಠ_ಠ" % usernick, chan)
             return
@@ -1046,7 +924,7 @@ def commands(usernick, msg, chan, irc):
             ret = add_custom_cmd(str(cmd[1]), fstr, usernick)
             irc.sendmsg(ret, chan)
 
-    elif cmd[0].lower() == "removecommand":
+    elif cmd[0] == "removecommand":
         if ignored_nick("commands", usernick) is True:
             irc.sendmsg("%s:ಠ_ಠ" % usernick, chan)
             return
@@ -1054,7 +932,7 @@ def commands(usernick, msg, chan, irc):
             ret = del_custom_cmd(str(cmd[1]), usernick)
             irc.sendmsg(ret, chan)
 
-    elif cmd[0].lower() == "addrawcommand" and usernick.lower() == "bluabk":
+    elif cmd[0] == "addrawcommand" and usernick.lower() == "bluabk":
         if len(cmd) > 1:
             arg = list()
             for item in xrange(len(cmd)):
@@ -1066,12 +944,12 @@ def commands(usernick, msg, chan, irc):
             ret = add_custom_rawcmd(str(cmd[1]), fstr, usernick)
             irc.sendmsg(ret, chan)
 
-    elif cmd[0].lower() == "removerawcommand" and usernick.lower() == "bluabk":
+    elif cmd[0] == "removerawcommand" and usernick.lower() == "bluabk":
         if len(cmd) > 1:
             ret = del_custom_rawcmd(str(cmd[1]), usernick)
             irc.sendmsg(ret, chan)
 
-    elif cmd[0].lower() == "listcustom":
+    elif cmd[0] == "listcustom":
         string_list = ""
         for item in cfg.lst_command():
             string_list += (item[0] + " ")
@@ -1080,7 +958,7 @@ def commands(usernick, msg, chan, irc):
         irc.sendmsg(string_list, chan)
 
     # Custom triggers
-    elif cmd[0].lower() == "addtrigger":
+    elif cmd[0] == "addtrigger":
         if ignored_nick("commands", usernick) is True:
             irc.sendmsg("%s:ಠ_ಠ" % usernick, chan)
             return
@@ -1095,7 +973,7 @@ def commands(usernick, msg, chan, irc):
             ret = add_custom_trg(str(cmd[1]), fstr, usernick)
             irc.sendmsg(ret, chan)
 
-    elif cmd[0].lower() == "removetrigger":
+    elif cmd[0] == "removetrigger":
         if ignored_nick("commands", usernick) is True:
             irc.sendmsg("%s:ಠ_ಠ" % usernick, chan)
             return
@@ -1105,68 +983,23 @@ def commands(usernick, msg, chan, irc):
 
     # TODO: Raw triggers
 
-    elif cmd[0].lower() == "customtriggers":
+    elif cmd[0] == "customtriggers":
         string_list = ""
         for item in cfg.lst_trigger():
             string_list += (item[0] + " ")
         irc.sendmsg(string_list, chan)
 
-
-    # Module: Watch
-    elif cmd[0].lower() == "watch":
-        if len(cmd) > 1:
-            if cmd[1] == "enable":
-                watch_enabled = True
-                irc.sendmsg("Watch notifications enabled.", chan)
-
-            elif cmd[1] == "disable":
-                watch_enabled = False
-                irc.sendmsg("Watch notifications disabled.", chan)
-
-            elif cmd[1] == "limit":
-                print "watch: Setting watchlimit to %s" % cmd[2]
-                watch.set_notify_limit(cmd[2])
-                irc.sendmsg("Watch notifications limit set to %s" % cmd[2], chan)
-        else:
-            for item in xrange(len(atch.helpcmd(cfg.cmdsym()))):
-                irc.sendmsg(str(watch.helpcmd(cfg.cmdsym())[item]), chan)
-
-    # Module: Stats
-    elif cmd[0].lower() == "stats":
-        if len(cmd) > 1:
-            if cmd[1] == "cmd" or cmd[1] == "command":
-                if len(cmd) > 2:
-                    irc.sendmsg(str(stats.get_cmd(cmd[2])), chan)
-                else:
-                    cmd_list = stats.get_cmd_all()
-                    cmd_string = ""
-                    cnt = 0
-                    for item in cmd_list:
-                        cmd_string += ("%s: %s" % (item[0], item[1]))
-                        cnt += 1
-                        if cnt <= len(cmd_list)-1:
-                            cmd_string += ", "
-                        cmd_string.strip('\n')
-                    print repr(cmd_string)
-                    irc.sendmsg(cmd_list, chan)
-
-            elif cmd[1] == "user":
-                # TODO: Code user stats get command
-                irc.sendmsg("Dummy function", chan)
-        else:
-            for item in xrange(len(stats.helpcmd(cfg.cmdsym()))):
-                irc.sendmsg(str(stats.helpcmd(cfg.cmdsym())[item]), chan)
-
-    elif cmd[0].lower() in cfg.lst_command_option():
+    elif cmd[0] in cfg.lst_command_option():
         print "Executing custom command"
-        custom_command(cmd[0].lower(), chan, irc)
+        custom_command(cmd[0], chan, irc)
 
-    elif cmd[0].lower() in cfg.lst_rawcommand_option() and usernick in cfg.su():
+    elif cmd[0] in cfg.lst_rawcommand_option() and usernick in cfg.su():
         print "Executing custom rawcommand"
         custom_rawcommand(cmd, usernick, chan, irc)
 
+    # TODO: Move into module/youtube.py
     # Module: YouTube
-    elif cmd[0].lower() == "ytt" and module_exists("modules.youtube"):
+    elif cmd[0] == "ytt" and module_exists("modules.youtube"):
         if len(cmd) > 1:
             if cmd[1].lower() == "trigger":
                 new_state = youtube.toggle_trigger()
@@ -1178,8 +1011,9 @@ def commands(usernick, msg, chan, irc):
         if youtube.get_url() is not None and youtube.get_trigger() is False:
             return irc.sendmsg(youtube.printable_title(fancy=False), chan)
 
+    # TODO: Move into module/yr.py
     # Private Module: yr
-    elif cmd[0].lower() == "yr" and module_exists("weather"):
+    elif cmd[0] == "yr" and module_exists("weather"):
         kittens = True
         if len(cmd) > 1:
             if cmd[1] == "extreme":
@@ -1234,7 +1068,8 @@ def triggers(usernick, msg, chan, irc):
         return
 
     """YouTube Title"""
-    if module_exists("modules.youtube"):
+    if "youtube" in modules:
+        youtube = modules["youtube"]
         if youtube.get_url() is not None and youtube.get_trigger() is True:
             irc.sendmsg(youtube.printable_title(fancy=False), chan)
 
@@ -1245,36 +1080,8 @@ def triggers(usernick, msg, chan, irc):
 
 
 def listeners(usernick, msg, chan, irc):
-    if module_exists("modules.youtube"):
-        youtube.parse_url(msg)
-
-
-def watch_notify(files, chan, msg, irc):
-    for item in files:
-        irc.sendmsg("%s %s" % (msg, item), chan)
-
-
-def watch_notify_moved(files, chan, irc):
-    # index = 0
-    # strings = list()
-    # for li in files:
-    # for index in xrange(li[0]):
-
-    # lame ass hack
-    for item in files:
-        irc.sendmsg(item, chan)
-
-
-def helpcmd(user, chan, irc):
-    irc.sendmsg("%s: Syntax: %scommand help arg1..argN" % (user, cfg.cmdsym()), chan)
-    irc.sendmsg("Available commands: %s, %s (* command contains sub-commands)" %
-            (commandsavail, modulesavail), chan)
-
-
-def topic(newtopic, chan, irc):
-    if newtopic is None:
-        irc.sendraw("TOPIC %s\n" % chan)
-
+    if "youtube" in modules:
+        modules["youtube"].parse_url(msg)
 
 
 class Client:
@@ -1286,40 +1093,70 @@ class Client:
         self.sock.connect((cfg.server(), cfg.port()))
         # Send password before registration [RFC2812 section-3.1.1 Password message]
         if cfg.spass() != "":
-            self.sendraw("PASS " + cfg.spass() + "\n")
+            self.sendraw("PASS " + cfg.spass())
         # Register with the server [RFC2812 section-3.1 Connection Registration]
-        self.sendraw("NICK " + cfg.nick() + "\n")
-        self.sendraw("USER %s %s %s :%s\n" % (cfg.nick(), "0", "*", cfg.realname()))
+        self.sendraw("NICK " + cfg.nick())
+        self.sendraw("USER %s %s %s :%s" % (cfg.nick(), "0", "*", cfg.realname()))
+        self.buf = ""
+
+    def readline(self):
+        # Get at least a line
+        while self.buf.find("\n") == -1:
+            data = self.sock.recv(65536)
+            # TODO check values
+            self.buf += data
+        idx = self.buf.find("\n")
+
+        # Split into line
+        line = self.buf[:idx]
+        # Remove \r
+        if line[-1] == "\r":
+            line = line[:-1]
+        # Set buf
+        self.buf = self.buf[idx+1:]
+
+        # No newlines
+        return line
+
 
     def eventloop(self):
         global ircbacklog, ircbacklog_in
         print "Entering event loop"
         i = 1
-        # if module_exists("weather"):
-        #    yr_init()
-        for recvraw in self.sock.makefile():
-            if not running:
-                break
 
-            if recvraw == '':
+        last_ping = None
+
+
+        #for recvraw in self.sock.makefile():
+        while self.sock and running:
+            recvraw = self.readline()
+
+            # Module ping()
+            # The last one is for backwards jumps in time
+            # TODO: the +1 part should be a configurable time interval in seconds
+            # Subseconds are also possible with floating point. Also configure self.sock to
+            # have a timeout equivalent with this number.
+            if last_ping is None or last_ping+1 < time.time() or time.time() < last_ping:
+                last_ping = time.time()
+                module_ping(self)
+
+            if recvraw == '': # TODO: Or socket timeout errors
                 continue
 
             recvmsg = self.raw_parse(recvraw)
-
-            ircbacklog.append(recvraw)
+            ircbacklog.append(recvraw+"\n")
 
             if len(ircbacklog) > maxbacklog:
                 # Delete first entry
                 ircbacklog = ircbacklog[1:]
 
-            ircbacklog_in.append(recvraw)
+            ircbacklog_in.append(recvraw+"\n")
 
             if len(ircbacklog_in) > maxbacklog:
                 # Delete first entry
                 ircbacklog_in = ircbacklog_in[1:]
 
-            ircmsg = recvraw.strip("\n\r")  # Remove protocol junk (linebreaks and return carriage)
-            ircmsg = ircmsg.lstrip(":")  # Remove first colon. Useless, waste of space >_<
+            ircmsg = recvraw.lstrip(":")  # Remove first colon. Useless, waste of space >_<
             print("<-- %s" % ircmsg)  # Print received data
 
             ircparts = re.split("\s", ircmsg, 3)
@@ -1328,17 +1165,17 @@ class Client:
                 continue
 
             if recvraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
-                self.sendraw("NICK " + (cfg.nick() + "|" + str(randint(0, 256))) + "\n")
+                self.sendraw("NICK " + (cfg.nick() + "|" + str(randint(0, 256))))
 
             if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
                 self.ping()
 
             if ircmsg.find("NOTICE %s :This nickname is registered" % cfg.nick()) != -1:
-                self.sendraw("PRIVMSG NickServ :identify %s\r\n" % cfg.nspass())
+                self.sendraw("PRIVMSG NickServ :identify %s" % cfg.nspass())
 
             if ircmsg.find("NOTICE Auth :Welcome") != -1:
                 if cfg.has_oper():
-                    self.sendraw("OPER %s %s\n" % (cfg.oper_name(), cfg.oper_pass()))
+                    self.sendraw("OPER %s %s" % (cfg.oper_name(), cfg.oper_pass()))
                 self.join(cfg.chan())
 
             # Run some checks
@@ -1366,78 +1203,24 @@ class Client:
                 channel = ircparts[2]
                 if channel[0] != '#':
                     channel = tmpusernick
+
                 try:
                     commands(tmpusernick, message, channel, self)
                 except Exception as e:
-                    sendmsg(e, channel, self.sock)
+                    self.sendmsg(e, channel)
                     traceback.print_exc()
+
                 try:
                     listeners(tmpusernick, message, channel, self)
                 except Exception as e:
-                    sendmsg(e, channel, self.sock)
+                    self.sendmsg(e, channel)
+                    traceback.print_exc()
+
                 try:
                     triggers(tmpusernick, message, channel, self)
                 except Exception as e:
-                    sendmsg(e, channel, self.sock)
-
-                if watch.check_added():
-                    if watch_enabled:
-                        if len(watch.get_added()) <= watch.notify_limit():
-                            watch_notify(watch.get_added(), watch.notify_chan(), watch.cfg.msg_add(), self.sock)
-                            for test in watch.get_added():
-                                print ("\033[94mNotified: %s\033[0m" % test)
-                        else:
-                            cap_list = list()
-                            for item in watch.get_added()[0:(watch.notify_limit())]:
-                                cap_list.append(item)
-
-                            cap_list[watch.notify_limit() - 1] += \
-                                " ... and " + str(len(watch.get_added()) - watch.notify_limit()) + " more unlisted entries"
-                            watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_add(), self.sock)
-                    else:
-                        for test in watch.get_added():
-                            print ("\033[94mIgnored notify: %s\033[0m" % test)
-
-                    watch.clear_added()
-
-                if watch.check_erased():
-                    if watch_enabled:
-                        if len(watch.get_erased()) <= watch.notify_limit():
-                            watch_notify(watch.get_erased(), watch.notify_chan(), watch.cfg.msg_del(), self.sock)
-                            print "Debug del sign is %s" % watch.cfg.msg_del()
-                            for test in watch.get_erased():
-                                print ("\033[94mNotified: %s\033[0m" % test)
-                        else:
-                            cap_list = list()
-                            for item in watch.get_erased()[0:(watch.notify_limit())]:
-                                cap_list.append(item)
-
-                            cap_list[watch.notify_limit() - 1] += \
-                                " ... and " + str(len(watch.get_erased()) - watch.notify_limit()) + " more unlisted entries"
-                            print "Debug2 del sign is %s" % watch.cfg.msg_del()
-                            watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_del(), self.sock)
-                    else:
-                        for test in watch.get_erased():
-                            print ("\033[94mIgnored notify: %s\033[0m" % test)
-
-                    watch.clear_erased()
-
-                if watch.check_moved():
-                    if watch_enabled:
-                        if len(watch.get_moved()) <= watch.notify_limit():
-                            watch_notify_moved(watch.get_moved(), watch.notify_chan(), self.sock)
-                            for test in watch.get_moved():
-                                print ("\033[94mNotified: %s\033[0m" % test)
-                        else:
-                            cap_list = list()
-                            for item in watch.get_moved()[0:(watch.notify_limit())]:
-                                cap_list.append(item)
-
-                            cap_list[watch.notify_limit() - 1] += \
-                                " ... and " + str(len(watch.get_moved()) - watch.notify_limit()) + " more unlisted entries"
-                            watch_notify(cap_list, watch.notify_chan(), watch.cfg.msg_mov(), self.sock)
-
-                    watch.clear_moved()
+                    self.sendmsg(e, channel)
+                    traceback.print_exc()
 
             # And the tick goes on...
             i += 1
@@ -1446,20 +1229,31 @@ class Client:
         self.quit()
 
     def quit(self):
-        self.sendraw("QUIT %s\r\n" % cfg.quitmsg())
+        self.sendraw("QUIT %s" % cfg.quitmsg())
         self.sock.close()
 
     def join(self, chan):
-        self.sendraw("JOIN " + chan + "\n")
+        self.sendraw("JOIN " + chan)
+
+    def debug(self, msg):
+        self.sendraw("PRIVMSG %s :DEBUG: %s" % (cfg.chan(), msg))
+
+    def topic(self, newtopic, chan):
+        if newtopic is None:
+            self.sendraw("TOPIC %s" % chan)
 
     def sendraw(self, buf):
         global ircbacklog_out
-        self.sock.sendall(buf)
-        ircbacklog_out.append(buf)
+
+        if buf[-1] == "\n":
+            raise ValueError("You are not supposed to send newlines to sendraw")
+
+        self.sock.sendall(buf+"\r\n")
+        ircbacklog_out.append(buf+"\n")
         print "--> %s" % buf
 
     def ping(self):
-        self.sendraw("PONG :Pong\n")
+        self.sendraw("PONG :Pong")
 
     def raw_parse(self, raw):
         msg = {
@@ -1477,21 +1271,17 @@ class Client:
         try:
             if isinstance(msg, basestring):
                 try:
-                    data = "PRIVMSG %s :%s\r\n" % (chan, msg)
-                    self.sendraw(data)
+                    self.sendraw("PRIVMSG %s :%s" % (chan, msg))
                 except ValueError as ve:
-                    data = "PRIVMSG %s :%s\r\n" % (chan, "sendmsg(): %s" % ve)
-                    self.sendraw(data)
+                    self.sendraw("PRIVMSG %s :%s" % (chan, "sendmsg(): %s" % ve))
             else:
                 # Don't check, errors from here are raised
                 for item in msg:
                     self.sendmsg(item, chan)
         except TypeError as te:
-            data = "PRIVMSG %s :A TypeError occurred, that's annoying: %s\r\n" % (chan, te)
-            self.sendraw(data)
+            self.sendraw("PRIVMSG %s :A TypeError occurred, that's annoying: %s" % (chan, te))
         except Exception as ex:
-            data = "PRIVMSG %s :An Exception occurred, that's annoying: %s\r\n" % (chan, ex)
-            self.sendraw(data)
+            self.sendraw("PRIVMSG %s :An Exception occurred, that's annoying: %s" % (chan, ex))
 
 def signal_exit(sig, frame):
     # No double-exiting
@@ -1499,7 +1289,7 @@ def signal_exit(sig, frame):
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
     print "Caught signal, exiting!"
-    instance.sendraw("QUIT :^C^C^C^C^C^C^C^C O.o\n")
+    instance.sendraw("QUIT :^C^C^C^C^C^C^C^C O.o")
     instance.sock.close()
     module_shutdown()
     sys.exit(0)
@@ -1518,25 +1308,63 @@ def module_exists(module_name):
         print shenanigans
         return False
 
+
+modules = {}
+
+# hawken proposal thing:
+def function_exists(thing, name):
+    # TODO: Check that it actually is callable via some neat dir() things
+    return name in dir(thing)
+
+def module_import(name):
+    global modules
+    module_name = "modules."+name
+    try:
+        module = __import__(module_name)
+        if name in modules:
+            raise ValueError("duplicate module name: "+name)
+        modules[name] = eval('module.'+name)
+        return True
+    except ImportError:
+        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % asname
+        return False
+    except Exception as shenanigans:
+        print shenanigans
+        traceback.print_exc()
+        return False
+
+def module_import_list(names):
+    for name in names:
+        module_import(name)
+
 def module_start():
-    watch.start()
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "start"):
+            mod.start()
 
 def module_shutdown():
-    watch.shutdown()
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "shutdown"):
+            mod.shutdown()
 
+def module_ping(irc):
+    """
+    ping() is called regularly, default at 1 sec intervals
+    """
+    global modules
+    for name,mod in modules.iteritems():
+        if function_exists(mod, "ping"):
+            mod.ping(irc)
 
-if module_exists("modules.samba"):
-    import modules.samba as samba # for server-side samba functionality
-if module_exists("modules.lastfm"):
-    import modules.lastfm as lastfm
-if module_exists("modules.watch"):
-    import modules.watch as watch
-if module_exists("modules.stats"):
-    import modules.stats as stats
-if module_exists("modules.youtube"):
-    import modules.youtube as youtube
-if module_exists("modules.weather"):
-    import modules.weather as yr
+# This:
+# No modules
+module_import_list(["samba", "lastfm", "watch", "stats", "youtube", "weather"])
+
+# Replaces
+#if module_exists("modules.youtube"):
+#    import modules.youtube as youtube
+#if module_exists("modules.weather"):
+#    import modules.weather as yr
 
 
 # Global variables
@@ -1547,9 +1375,8 @@ ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
 running = True
-watch_enabled = True
+# TODO migrate it to the module_commands stuff
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
-modulesavail = "samba*"
 telegram_cur_nick = None
 
 # Variables declared by config file

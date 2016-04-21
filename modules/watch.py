@@ -151,19 +151,6 @@ def set_notify_limit(i):
     return cfg.set_notify_limit(i)
 
 
-def helpcmd(cmdsym):
-    cmdlist = list()
-    if len(commandsavail) > 0 or len(commandsavail_short) > 0:
-        cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
-        if len(commandsavail) > 0:
-            cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
-        if len(commandsavail_short) > 0:
-            cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail_short)
-    else:
-        cmdlist.append("That command has no arguments")
-
-    return cmdlist
-
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
@@ -183,6 +170,7 @@ class EventHandler(pyinotify.ProcessEvent):
 
 
 def start():
+    """ public """
     global wdd
     notifier.start()
 
@@ -198,17 +186,125 @@ def start():
 
 
 def shutdown():
+    """ public """
     for k,i in wdd.iteritems():
         wm.del_watch(i)
     notifier.stop()
 
-cfg = Config()
+def help(nick, chan):
+    """ public """
+    return {
+            "watch enable": "",
+            "watch disable": "",
+            "watch limit": "<num>"
+    }
 
-# Variables
+def commands():
+    """ public """
+
+    return { "watch" : command_watch }
+
+def command_watch(nick, chan, cmd, irc):
+    if len(cmd) < 1:
+        return
+    cmd[0] = cmd[0].lower()
+    if cmd[0] == "enable":
+        watch_enabled = True
+        irc.sendmsg("Watch notifications enabled.", chan)
+
+    elif cmd[0] == "disable":
+        watch_enabled = False
+        irc.sendmsg("Watch notifications disabled.", chan)
+
+    elif cmd[0] == "limit" and len(cmd) >= 2:
+        print "watch: Setting watchlimit to %s" % cmd[1]
+        watch.set_notify_limit(cmd[1])
+        irc.sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
+
+def watch_notify(files, chan, msg, irc):
+    for item in files:
+        irc.sendmsg("%s %s" % (msg, item), chan)
+
+
+def watch_notify_moved(files, chan, irc):
+    # index = 0
+    # strings = list()
+    # for li in files:
+    # for index in xrange(li[0]):
+
+    # lame ass hack
+    for item in files:
+        irc.sendmsg(item, chan)
+
+def ping(irc):
+    """ public """
+    # TODO these three blocks are similar enough that they can be combined somehow
+    if check_added():
+        if watch_enabled:
+            if len(get_added()) <= notify_limit():
+                watch_notify(get_added(), notify_chan(), cfg.msg_add(), irc)
+                for test in get_added():
+                    print ("\033[94mNotified: %s\033[0m" % test)
+            else:
+                cap_list = list()
+                for item in get_added()[0:(notify_limit())]:
+                    cap_list.append(item)
+
+                cap_list[notify_limit() - 1] += \
+                    " ... and " + str(len(get_added()) - notify_limit()) + " more unlisted entries"
+                watch_notify(cap_list, notify_chan(), cfg.msg_add(), irc)
+        else:
+            for test in get_added():
+                print ("\033[94mIgnored notify: %s\033[0m" % test)
+
+        clear_added()
+
+    if check_erased():
+        if watch_enabled:
+            if len(get_erased()) <= notify_limit():
+                watch_notify(get_erased(), notify_chan(), cfg.msg_del(), irc)
+                print "Debug del sign is %s" % cfg.msg_del()
+                for test in get_erased():
+                    print ("\033[94mNotified: %s\033[0m" % test)
+            else:
+                cap_list = list()
+                for item in get_erased()[0:(notify_limit())]:
+                    cap_list.append(item)
+
+                cap_list[notify_limit() - 1] += \
+                    " ... and " + str(len(get_erased()) - notify_limit()) + " more unlisted entries"
+                print "Debug2 del sign is %s" % cfg.msg_del()
+                watch_notify(cap_list, notify_chan(), cfg.msg_del(), irc)
+        else:
+            for test in get_erased():
+                print ("\033[94mIgnored notify: %s\033[0m" % test)
+
+        clear_erased()
+
+    if check_moved():
+        if watch_enabled:
+            if len(get_moved()) <= notify_limit():
+                watch_notify_moved(get_moved(), notify_chan(), irc)
+                for test in get_moved():
+                    print ("\033[94mNotified: %s\033[0m" % test)
+            else:
+                cap_list = list()
+                for item in get_moved()[0:(notify_limit())]:
+                    cap_list.append(item)
+
+                cap_list[notify_limit() - 1] += \
+                    " ... and " + str(len(get_moved()) - notify_limit()) + " more unlisted entries"
+                watch_notify(cap_list, notify_chan(), cfg.msg_mov(), irc)
+
+        clear_moved()
+
+watch_enabled = True
+
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.blue
-commandsavail_short = ""  # "enable, disable stopwatch"
-commandsavail = "enable, disable, limit"
+
+cfg = Config()
+
 # watchdir = cfg.watch()
 files = list()
 files_erased = list()

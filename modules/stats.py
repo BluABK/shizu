@@ -106,10 +106,12 @@ cfg = Config()
 
 # Functions
 def update_user(user, cmd, num):
+    """ used from shizu, hack """
     return cfg.update_user(str(user), str(cmd), int(num))
 
 
 def update_cmd(cmd, num):
+    """ used from shizu, hack """
     return cfg.update_cmd(str(cmd), int(num))
 
 
@@ -148,10 +150,36 @@ def wc_generate(mode):
         plt.axis("off")
         plt.show()
 
+def help(nick, chan):
+    """ public """
+    return {
+        "stats user": "",
+        "stats command": ""
+    }
 
+def commands():
+    """ public """
+    return { "stats" : command_stats }
 
-def helpcmd(cmdsym):
-    cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail)
-    return cmdlist
+def command_stats(nick, chan, cmd, irc):
+    if len(cmd) >= 1:
+        cmd[0] = cmd[0].lower()
+        if cmd[0] == "cmd" or cmd[0] == "command":
+            if len(cmd) >= 2:
+                irc.sendmsg(str(get_cmd(cmd[1])), chan)
+            else:
+                cmd_list = get_cmd_all()
+                cmd_string = ""
+                cnt = 0
+                for item in cmd_list:
+                    cmd_string += ("%s: %s" % (item[0], item[1]))
+                    cnt += 1
+                    if cnt <= len(cmd_list)-1:
+                        cmd_string += ", "
+                    cmd_string.strip('\n')
+                print repr(cmd_string)
+                irc.sendmsg(cmd_list, chan)
+
+        elif cmd[0] == "user":
+            # TODO: Code user stats get command
+            irc.sendmsg("Dummy function", chan)

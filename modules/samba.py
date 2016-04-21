@@ -337,9 +337,30 @@ def get_logins(msg):
     #        raise
     return login_list
 
+def help(nick, chan):
+    return {
+        "samba logins": "<user>",
+        "samba np": "",
+        "samba np2": "",
+        "samba debug": ""
+    }
 
-def helpcmd(cmdsym):
-    cmdlist = list()
-    cmdlist.append("Syntax: %ssamba command arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: logins* (* command contains sub-commands)")
-    return cmdlist
+def commands():
+    return { "samba": command_samba }
+
+def command_samba(nick, chan, cmd, irc):
+    if len(cmd) >= 1:
+        cmd[0] = cmd[0].lower()
+        if cmd[0] == "logins":
+            irc.sendmsg(get_logins(cmd[1:]), chan)
+        elif cmd[0] == "np":
+            irc.sendmsg(get_playing(), chan)
+        elif cmd[0] == "np2":
+            irc.sendmsg(get_playing2(), chan)
+        elif cmd[0] == "debug":
+            dbg = get_logins(cmd[1:])
+            irc.debug("Passed variable of length:" + str(len(dbg)))
+            for itr in range(len(dbg)):
+                irc.debug("Iteration: %s/%s" % (str(itr), str(len(dbg))))
+                irc.debug(dbg[itr])
+

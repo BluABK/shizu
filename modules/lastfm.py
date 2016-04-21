@@ -19,15 +19,11 @@ def module_exists(module_name):
 
 if module_exists("pylast") is True:
     import pylast
-
 # if module_exists("modules.forklast") is True:
 #    import modules.forklast as pylast
 else:
     print "This module requires pylast to be installed https://github.com/pylast/pylast"
     print "IMPORT ERROR: Unable to import pylast, expect issues!"
-
-my_name = os.path.basename(__file__).split('.', 1)[0]
-my_colour = clr.red
 
 
 class Config:  # Shizu's config class
@@ -137,10 +133,10 @@ class Config:  # Shizu's config class
         else:
             return "Wha! The section has left the building T_T"
 
+my_name = os.path.basename(__file__).split('.', 1)[0]
+my_colour = clr.red
 
 cfg = Config()
-commandsavail_short = "np, npt, alias"
-commandsavail = "imaginary, recent*, bio, status, alias"
 network = pylast.LastFMNetwork(api_key=cfg.get_api_key(), api_secret=cfg.get_api_secret(),
                                username=cfg.get_username(), password_hash=cfg.get_password_hash())
 
@@ -327,14 +323,155 @@ def del_alias(nick):
     return cfg.del_alias(nick)
 
 
-def helpcmd(cmdsym):
+def dump(usernick, chan, cmd, irc):
     """
-    Shizu module helper
-    :param cmdsym: Command trigger symbol
-    :return: Filled in list of available commands
+    public (Part of module interface)
     """
-    cmdlist = list()
-    cmdlist.append("Syntax: %scommand help arg1..argN" % cmdsym)
-    cmdlist.append("Available commands: %s (* command contains sub-commands)" % commandsavail_short)
-    cmdlist.append("Available subcommands: %s (* command contains sub-commands)" % commandsavail)
-    return cmdlist
+    if len(cmd) < 1:
+        return
+    cmd[0] = cmd[0].lower()
+    if cmd[0] == "alias":
+        irc.sendmsg(cfg.list_alias(), chan)
+
+
+def help(nick, chan):
+    """
+    public
+    Return help for this module's commands
+    """
+    return {
+        "lastfm recent":    "[user] [num]",
+        "lastfm bio":       "<artist>",
+        "lastfm status":    "",
+        "lastfm alias":     "[set|unset] <user>",
+        "np":               "[nick]",
+        "npt":              "[nick]"
+    }
+
+
+def command_lastfm(nick, chan, cmd, irc):
+    if len(cmd) == 0:
+        return
+    cmd[0] = cmd[0].lower()
+
+    if cmd[0] == "bio" and len(cmd) >= 2:
+        feedback = artist_bio(cmd[1])
+        if isinstance(feedback, str):
+            irc.sendmsg(str(feedback), chan)
+        else:
+            for i in feedback:
+                irc.sendmsg(str(i), chan)
+    elif cmd[0] == "status":
+        auth = test_connection()
+        print auth
+        print type(auth)
+
+        if type(auth) is Exception:
+            irc.sendmsg(str(auth.message), chan)
+            irc.sendmsg(str(auth.details), chan)
+        else:
+            auth = unicodedata.normalize('NFKD', auth).encode('ascii', 'ignore')
+            print auth
+            print type(auth)
+            net = network.name
+            print net
+            print type(net)
+
+            # if type(auth) is str and type(net) is str:
+            if type(auth) is str and type(net) is str:
+                irc.sendmsg("I am currently authenticated as " + auth + " on " + net, chan)
+            elif type(auth) is str:
+                irc.sendmsg(
+                    "I am currently authenticated as " + auth + " on *NO NETWORK*, how does that even work? =/",
+                    chan)
+            elif net is str:
+                irc.sendmsg("I am somehow connected to " + net + ", but not authenticated... Okay then!", chan)
+            else:
+                irc.sendmsg("I am unable to query the network, is LastFM throwing a fit?", chan)
+    elif cmd[0] == "alias" and len(cmd) > 1:
+        if cmd[1].lower() == "set" and len(cmd) > 2:
+            irc.sendmsg(add_alias(nick, cmd[2]), chan)
+        elif cmd[1].lower() == "unset" and len(cmd) > 2:
+            irc.sendmsg(del_alias(nick), chan)
+        else:
+            irc.sendmsg(add_alias(nick, cmd[1]), chan)
+    elif cmd[0] == "recent":
+        num = 3
+        user = nick
+
+        # !lastfm recent nick *num*
+        # !lastfm recent *num*
+        if len(cmd) >= 2:
+            if len(cmd) >= 3:
+                tmpnum = cmd[2]
+            else:
+                tmpnum = cmd[1]
+
+            try:
+                if 10 >= tmpnum > 0:
+                    num = tmpnum
+                else:
+                    raise TypeError("num must be between 1 and 10")
+            except TypeError:
+                pass
+
+        # !lastfm recent *nick* num
+        if len(cmd) >= 3:
+            user = cmd[1]
+
+        test = recently_played(user, num)
+
+        # Test returned data integrity
+        # If the returned data is a string it is most likely an exception and should be handled as one
+        if type(test) is str:
+            irc.sendmsg(test, chan)
+        elif test is None:
+            irc.sendmsg(user+" has not played anything in the given period", chan)
+        elif test == "None":
+            irc.sendmsg(nick+": No user named '"+user+"' was found =/", chan)
+        else:
+            irc.sendmsg(user+" has recently played:", chan)
+            for item in xrange(len(test)):
+                irc.sendmsg(str(test[item]), chan)
+
+
+def command_np(nick, chan, cmd, irc):
+    # Module: lastfm - shortcuts
+    user = nick
+    if len(cmd) >= 1:
+        user = cmd[0]
+    test = now_playing(user)
+
+    if test is None:
+        irc.sendmsg("%s is not currently playing anything" % user, chan)
+    elif test == "None":
+        irc.sendmsg("No user named '%s' was found =/" % user, chan)
+        if user == nick:
+            irc.sendmsg("You can set an alias with !lastfm set alias <lastfmuser>", chan)
+    elif test == "timeout":
+        irc.sendmsg("Request timed out =/", chan)
+    else:
+        irc.sendmsg("%s is currently playing: %s" % (user, test), chan)
+
+
+def command_npt(nick, chan, cmd, irc):
+    user = nick
+    if len(cmd) >= 1:
+        user = cmd[0]
+
+    try:
+        irc.sendmsg("%s is currently playing; %s" % (user, test_playing(user)), chan)
+    except IndexError:
+        irc.sendmsg("Index derp", chan)
+
+
+def commands():
+    """
+    public
+    Register commands for this module
+    """
+    return {
+        "lastfm": command_lastfm,
+        "np":     command_np,
+        "npt":    command_npt
+    }
