@@ -668,27 +668,31 @@ def nickname_proxy(irc_line):
     # Case1 : Telegram relay
     global telegram_cur_nick
     real_nick = None
-    if irc_line[3][-2:] == ">:":
+
+    line = ""
+
+    if msg["line"][-2:] == ">:":
         # Start of a continued sentence, but payload is useless to us
         # if telegram_cur_nick is None:
-        telegram_cur_nick = irc_line[3].split('> ')[0][2:-2]
-        msg = ""
-    elif irc_line[3][1] != '<':
+        telegram_cur_nick = msg["line"][1:-2]
+        line = ""
+    elif msg["line"][0] != '<':
         # Continued sentence; doesn't start with a usernick identifier
         # TODO: Will fail is continued sentence starts with '<'
         real_nick = telegram_cur_nick
-        msg = irc_line[3][1:]
+        line = msg["line"]
     else:
         # Assume that sentence starts with a usernick
-        real_nick = irc_line[3].split('> ')[0][2:]
-        msg = irc_line[3].split('> ')[1]
+        split = msg["line"].split('> ')
+        real_nick = split[0][1:]
+        line = split[1]
         telegram_cur_nick = real_nick
 
     # Strip any fancy smancy unicode as it won't be a valid IRC nickname
     if real_nick is not None:
         real_nick = real_nick.decode('ascii', 'ignore').encode('utf-8')
 
-    return [real_nick, msg]
+    return [real_nick, line]
 
 
 
@@ -1022,7 +1026,10 @@ class Client:
             if recvraw == '' or recvraw is None:
                 continue
 
-            recvmsg = self.raw_parse(recvraw)
+
+            print "<-- "+recvraw  # Print received data
+
+            # Backlog stuff. Possible TODO: Make a class for ircbacklog or find a cooler premade type
             ircbacklog.append(recvraw+"\n")
 
             if len(ircbacklog) > maxbacklog:
@@ -1035,69 +1042,75 @@ class Client:
                 # Delete first entry
                 ircbacklog_in = ircbacklog_in[1:]
 
-            ircmsg = recvraw.lstrip(":")  # Remove first colon. Useless, waste of space >_<
-            print("<-- %s" % ircmsg)  # Print received data
+            msg = self.parse_raw(recvraw)
 
-            ircparts = re.split("\s", ircmsg, 3)
-
-            if ircparts[0] == '':
-                continue
-
-            if recvraw.find("433 * %s :Nickname is already in use." % cfg.nick()) != -1:
-                self.sendraw("NICK " + (cfg.nick() + "|" + str(randint(0, 256))))
-
-            if ircparts[0] == "PING":  # Gotta pong that ping...pong..<vicious cycle>
-                self.ping()
-
-            if ircmsg.find("NOTICE %s :This nickname is registered" % cfg.nick()) != -1:
-                self.sendraw("PRIVMSG NickServ :identify %s" % cfg.nspass())
-
-            if ircmsg.find("NOTICE Auth :Welcome") != -1:
+            if msg["cmd"] == "001":
                 if cfg.has_oper():
                     self.sendraw("OPER %s %s" % (cfg.oper_name(), cfg.oper_pass()))
                 self.join(cfg.chan())
+                continue
+
+            if msg["cmd"] == "433":
+                # TODO: cfg.nick() has to change, or we have to take a copy of it and use that instead...
+                # Or we can just refuse to work if someone takes our nick. Then we also have to try to send NICK
+                # if we suspect that our nick has been changed.
+                self.sendraw("NICK " + (cfg.nick() + "|" + str(randint(0, 256))))
+                continue
+
+            if msg["cmd"] == "PING":
+                self.ping(msg["line"])
+                continue
+
+            if msg["cmd"] == "NOTICE":
+                # TODO check what the full line is, and take care to check who the sender is
+                if msg["line"] == "This nickname is registered" and msg["args"][0] == cfg.nick():
+                    self.sendmsg("identify " +cfg.nspass(), "NickServ")
 
             # Run some checks
 
             # Rejoin on kick
             # TODO: Make optional and abbreviate into methods
-            if ircmsg.find("KICK #") != -1:
+            if msg["cmd"] == "KICK" and msg["args"][0] == cfg.nick():
                 # TODO: HACK: Rejoin all channels
                 self.join(cfg.chan())
 
-            if ircparts[1] != '' and ircparts[1] == "PRIVMSG":
-                message = ircparts[3].lstrip(":")
+            if msg["cmd"] == "PRIVMSG":
+                try:
+                    nick = msg["from"]["nick"]
+                except KeyError:
+                    # It's from a server, see #staff.log for example
+                    nick = msg["from"]["host"]
 
-                tmpusernick = ircparts[0].split('!')[0]
+                line = msg["line"]
+
                 # Check is message was received via proxy nickname
-                if tmpusernick.lower() in cfg.proxy_nicks().split(','):
-                    print "DBG: nickname_proxy(%s)" % ircparts
-                    tmp_chk = nickname_proxy(ircparts)
+                if nick.lower() in cfg.proxy_nicks().split(','):
+                    tmp_chk = nickname_proxy(msg)
                     print "DBG: tmp_chk = %s" % tmp_chk
                     if tmp_chk[0] is not None:
                         print "DBG: tmp_chk != None"
-                        tmpusernick = tmp_chk[0]
-                        message = tmp_chk[1]
+                        nick = tmp_chk[0]
+                        line = tmp_chk[1]
 
-                channel = ircparts[2]
+                channel = msg["args"][0]
                 if channel[0] != '#':
-                    channel = tmpusernick
+                    channel = nick
 
                 try:
-                    commands(tmpusernick, message, channel, self)
+                    commands(nick, line, channel, self)
                 except Exception as e:
                     self.sendmsg(e, channel)
                     traceback.print_exc()
 
                 try:
-                    module_listeners(tmpusernick, channel, message, self)
+                    module_listeners(nick, channel, line, self)
                 except Exception as e:
                     self.sendmsg(e, channel)
                     traceback.print_exc()
 
                 try:
                     # TODO merge into listeners (modules cannot know the difference anyway)
-                    triggers(tmpusernick, message, channel, self)
+                    triggers(nick, line, channel, self)
                 except Exception as e:
                     self.sendmsg(e, channel)
                     traceback.print_exc()
@@ -1133,19 +1146,44 @@ class Client:
         ircbacklog_out.append(buf+"\n")
         print "--> %s" % buf
 
-    def ping(self):
-        self.sendraw("PONG :Pong")
+    def ping(self, msg="Pong"):
+        self.sendraw("PONG :"+msg)
 
-    def raw_parse(self, raw):
-        msg = {
-            "to": None,
-            "cmd": None,
-            "args": [],
-            "line": None
-        }
-        #import sys
-        #module_shutdown()
-        #sys.exit(1)
+    def parse_from(self, line):
+        off = line.find("!")
+        ret = {}
+
+        if off != -1:
+            ret["nick"] = line[:off]
+            tmp = line[off+1:]
+            off = tmp.find("@")
+            if off == -1:
+                raise ValueError("@ not found after ! (Expected something like: nick!user@host), got "+line)
+            ret["user"] = tmp[:off]
+            ret["host"] = tmp[off+1:]
+        else:
+            ret["host"] = line
+        return ret
+
+    def parse_raw(self, raw):
+        msg = { "args": [] }
+        raw = raw.split(' ')
+        if raw[0][0] == ':':
+            msg["from"] = self.parse_from(raw[0][1:])
+            raw = raw[1:]
+
+        msg["cmd"] = raw[0]
+        stroffset = -1
+        for i in xrange(1, len(raw)):
+            if raw[i][0] == ':':
+                stroffset = i
+                break
+            msg["args"].append(raw[i])
+
+        if stroffset != -1:
+            msg["line"] = " ".join(raw[stroffset:])[1:]
+
+        return msg
 
     def sendmsg(self, msg, chan):
         global ircbacklog_out
