@@ -638,7 +638,7 @@ def custom_command(name, chan, irc):
 
 
 def custom_trigger(name, chan, irc):
-    irc.sendmsg(cfg.get_trigger(name), chan, irc)
+    irc.sendmsg(cfg.get_trigger(name), chan)
 
 
 def custom_rawcommand(cmd, usernick, chan, irc):
@@ -664,7 +664,7 @@ def version():
     return retv
 
 
-def nickname_proxy(irc_line):  # TODO: unused parameter
+def nickname_proxy(msg):
     """Takes a proxy/relay user and returns the actual usernick
     :param irc_line:
     """
