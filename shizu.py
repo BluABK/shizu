@@ -1232,7 +1232,7 @@ def module_import(name):
         modules[name] = eval('module.'+name)
         return True
     except ImportError:
-        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % asname
+        print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % name
         return False
     except Exception as shenanigans:
         print shenanigans
