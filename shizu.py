@@ -666,14 +666,12 @@ def version():
 
 def nickname_proxy(msg):
     """Takes a proxy/relay user and returns the actual usernick
-    :param irc_line:
+    :param msg:
     """
     # Case1 : Telegram relay
     global telegram_cur_nick
     real_nick = None
 
-    line = ""  # TODO: unused local var
-    # TODO: Unresolved ref 'msg' o_0
     if msg["line"][-2:] == ">:":
         # Start of a continued sentence, but payload is useless to us
         # if telegram_cur_nick is None:
@@ -971,10 +969,12 @@ def triggers(usernick, msg, chan, irc):
 class Client:
     def __init__(self):
         print "Spawned client instance"
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.buf = ""
+        self.running = True
 
     def connect(self):
         # Connect to the the server
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TODO: Inst attrib defined outside of __init__
         self.sock.connect((cfg.server(), cfg.port()))
         self.sock.settimeout(cfg.ping_interval())
         # Send password before registration [RFC2812 section-3.1.1 Password message]
@@ -983,7 +983,6 @@ class Client:
         # Register with the server [RFC2812 section-3.1 Connection Registration]
         self.sendraw("NICK " + cfg.nick())
         self.sendraw("USER %s %s %s :%s" % (cfg.nick(), "0", "*", cfg.realname()))
-        self.buf = ""  # TODO: Instance attribute defined outside of __init__
 
     def readline(self):
         # Get at least a line
@@ -998,7 +997,7 @@ class Client:
         if line[-1] == "\r":
             line = line[:-1]
         # Set buf
-        self.buf = self.buf[idx + 1:]  # TODO: Instance attribute defined outside of __init__
+        self.buf = self.buf[idx + 1:]
 
         # No newlines
         return line
@@ -1011,7 +1010,7 @@ class Client:
         last_ping = None
 
         # for recvraw in self.sock.makefile():
-        while self.sock and running:
+        while self.sock and self.running:
             try:
                 recvraw = self.readline()
             except socket.timeout:
@@ -1057,7 +1056,8 @@ class Client:
                 continue
 
             if msg["cmd"] == "PING":
-                self.ping(msg["line"])  # TODO: Expected type str, got list instead
+                # noinspection PyTypeChecker
+                self.ping(msg["line"])
                 continue
 
             if msg["cmd"] == "NOTICE":
@@ -1075,10 +1075,12 @@ class Client:
 
             if msg["cmd"] == "PRIVMSG":
                 try:
-                    nick = msg["from"]["nick"]  # TODO: Expected type Integral, got str instead
+                    # noinspection PyTypeChecker
+                    nick = msg["from"]["nick"]
                 except KeyError:
                     # It's from a server, see #staff.log for example
-                    nick = msg["from"]["host"]  # TODO: Expected type Integral, got str instead
+                    # noinspection PyTypeChecker
+                    nick = msg["from"]["host"]
 
                 line = msg["line"]
 
@@ -1148,7 +1150,8 @@ class Client:
     def ping(self, msg="Pong"):
         self.sendraw("PONG :" + msg)
 
-    def parse_from(self, line):  # TODO: Method may be static
+    @staticmethod
+    def parse_from(line):
         off = line.find("!")
         ret = {}
 
@@ -1202,7 +1205,8 @@ class Client:
             self.sendraw("PRIVMSG %s :An Exception occurred, that's annoying: %s" % (chan, ex))
 
 
-def signal_exit(sig, frame):  # TODO: both parameters are unused
+# noinspection PyUnusedLocal
+def signal_exit(sig, frame):
     # No double-exiting
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
@@ -1356,7 +1360,6 @@ my_colour = clr.yellow
 ircbacklog = list()
 ircbacklog_in = list()
 ircbacklog_out = list()
-running = True
 # TODO migrate it to the module_commands stuff
 commandsavail = "awesome, nyaa, help, quit*, triggers, replay*, say, act, kick*, date, ddate, version"
 telegram_cur_nick = None
