@@ -1,7 +1,11 @@
 import ConfigParser
 import os
 import colours as clr
-import pyinotify
+try:
+    import pyinotify
+except ImportError:
+    print "%sFATAL ERROR: Failed importing pyinotify module (NB: N/A on win32)%s" % (clr.bold_red, clr.off)
+    exit(-1)
 
 __author__ = 'BluABK'
 
