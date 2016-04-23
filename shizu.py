@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-__author__ = 'BluABK <abk@blucoders.net'
-
 # TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
 # TODO: Support multiple IRC channels
 # TODO: Support multiple IRC Servers
@@ -40,6 +38,8 @@ README module interface:
 
 Debug function_exists if you suspect there are undocumented functionality here
 """
+
+__author__ = 'BluABK <abk@blucoders.net'
 
 clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
@@ -80,7 +80,7 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
                     return True
             else:
                 return False
-        except:
+        except ConfigParser.NoOptionError, ConfigParser.NoSectionError:
             return False
 
     def oper_name(self):
@@ -664,14 +664,16 @@ def version():
     return retv
 
 
-def nickname_proxy(irc_line):
-    """Takes a proxy/relay user and returns the actual usernick"""
+def nickname_proxy(irc_line):  # TODO: unused parameter
+    """Takes a proxy/relay user and returns the actual usernick
+    :param irc_line:
+    """
     # Case1 : Telegram relay
     global telegram_cur_nick
     real_nick = None
 
-    line = ""
-
+    line = ""  # TODO: unused local var
+    # TODO: Unresolved ref 'msg' o_0
     if msg["line"][-2:] == ">:":
         # Start of a continued sentence, but payload is useless to us
         # if telegram_cur_nick is None:
@@ -972,7 +974,7 @@ class Client:
 
     def connect(self):
         # Connect to the the server
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TODO: Inst attrib defined outside of __init__
         self.sock.connect((cfg.server(), cfg.port()))
         self.sock.settimeout(cfg.ping_interval())
         # Send password before registration [RFC2812 section-3.1.1 Password message]
@@ -981,7 +983,7 @@ class Client:
         # Register with the server [RFC2812 section-3.1 Connection Registration]
         self.sendraw("NICK " + cfg.nick())
         self.sendraw("USER %s %s %s :%s" % (cfg.nick(), "0", "*", cfg.realname()))
-        self.buf = ""
+        self.buf = ""  # TODO: Instance attribute defined outside of __init__
 
     def readline(self):
         # Get at least a line
@@ -996,7 +998,7 @@ class Client:
         if line[-1] == "\r":
             line = line[:-1]
         # Set buf
-        self.buf = self.buf[idx + 1:]
+        self.buf = self.buf[idx + 1:]  # TODO: Instance attribute defined outside of __init__
 
         # No newlines
         return line
@@ -1026,7 +1028,7 @@ class Client:
 
             print "<-- " + recvraw  # Print received data
 
-            # Backlog stuff. Possible TODO: Make a class for ircbacklog or find a cooler premade type
+            # Backlog stuff. Possible TODO: Make a class for ircbacklog or find a cooler pre-made type
             ircbacklog.append(recvraw + "\n")
 
             if len(ircbacklog) > maxbacklog:
@@ -1055,7 +1057,7 @@ class Client:
                 continue
 
             if msg["cmd"] == "PING":
-                self.ping(msg["line"])
+                self.ping(msg["line"])  # TODO: Expected type str, got list instead
                 continue
 
             if msg["cmd"] == "NOTICE":
@@ -1073,10 +1075,10 @@ class Client:
 
             if msg["cmd"] == "PRIVMSG":
                 try:
-                    nick = msg["from"]["nick"]
+                    nick = msg["from"]["nick"]  # TODO: Expected type Integral, got str instead
                 except KeyError:
                     # It's from a server, see #staff.log for example
-                    nick = msg["from"]["host"]
+                    nick = msg["from"]["host"]  # TODO: Expected type Integral, got str instead
 
                 line = msg["line"]
 
@@ -1095,21 +1097,21 @@ class Client:
 
                 try:
                     commands(nick, line, channel, self)
-                except Exception as e:
-                    self.sendmsg(e, channel)
+                except Exception as e_commands:
+                    self.sendmsg(e_commands, channel)
                     traceback.print_exc()
 
                 try:
                     module_listeners(nick, channel, line, self)
-                except Exception as e:
-                    self.sendmsg(e, channel)
+                except Exception as e_module_listeners:
+                    self.sendmsg(e_module_listeners, channel)
                     traceback.print_exc()
 
                 try:
                     # TODO merge into listeners (modules cannot know the difference anyway)
                     triggers(nick, line, channel, self)
-                except Exception as e:
-                    self.sendmsg(e, channel)
+                except Exception as e_triggers:
+                    self.sendmsg(e_triggers, channel)
                     traceback.print_exc()
 
             # And the tick goes on...
@@ -1121,7 +1123,7 @@ class Client:
     def quit(self):
         self.sendraw("QUIT %s" % cfg.quitmsg())
         self.sock.close()
-        self.running = False
+        self.running = False  # TODO: Instance attribute defined outside of __init__
 
     def join(self, chan):
         self.sendraw("JOIN " + chan)
@@ -1146,7 +1148,7 @@ class Client:
     def ping(self, msg="Pong"):
         self.sendraw("PONG :" + msg)
 
-    def parse_from(self, line):
+    def parse_from(self, line):  # TODO: Method may be static
         off = line.find("!")
         ret = {}
 
@@ -1200,7 +1202,7 @@ class Client:
             self.sendraw("PRIVMSG %s :An Exception occurred, that's annoying: %s" % (chan, ex))
 
 
-def signal_exit(sig, frame):
+def signal_exit(sig, frame):  # TODO: both parameters are unused
     # No double-exiting
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
@@ -1215,7 +1217,7 @@ def signal_exit(sig, frame):
 # ============== MODULE CODE ======================
 
 
-# hawken proposal thing:
+# TODO: hawken's proposal thing:
 def function_exists(thing, name):
     # TODO: Check that it actually is callable via some neat dir() things
     return name in dir(thing)
@@ -1225,10 +1227,11 @@ def module_import(name):
     global modules
     module_name = "modules." + name
     try:
-        module = __import__(module_name)
+        # noinspection PyUnusedLocal
+        __module__ = __import__(module_name)
         if name in modules:
             raise ValueError("duplicate module name: " + name)
-        modules[name] = eval('module.' + name)
+        modules[name] = eval('__module__.' + name)
         return True
     except ImportError:
         print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % name
@@ -1259,6 +1262,7 @@ def module_shutdown():
 def module_ping(irc):
     """
     ping() is called regularly, default at 1 sec intervals
+    :param irc:
     """
     global modules
     for name, mod in modules.iteritems():
@@ -1291,6 +1295,7 @@ def module_commands(lst=None):
             "b": handle_b,
             etc
        }
+       :param lst:
     """
     if lst is None:
         lst = {}
@@ -1311,12 +1316,17 @@ def module_dump(usernick, chan, cmd, irc):
             m.dump(usernick, chan, cmd[1:], irc)
 
 
-def module_help(nick, chan, usage_list={}):
+def module_help(nick, chan, usage_list=None):
     """
     The strings returned by modules should be the part of the usage after the command, i.e. for:
        lastfm alias [set|unset] <user>, the dict entry returned would be:
        "lastfm alias": "[set|unset] <user>".
+       :param chan:
+       :param usage_list:
+       :param nick:
     """
+    if usage_list is None:
+        usage_list = {}
     for name, mod in modules.iteritems():
         try:
             if function_exists(mod, "help"):
@@ -1330,8 +1340,8 @@ def module_help(nick, chan, usage_list={}):
                     if not isinstance(usage, basestring):
                         raise ValueError("if help() returns a dict, it has to be a dict of purely strings")
                     usage_list[cmdname] = usage
-        except ValueError as e:
-            print "Module " + name + " has an error with the help() interface: " + str(e)
+        except ValueError as e_fe:
+            print "Module " + name + " has an error with the help() interface: " + str(e_fe)
 
     print usage_list
     return usage_list
