@@ -4,6 +4,7 @@ import os
 import colours as clr
 
 try:
+    # noinspection PyUnresolvedReferences
     import pyinotify
 except ImportError:
     print "%s[watch] FATAL ERROR: Failed importing pyinotify module (NB: N/A on win32)%s" % (clr.red, clr.off)
@@ -214,6 +215,7 @@ def commands():
 
 
 def command_watch(nick, chan, cmd, irc):
+    global watch_enabled
     if len(cmd) < 1:
         return
     cmd[0] = cmd[0].lower()
@@ -227,7 +229,7 @@ def command_watch(nick, chan, cmd, irc):
 
     elif cmd[0] == "limit" and len(cmd) >= 2:
         print "watch: Setting watchlimit to %s" % cmd[1]
-        watch.set_notify_limit(cmd[1])
+        set_notify_limit(cmd[1])
         irc.sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
 
 
@@ -248,7 +250,9 @@ def watch_notify_moved(files, chan, irc):
 
 
 def ping(irc):
-    """ public """
+    """ public
+    :param irc:
+    """
     # TODO these three blocks are similar enough that they can be combined somehow
     if check_added():
         if watch_enabled:
