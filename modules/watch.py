@@ -4,8 +4,8 @@ import colours as clr
 try:
     import pyinotify
 except ImportError:
-    print "%sFATAL ERROR: Failed importing pyinotify module (NB: N/A on win32)%s" % (clr.bold_red, clr.off)
-    exit(-1)
+    print "%s[watch] FATAL ERROR: Failed importing pyinotify module (NB: N/A on win32)%s" % (clr.red, clr.off)
+    raise
 
 __author__ = 'BluABK'
 
