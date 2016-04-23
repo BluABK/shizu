@@ -1,6 +1,8 @@
 import ConfigParser
 import os
+
 import colours as clr
+
 try:
     import pyinotify
 except ImportError:
@@ -8,6 +10,7 @@ except ImportError:
     raise
 
 __author__ = 'BluABK'
+
 
 # Classes
 class Config:  # Mandatory Config class
@@ -155,7 +158,6 @@ def set_notify_limit(i):
     return cfg.set_notify_limit(i)
 
 
-
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CREATE(self, event):
         print "\033[94mwatch.py: New file: %s\033[0m" % event.name
@@ -191,22 +193,25 @@ def start():
 
 def shutdown():
     """ public """
-    for k,i in wdd.iteritems():
+    for k, i in wdd.iteritems():
         wm.del_watch(i)
     notifier.stop()
+
 
 def help(nick, chan):
     """ public """
     return {
-            "watch enable": "",
-            "watch disable": "",
-            "watch limit": "<num>"
+        "watch enable": "",
+        "watch disable": "",
+        "watch limit": "<num>"
     }
+
 
 def commands():
     """ public """
 
-    return { "watch" : command_watch }
+    return {"watch": command_watch}
+
 
 def command_watch(nick, chan, cmd, irc):
     if len(cmd) < 1:
@@ -225,6 +230,7 @@ def command_watch(nick, chan, cmd, irc):
         watch.set_notify_limit(cmd[1])
         irc.sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
 
+
 def watch_notify(files, chan, msg, irc):
     for item in files:
         irc.sendmsg("%s %s" % (msg, item), chan)
@@ -239,6 +245,7 @@ def watch_notify_moved(files, chan, irc):
     # lame ass hack
     for item in files:
         irc.sendmsg(item, chan)
+
 
 def ping(irc):
     """ public """
@@ -302,6 +309,7 @@ def ping(irc):
 
         clear_moved()
 
+
 watch_enabled = True
 
 my_name = os.path.basename(__file__).split('.', 1)[0]
@@ -316,8 +324,6 @@ files_moved = list()
 files_moved_src = list()
 files_moved_dst = list()
 
-
 wm = pyinotify.WatchManager()  # Watch Manager
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
 wdd = None
-
