@@ -11,23 +11,22 @@ __author__ = 'BluABK <abk@blucoders.net'
 # TODO: Add try and SomeReasonableExceptionHandler across code
 
 # Import necessary modules
+import ConfigParser
+import re  # Regex for the win.
 import socket  # A rather *useful* network tool
 import time  # For time-based greeting functionality
-import re  # Regex for the win.
-import ConfigParser
 from random import randint
+
 # from subprocess import check_output
 from subprocess import *
 from collections import deque
 import os
-import unicodedata
-import sys # Sys.exit in sigint handler
-import signal # sigint handler
-import traceback # traceback.print_exc()
+import sys  # Sys.exit in sigint handler
+import signal  # sigint handler
+import traceback  # traceback.print_exc()
 
 # Project-specific modules
 import colours as clr
-
 
 """
 README module interface:
@@ -42,8 +41,8 @@ README module interface:
 Debug function_exists if you suspect there are undocumented functionality here
 """
 
-
 clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
+
 
 class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
     config = ConfigParser.RawConfigParser()
@@ -332,6 +331,7 @@ def ian(s):  # is a number
     except ValueError:
         return False
 
+
 def getgreeting(greeter, irc):
     t = int(time.strftime("%H"))
 
@@ -364,6 +364,7 @@ def replay(lines, chan, direction, irc):
 
     for m in to_send:
         irc.sendmsg(m, chan)
+
 
 def ignored_nick(section, usernick):
     if section == "commands":
@@ -695,8 +696,6 @@ def nickname_proxy(irc_line):
     return [real_nick, line]
 
 
-
-
 def commands(usernick, msg, chan, irc):
     # First of all, check if it is a command
     if chan[0] == "#":
@@ -718,7 +717,7 @@ def commands(usernick, msg, chan, irc):
         # TODO: If it gets popular to spy on other commands, make an interface for this
         if "stats" in modules:
             modules["stats"].update_cmd(cmd[0], 1)
-            #stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
+            # stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
         mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
         return
 
@@ -833,9 +832,9 @@ def commands(usernick, msg, chan, irc):
         cmd = [x.lower() for x in cmd]
 
         mhelp = {
-                "replay": "<lines> <direction:recv|send|duplex>",
-                "kick":   "<user>",
-                "help":   "[full command]"
+            "replay": "<lines> <direction:recv|send|duplex>",
+            "kick": "<user>",
+            "help": "[full command]"
         }
         mhelp = module_help(usernick, chan, mhelp)
         item = ' '.join(cmd[1:])
@@ -844,11 +843,11 @@ def commands(usernick, msg, chan, irc):
             irc.sendmsg("%s: Syntax: <trigger> %s" % (usernick, cfg.nick()), chan)
             irc.sendmsg("Available triggers: %s " % cfg.triggers_words(), chan)
         elif item in mhelp:
-            irc.sendmsg(usernick+": Syntax: "+cfg.cmdsym()+item+" "+mhelp[item], chan)
+            irc.sendmsg(usernick + ": Syntax: " + cfg.cmdsym() + item + " " + mhelp[item], chan)
         else:
-            items = [cfg.cmdsym()+x for x in mhelp.keys()+["triggers"]]
+            items = [cfg.cmdsym() + x for x in mhelp.keys() + ["triggers"]]
             items.sort()
-            irc.sendmsg(usernick+": Available commands: "+', '.join(items), chan)
+            irc.sendmsg(usernick + ": Available commands: " + ', '.join(items), chan)
         return
 
     elif cmd[0] == "ragequit":
@@ -997,11 +996,10 @@ class Client:
         if line[-1] == "\r":
             line = line[:-1]
         # Set buf
-        self.buf = self.buf[idx+1:]
+        self.buf = self.buf[idx + 1:]
 
         # No newlines
         return line
-
 
     def eventloop(self):
         global ircbacklog, ircbacklog_in
@@ -1010,7 +1008,7 @@ class Client:
 
         last_ping = None
 
-        #for recvraw in self.sock.makefile():
+        # for recvraw in self.sock.makefile():
         while self.sock and running:
             try:
                 recvraw = self.readline()
@@ -1019,24 +1017,23 @@ class Client:
 
             # Module ping()
             # The last one is for backwards jumps in time
-            if last_ping is None or last_ping+cfg.ping_interval() < time.time() or time.time() < last_ping:
+            if last_ping is None or last_ping + cfg.ping_interval() < time.time() or time.time() < last_ping:
                 last_ping = time.time()
                 module_ping(self)
 
             if recvraw == '' or recvraw is None:
                 continue
 
-
-            print "<-- "+recvraw  # Print received data
+            print "<-- " + recvraw  # Print received data
 
             # Backlog stuff. Possible TODO: Make a class for ircbacklog or find a cooler premade type
-            ircbacklog.append(recvraw+"\n")
+            ircbacklog.append(recvraw + "\n")
 
             if len(ircbacklog) > maxbacklog:
                 # Delete first entry
                 ircbacklog = ircbacklog[1:]
 
-            ircbacklog_in.append(recvraw+"\n")
+            ircbacklog_in.append(recvraw + "\n")
 
             if len(ircbacklog_in) > maxbacklog:
                 # Delete first entry
@@ -1064,7 +1061,7 @@ class Client:
             if msg["cmd"] == "NOTICE":
                 # TODO check what the full line is, and take care to check who the sender is
                 if msg["line"] == "This nickname is registered" and msg["args"][0] == cfg.nick():
-                    self.sendmsg("identify " +cfg.nspass(), "NickServ")
+                    self.sendmsg("identify " + cfg.nspass(), "NickServ")
 
             # Run some checks
 
@@ -1142,12 +1139,12 @@ class Client:
         if buf[-1] == "\n":
             raise ValueError("You are not supposed to send newlines to sendraw")
 
-        self.sock.sendall(buf+"\r\n")
-        ircbacklog_out.append(buf+"\n")
+        self.sock.sendall(buf + "\r\n")
+        ircbacklog_out.append(buf + "\n")
         print "--> %s" % buf
 
     def ping(self, msg="Pong"):
-        self.sendraw("PONG :"+msg)
+        self.sendraw("PONG :" + msg)
 
     def parse_from(self, line):
         off = line.find("!")
@@ -1155,18 +1152,18 @@ class Client:
 
         if off != -1:
             ret["nick"] = line[:off]
-            tmp = line[off+1:]
+            tmp = line[off + 1:]
             off = tmp.find("@")
             if off == -1:
-                raise ValueError("@ not found after ! (Expected something like: nick!user@host), got "+line)
+                raise ValueError("@ not found after ! (Expected something like: nick!user@host), got " + line)
             ret["user"] = tmp[:off]
-            ret["host"] = tmp[off+1:]
+            ret["host"] = tmp[off + 1:]
         else:
             ret["host"] = line
         return ret
 
     def parse_raw(self, raw):
-        msg = { "args": [] }
+        msg = {"args": []}
         raw = raw.split(' ')
         if raw[0][0] == ':':
             msg["from"] = self.parse_from(raw[0][1:])
@@ -1202,9 +1199,10 @@ class Client:
         except Exception as ex:
             self.sendraw("PRIVMSG %s :An Exception occurred, that's annoying: %s" % (chan, ex))
 
+
 def signal_exit(sig, frame):
     # No double-exiting
-    signal.signal(signal.SIGINT,  signal.SIG_IGN)
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     signal.signal(signal.SIGTERM, signal.SIG_IGN)
 
     print "Caught signal, exiting!"
@@ -1222,14 +1220,15 @@ def function_exists(thing, name):
     # TODO: Check that it actually is callable via some neat dir() things
     return name in dir(thing)
 
+
 def module_import(name):
     global modules
-    module_name = "modules."+name
+    module_name = "modules." + name
     try:
         module = __import__(module_name)
         if name in modules:
-            raise ValueError("duplicate module name: "+name)
-        modules[name] = eval('module.'+name)
+            raise ValueError("duplicate module name: " + name)
+        modules[name] = eval('module.' + name)
         return True
     except ImportError:
         print "[shizu/import]:\t ERROR: Unable to import %s, expect issues!" % name
@@ -1239,31 +1238,36 @@ def module_import(name):
         traceback.print_exc()
         return False
 
+
 def module_import_list(names):
     for name in names:
         module_import(name)
 
+
 def module_start():
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         if function_exists(mod, "start"):
             mod.start()
 
+
 def module_shutdown():
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         if function_exists(mod, "shutdown"):
             mod.shutdown()
+
 
 def module_ping(irc):
     """
     ping() is called regularly, default at 1 sec intervals
     """
     global modules
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         if function_exists(mod, "ping"):
             mod.ping(irc)
 
+
 def module_listeners(nick, chan, msg, irc):
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         if function_exists(mod, "listener"):
             mod.listener(nick, chan, msg, irc)
 
@@ -1290,11 +1294,11 @@ def module_commands(lst=None):
     """
     if lst is None:
         lst = {}
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         if function_exists(mod, "commands"):
-            for cmd,func in mod.commands().iteritems():
+            for cmd, func in mod.commands().iteritems():
                 if cmd in lst:
-                    print "Two modules both tried to register the command "+cmd+", one of them is "+name
+                    print "Two modules both tried to register the command " + cmd + ", one of them is " + name
                 else:
                     lst[cmd] = func
     return lst
@@ -1313,24 +1317,25 @@ def module_help(nick, chan, usage_list={}):
        lastfm alias [set|unset] <user>, the dict entry returned would be:
        "lastfm alias": "[set|unset] <user>".
     """
-    for name,mod in modules.iteritems():
+    for name, mod in modules.iteritems():
         try:
             if function_exists(mod, "help"):
                 retval = mod.help(nick, chan)
                 if not isinstance(retval, dict):
                     raise ValueError("help() should return a dict")
 
-                for cmdname,usage in retval.iteritems():
+                for cmdname, usage in retval.iteritems():
                     if cmdname in usage_list:
-                        raise ValueError("Command "+cmdname+" is already in use")
+                        raise ValueError("Command " + cmdname + " is already in use")
                     if not isinstance(usage, basestring):
                         raise ValueError("if help() returns a dict, it has to be a dict of purely strings")
                     usage_list[cmdname] = usage
         except ValueError as e:
-            print "Module "+name+" has an error with the help() interface: "+str(e)
+            print "Module " + name + " has an error with the help() interface: " + str(e)
 
     print usage_list
     return usage_list
+
 
 modules = {}
 module_import_list(["samba", "lastfm", "watch", "stats", "youtube", "weather"])
@@ -1353,13 +1358,12 @@ maxbacklog = int(cfg.backlog())
 # TODO instance will in the future be a list of all connections
 instance = Client()
 
-
 # Main()
 if __name__ == "__main__":
 
     module_start()
 
-    signal.signal(signal.SIGINT,  signal_exit)
+    signal.signal(signal.SIGINT, signal_exit)
     signal.signal(signal.SIGTERM, signal_exit)
 
     instance.connect()
