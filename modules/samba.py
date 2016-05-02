@@ -246,7 +246,7 @@ def get_playing():
         samba_meta = []
         path = []
         for item in samba_raw[:-5]:
-            if '/' in item:
+            if '/' in item and mount_found is False:
                 # Signal that the path has begun and add a missing trailing / to mount point item
                 mount_found = True
                 item += '/'
