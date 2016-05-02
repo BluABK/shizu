@@ -147,6 +147,14 @@ def clear_all():
     del files_moved[:]
 
 
+def get_watchdirs():
+    """
+    Retrieves the list of watched dirs
+    :return:
+    """
+    return cfg.watch()
+
+
 def notify_chan():
     return cfg.chan()
 
@@ -204,7 +212,8 @@ def help(nick, chan):
     return {
         "watch enable": "",
         "watch disable": "",
-        "watch limit": "<num>"
+        "watch limit": "<num>",
+        "watch list": "lists watched directories"
     }
 
 
@@ -231,6 +240,9 @@ def command_watch(nick, chan, cmd, irc):
         print "watch: Setting watchlimit to %s" % cmd[1]
         set_notify_limit(cmd[1])
         irc.sendmsg("Watch notifications limit set to %s" % cmd[1], chan)
+
+    elif cmd[0] == "list":
+        irc.sendmsg(str(get_watchdirs()), chan)
 
 
 def watch_notify(files, chan, msg, irc):
