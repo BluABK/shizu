@@ -251,12 +251,13 @@ def get_playing():
                 mount_found = True
                 item += '/'
             if mount_found:
-                path += item
+                path.append(item)
             else:
                 samba_meta.append(item)
 
         # Join mountpoint to path
-        #path = path[0] + ' '.join(path[1:])
+        path = path[0] + ' '.join(path[1:])
+        """
         tmp = ""
         for item in path:
             if item is not path[-1]:
@@ -264,6 +265,7 @@ def get_playing():
             else:
                 tmp += item
         path = tmp
+        """
         print "meta: %s\npath: %s\ndate: %s" % (samba_meta, path, date)
 
         test_playback = Playback("test")
