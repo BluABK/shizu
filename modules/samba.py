@@ -237,10 +237,35 @@ def get_playing():
         # throw out empty lines
         if not len(line):
             continue
-        tmp_line = re.split(r'\s{3,}', line)
-        print tmp_line
+
+        # This is required for later versions, because it makes nonsensical spacing
+        samba_raw = line.split()
+        print "raw: %s" % samba_raw
+        mount_found = False
+        date = ' '.join(samba_raw[-5:])
+        samba_meta = []
+        path = []
+        for item in samba_raw[:-5]:
+            if '/' in item:
+                # Signal that the path has begun and add a missing trailing / to mount point item
+                mount_found = True
+                item += '/'
+            if mount_found:
+                path += item
+            else:
+                samba_meta.append(item)
+
+        # Join mountpoint to path
+        path = path[0] + ' '.join(path[1:])
+        print "meta: %s\npath: %s\ndate: %s" % (samba_meta, path, date)
 
         test_playback = Playback("test")
+
+        """ [Deprecated in later versions of samba]
+
+        # This is sufficient for older samba
+        # tmp_line = re.split(r'\s{3,}', line)
+
         if test_playback.set_stringdate(tmp_line[-1]):
             print "Two-numeric date"
             date = tmp_line[-1]
@@ -256,7 +281,7 @@ def get_playing():
             # Merge multiple path items to one
             for path_item in tmp_line[6:-2]:
                 path += path_item
-
+        """
         new_playback = Playback(path)
         new_playback.set_stringdate(date)
         li.append(new_playback)
