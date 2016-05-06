@@ -1,13 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# TODO: Have module-specific commands loaded from the modules themselves, not shizu.py's command()
-# TODO: Support multiple IRC channels
-# TODO: Support multiple IRC Servers
-# TODO: Support SSL
-# TODO: Implement command to trigger server-side permission-sentinel.sh - and assign this to a server-side features mod
-# TODO: Add try and SomeReasonableExceptionHandler across code
-
 # Import necessary modules
 import ConfigParser
 import re  # Regex for the win.
@@ -45,7 +38,7 @@ __author__ = 'BluABK <abk@blucoders.net'
 clr_selection = deque([clr.green, clr.red, clr.blue, clr.purple, clr.cyan, clr.white])
 
 
-class Config:  # Shizu's config class # TODO: Add ConfigParser for writing changes to config.ini
+class Config:  # Shizu's config class
     config = ConfigParser.RawConfigParser()
 
     def __init__(self):
