@@ -12,6 +12,7 @@
 import ConfigParser
 import re  # Regex for the win.
 import socket  # A rather *useful* network tool
+import ssl     # Secure Socket Layer
 import time  # For time-based greeting functionality
 from random import randint
 
@@ -49,29 +50,59 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
 
     def __init__(self):
         print "%s[%s]%s:\t Initiating config..." % (my_colour, my_name, clr.off)
+        self.use_ssl = False
         self.config.read('config.ini')
 
+    def ssl(self):
+        return self.use_ssl
+
     def server(self):
-        return str(self.config.get('irc', 'server'))
+        if self.config.has_option('irc', 'server'):
+            return str(self.config.get('irc', 'server'))
+        else:
+            self.config.set('irc', 'server')
 
     def spass(self):
-        return str(self.config.get('irc', 'password'))
+        if self.config.has_option('irc', 'password'):
+            return str(self.config.get('irc', 'password'))
+        else:
+            self.config.set('irc', 'password')
 
     def port(self):
-        return int(self.config.get('irc', 'port'))
+        if self.config.has_option('irc', 'port'):
+            port = self.config.get('irc', 'port')
+            if '+' in port:
+                self.use_ssl = True
+                port = port.strip('+')
+
+            return int(port)
+        else:
+            self.config.set('irc', 'port', '6667')
 
     def ping_interval(self):
         """ The amount of time in seconds between module_ping calls. Supports float """
-        return int(self.config.get('irc', 'ping interval'))
+        if self.config.has_option('irc', 'ping interval'):
+            return int(self.config.get('irc', 'ping interval'))
+        else:
+            self.config.set('irc', 'ping interval')
 
     def chan(self):
-        return str(self.config.get('irc', 'channel'))
+        if self.config.has_option('irc', 'channel'):
+            return str(self.config.get('irc', 'channel'))
+        else:
+            self.config.set('irc', 'channel')
 
     def nick(self):
-        return str(self.config.get('irc', 'nickname'))
+        if self.config.has_option('irc', 'nickname'):
+            return str(self.config.get('irc', 'nickname'))
+        else:
+            self.config.set('irc', 'nickname', 'shizu')
 
     def realname(self):
-        return str(self.config.get('irc', 'real name'))
+        if self.config.has_option('irc', 'real name'):
+            return str(self.config.get('irc', 'real name'))
+        else:
+            self.config.set('irc', 'real name', 'Nibiiro Shizuka')
 
     def has_oper(self):
         try:
@@ -84,50 +115,61 @@ class Config:  # Shizu's config class # TODO: Add ConfigParser for writing chang
             return False
 
     def oper_name(self):
-        return str(self.config.get('irc', 'oper name'))
+        if self.config.has_option('irc', 'oper name'):
+            return str(self.config.get('irc', 'oper name'))
 
     def oper_pass(self):
-        return str(self.config.get('irc', 'oper password'))
+        if self.config.has_option('irc', 'oper password'):
+            return str(self.config.get('irc', 'oper password'))
 
     def cmdsym(self):
-        return str(self.config.get('irc', 'cmdsymbol'))
+        if self.config.has_option('irc', 'cmdsymbol'):
+            return str(self.config.get('irc', 'cmdsymbol'))
+        else:
+            self.config.set('irc', 'cmdsymbol', '!')
 
     def quitmsg(self):
-        return str(self.config.get('irc', 'quit-message'))
+        if self.config.has_option('irc', 'quit-message'):
+            return str(self.config.get('irc', 'quit-message'))
+        else:
+            self.config.set('irc', 'quit-message', 'Bye!')
 
     def quitpro(self):
-        return str(self.config.get('irc', 'quit-protection'))
+        if self.config.has_option('irc', 'quit-protection'):
+            return str(self.config.get('irc', 'quit-protection'))
 
     def proxy_nicks(self):
-        # try:
-        return_dbg = self.config.get('irc', 'proxy-users')
-        return return_dbg
-
-    #    except ConfigParser.NoSectionError:
-    #        return "That section does not seem to exist"
-    #    except ConfigParser.NoOptionError:
-    #        return "Option does not seem to exist"
+        if self.config.has_option('irc', 'proxy-users'):
+            return_dbg = self.config.get('irc', 'proxy-users')
+            return return_dbg
 
     def su(self):
-        return str(self.config.get('users', 'superusers'))
+        if self.config.has_option('users', 'superusers'):
+            return str(self.config.get('users', 'superusers'))
 
     def nspass(self):
-        return str(self.config.get('nickserv', 'password'))
+        if self.config.has_option('nickserv', 'password'):
+            return str(self.config.get('nickserv', 'password'))
 
     def backlog(self):
-        return str(self.config.getint('irc', 'backlog-limit'))
+        if self.config.has_option('irc', 'backlog-limit'):
+            return str(self.config.getint('irc', 'backlog-limit'))
 
     def triggers_words(self):
-        return str(self.config.get('triggers', 'words'))
+        if self.config.has_option('triggers', 'words'):
+            return str(self.config.get('triggers', 'words'))
 
     def triggers_badwords(self):
-        return str(self.config.get('triggers', 'badwords'))
+        if self.config.has_option('triggers', 'badwords'):
+            return str(self.config.get('triggers', 'badwords'))
 
     def triggers_ignorednicks(self):
-        return str(self.config.get('triggers', 'ignored-nicks'))
+        if self.config.has_option('triggers', 'ignored-nicks'):
+            return str(self.config.get('triggers', 'ignored-nicks'))
 
     def commands_ignorednicks(self):
-        return str(self.config.get('commands', 'ignored-nicks'))
+        if self.config.has_option('commands', 'ignored-nicks'):
+            return str(self.config.get('commands', 'ignored-nicks'))
 
     def chk_command_perms(self, user, inst):
         try:
@@ -968,8 +1010,12 @@ def triggers(usernick, msg, chan, irc):
 
 class Client:
     def __init__(self):
-        print "Spawned client instance"
+        cfg.port()
+        print "Spawned client instance (ssl = %s)" % cfg.ssl()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if cfg.ssl():
+            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            self.sock = context.wrap_socket(self.sock, server_hostname=cfg.server())
         self.buf = ""
         self.running = True
 
@@ -1013,7 +1059,7 @@ class Client:
         while self.sock and self.running:
             try:
                 recvraw = self.readline()
-            except socket.timeout:
+            except (socket.timeout, ssl.SSLError):
                 recvraw = None
 
             # Module ping()
