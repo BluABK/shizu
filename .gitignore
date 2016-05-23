@@ -14,5 +14,4 @@ config.ini.mostrecent
 iteration
 launch-bot.sh
 test.py
-weather.py
 
