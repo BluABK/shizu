@@ -490,6 +490,8 @@ def command_yr(nick, chan, cmd, irc):
             return
 
         try:
+            print "weather debug:"
+            print " ".join(map(str, cmd))
             forecast = weather_update(" ".join(map(str, cmd)), hour=time.localtime().tm_hour,
                                          minute=time.localtime().tm_min, debug=kittens)
             for item in cmd:
