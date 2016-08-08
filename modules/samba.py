@@ -188,6 +188,8 @@ def format_np_mediainfo(format_dict):
         output += "No Artist"
     if "Album" in format_dict:
         output += " - %s" % format_dict["Album"]
+    elif "Product" in format_dict:
+        output += " - %s" % format_dict["Product"]  # WAV/PCM has Product instead of Album
     else:
         output += " - No Album"
     if "ISBN" in format_dict:
