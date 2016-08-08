@@ -154,6 +154,8 @@ def format_np(format_dict):
         output += "No Artist"
     if "Album" in format_dict:
         output += " - %s" % format_dict["Album"]
+    elif "Product" in format_dict:
+        output += " - %s" % format_dict["Product"]  # WAV/PCM has Product instead of Album
     else:
         output += " - No Album"
     if "Isbn" in format_dict:
@@ -314,6 +316,7 @@ def get_playing():
     format_dict = format_exiftool(tmp_playback, "Artist", format_dict)
     format_dict = format_exiftool(tmp_playback, "Title", format_dict)
     format_dict = format_exiftool(tmp_playback, "Album", format_dict)
+    format_dict = format_exiftool(tmp_playback, "Product", format_dict)  # Album equivalent in WAV/PCM
     format_dict = format_exiftool(tmp_playback, "Albumartist", format_dict)
     format_dict = format_exiftool(tmp_playback, "Isbn", format_dict)
     format_dict = format_exiftool(tmp_playback, "FileType", format_dict)
