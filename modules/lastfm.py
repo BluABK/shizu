@@ -137,11 +137,11 @@ my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.red
 
 cfg = Config()
-#network = pylast.LastFMNetwork(api_key=cfg.get_api_key(), api_secret=cfg.get_api_secret(),
-#                               username=cfg.get_username(), password_hash=cfg.get_password_hash())
-
 network = pylast.LastFMNetwork(api_key=cfg.get_api_key(), api_secret=cfg.get_api_secret(),
-                               username=cfg.get_username(), password=cfg.get_password())
+                               username=cfg.get_username(), password_hash=cfg.get_password_hash())
+
+#network = pylast.LastFMNetwork(api_key=cfg.get_api_key(), api_secret=cfg.get_api_secret(),
+#                               username=cfg.get_username(), password=cfg.get_password())
 
 def test_connection():
     """
