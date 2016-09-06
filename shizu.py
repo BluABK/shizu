@@ -754,7 +754,8 @@ def commands(usernick, msg, chan, irc):
             modules["stats"].update_cmd(cmd[0], 1)
             # stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
         #try:
-        mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
+        retv = mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
+        print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         #except cmd[0].NotPlaying as lastfm_nop:
         #    raise lastfm_nop
         return
