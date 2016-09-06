@@ -137,7 +137,7 @@ class Config:  # Shizu's config class
 
 
 class NotPlaying(Exception):
-    def __init__(self, message, errors, *args):
+    def __init__(self, message):
         """
         Exception thrown when lastfm claims the user is not playing anything
         (Workaround for foobar2000 lastfm module's "midnight time travel bug")
@@ -150,10 +150,10 @@ class NotPlaying(Exception):
         """
 
         # Call the base class constructor with the parameters it needs
-        super(NotPlaying, self).__init__(message, errors, *args)
+        super(NotPlaying, self).__init__(message)
 
         # Code for errors
-        self.errors = "User is not playing anything"
+        #self.errors = "User is not playing anything"
 
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.red
