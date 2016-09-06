@@ -756,11 +756,9 @@ def commands(usernick, msg, chan, irc):
         #try:
         retv = None
         try:
-            if "lastfm" in modules:
-                import lastfm.NotPlaying as NotPlaying
             retv = mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
             print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
-        except NotPlaying as enp:
+        except lastfm.NotPlaying as enp:
             print enp
             print enp.message
             # If user is not playing anything, verify with samba
