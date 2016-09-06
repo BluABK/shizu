@@ -760,15 +760,14 @@ def commands(usernick, msg, chan, irc):
             print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         except Exception as enp:
             if enp.message is 'LastFMNotPlaying':
-                print enp
-                print "---"
-                print enp.message
-                print "---"
+                print "Caught LastFMNotPlaying Exception"
                 # If user is not playing anything, verify with samba
                 if "samba" in modules:
                     try:
-                        retv = mod_commands[samba](usernick, chan, cmd[1:], irc)
-                        print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
+                        #retv = mod_commands['samba'](usernick, chan, cmd[1:], irc)
+                        retv = modules["samba"].get_playing()
+                        print "retv = %s" % retv
+                        #print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
                     except Exception as esmb:
                         print esmb
                         print esmb.message
