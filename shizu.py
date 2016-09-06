@@ -758,19 +758,22 @@ def commands(usernick, msg, chan, irc):
         try:
             retv = mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
             print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
-        except ArithmeticError as enp:
-            print enp
-            print enp.message
-            # If user is not playing anything, verify with samba
-            if "samba" in modules:
-                try:
-                    retv = mod_commands[samba](usernick, chan, cmd[1:], irc)
-                    print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
-                except Exception as esmb:
-                    print esmb
-                    print esmb.message
+        except Exception as enp:
+            if enp is NotPlaying:
+                print enp
+                print enp.message
+                # If user is not playing anything, verify with samba
+                if "samba" in modules:
+                    try:
+                        retv = mod_commands[samba](usernick, chan, cmd[1:], irc)
+                        print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
+                    except Exception as esmb:
+                        print esmb
+                        print esmb.message
+                else:
+                    print "ERROR: Samba module not available to verify NowPlaying situation"
             else:
-                print "ERROR: Samba module not available to verify NowPlaying situation"
+                raise enp
         print "DEBUG*: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         #except cmd[0].NotPlaying as lastfm_nop:
         #    raise lastfm_nop
