@@ -407,13 +407,13 @@ def command_lastfm(nick, chan, cmd, irc):
             print type(net)
 
             # if type(auth) is str and type(net) is str:
-            if type(auth) is str and type(net) is str:
+            if auth and net:
                 irc.sendmsg("I am currently authenticated as " + auth + " on " + net, chan)
-            elif type(auth) is str:
+            elif auth:
                 irc.sendmsg(
                     "I am currently authenticated as " + auth + " on *NO NETWORK*, how does that even work? =/",
                     chan)
-            elif net is str:
+            elif net:
                 irc.sendmsg("I am somehow connected to " + net + ", but not authenticated... Okay then!", chan)
             else:
                 irc.sendmsg("I am unable to query the network, is LastFM throwing a fit?", chan)
