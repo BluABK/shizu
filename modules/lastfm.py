@@ -404,7 +404,7 @@ def command_lastfm(nick, chan, cmd, irc):
             #auth = unicodedata.normalize('NFKD', auth).encode('utf8', 'ignore')
             print auth
             print type(auth)
-            net = network.name
+            net = network.name.encode('utf8')
             print net
             print type(net)
 
