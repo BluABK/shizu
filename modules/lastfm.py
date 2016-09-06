@@ -258,7 +258,8 @@ def now_playing(user):
         try:
             retval = network.get_user(u).get_now_playing()
             if not retval:
-                raise NotPlaying
+                # TODO: BAD practice, but it is inexplicably hard to make shizu call NotPlaying without knowing about it
+                raise Exception('LastFMNotPlaying')
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"
