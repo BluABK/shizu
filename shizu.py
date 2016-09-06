@@ -764,7 +764,7 @@ def commands(usernick, msg, chan, irc):
                 # If user is not playing anything, verify with samba
                 if "samba" in modules:
                     try:
-                        retv = mod_commands['samba'](usernick, chan, 'np', irc)
+                        retv = mod_commands['samba'](usernick, chan, ['np'], irc)
                         #retv = modules["samba"].get_playing()
                         print "retv = %s" % retv
                         print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
