@@ -777,8 +777,7 @@ def commands(usernick, msg, chan, irc):
                 irc.sendmsg("%s is not playing anything." % usernick, chan)
 
         print "DEBUG*: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
-        #except cmd[0].NotPlaying as lastfm_nop:
-        #    raise lastfm_nop
+
         return
 
     # General commands
