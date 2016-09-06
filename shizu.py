@@ -753,10 +753,10 @@ def commands(usernick, msg, chan, irc):
         if "stats" in modules:
             modules["stats"].update_cmd(cmd[0], 1)
             # stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
-        try:
-            mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
-        except cmd[0].NotPlaying as lastfm_nop:
-            raise lastfm_nop
+        #try:
+        mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
+        #except cmd[0].NotPlaying as lastfm_nop:
+        #    raise lastfm_nop
         return
 
     # General commands
