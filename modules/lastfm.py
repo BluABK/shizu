@@ -398,7 +398,7 @@ def command_lastfm(nick, chan, cmd, irc):
             irc.sendmsg(str(auth.details), chan)
         else:
             # TODO: global name 'unicodedata' is not defined (issue residing within pylast itself?)
-            auth = unicodedata.normalize('NFKD', auth).encode('ascii', 'ignore')
+            auth = unicodedata.normalize('NFKD', auth).encode('utf8', 'ignore')
             print auth
             print type(auth)
             net = network.name
