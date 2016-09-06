@@ -768,10 +768,13 @@ def commands(usernick, msg, chan, irc):
                                                                                cmd[1:], irc, retv)
                     except Exception as esmb:
                         if esmb.message is "SambaNotPlaying":
-                            print "Caught SambaNotPlaying Exception"
+                            print "Caught SambaNotPlaying Exception (Verification mode)"
                             irc.sendmsg("%s is not playing anything." % usernick, chan)
                 else:
                     print "ERROR: Samba module not available to verify NowPlaying situation"
+            elif enp.message is "SambaNotPlaying":
+                print "Caught SambaNotPlaying Exception"
+                irc.sendmsg("%s is not playing anything." % usernick, chan)
 
         print "DEBUG*: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         #except cmd[0].NotPlaying as lastfm_nop:
