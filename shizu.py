@@ -753,7 +753,6 @@ def commands(usernick, msg, chan, irc):
         if "stats" in modules:
             modules["stats"].update_cmd(cmd[0], 1)
             # stats.update_user(usernick, cmd[0], 1) # TODO broken by design :(
-        #try:
         retv = None
         try:
             retv = mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
@@ -765,7 +764,6 @@ def commands(usernick, msg, chan, irc):
                 if "samba" in modules:
                     try:
                         retv = mod_commands['samba'](usernick, chan, ['np'], irc)
-                        #retv = modules["samba"].get_playing()
                         print "retv = %s" % retv
                         print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
                     except Exception as esmb:
@@ -773,8 +771,7 @@ def commands(usernick, msg, chan, irc):
                         print esmb.message
                 else:
                     print "ERROR: Samba module not available to verify NowPlaying situation"
-            else:
-                raise enp
+
         print "DEBUG*: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         #except cmd[0].NotPlaying as lastfm_nop:
         #    raise lastfm_nop
