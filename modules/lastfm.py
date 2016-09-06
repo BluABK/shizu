@@ -137,7 +137,7 @@ class Config:  # Shizu's config class
 
 
 class NotPlaying(Exception):
-    def __init__(self, message):
+    def __init__(self):
         """
         Exception thrown when lastfm claims the user is not playing anything
         (Workaround for foobar2000 lastfm module's "midnight time travel bug")
@@ -148,12 +148,8 @@ class NotPlaying(Exception):
         :param message:
         :param errors:
         """
-
-        # Call the base class constructor with the parameters it needs
-        super(NotPlaying, self).__init__(self, message)
-
-        # Code for errors
-        #self.errors = "User is not playing anything"
+        message = "User is not playing anything"
+        pass
 
 my_name = os.path.basename(__file__).split('.', 1)[0]
 my_colour = clr.red
@@ -261,8 +257,8 @@ def now_playing(user):
 
         try:
             retval = network.get_user(u).get_now_playing()
-            print retval
-            raise NotPlaying
+            if not retval:
+                raise NotPlaying
         except IndexError:
             print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
             return "timeout"

@@ -757,8 +757,15 @@ def commands(usernick, msg, chan, irc):
         retv = None
         try:
             retv = mod_commands[cmd[0]](usernick, chan, cmd[1:], irc)
-        except Exception as ex:
-            print ex.message
+        except NotPlaying as enp:
+            print enp
+            print enp.message
+            # If user is not playing anything, verify with samba
+            try:
+                retv = mod_commands[samba](usernick, chan, cmd[1:], irc)
+            except Exception as esmb:
+                print esmb
+                print esmb.message
         print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
         #except cmd[0].NotPlaying as lastfm_nop:
         #    raise lastfm_nop
