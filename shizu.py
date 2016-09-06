@@ -763,12 +763,13 @@ def commands(usernick, msg, chan, irc):
                 # If user is not playing anything, verify with samba
                 if "samba" in modules:
                     try:
-                        retv = mod_commands['samba'](usernick, chan, ['np'], irc)
-                        print "retv = %s" % retv
-                        print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan, cmd[1:], irc, retv)
+                        retv2 = mod_commands['samba'](usernick, chan, ['np'], irc)
+                        print "DEBUG: mod_commands[%s](%s, %s, %s, %s): %s" % (cmd[0], usernick, chan,
+                                                                               cmd[1:], irc, retv)
                     except Exception as esmb:
-                        print esmb
-                        print esmb.message
+                        if esmb.message is "SambaNotPlaying":
+                            print "Caught SambaNotPlaying Exception"
+                            irc.sendmsg("%s is not playing anything." % usernick, chan)
                 else:
                     print "ERROR: Samba module not available to verify NowPlaying situation"
 
