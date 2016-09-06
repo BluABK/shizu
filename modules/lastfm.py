@@ -389,22 +389,14 @@ def command_lastfm(nick, chan, cmd, irc):
             for i in feedback:
                 irc.sendmsg(str(i), chan)
     elif cmd[0] == "status":
-        print "Setting auth"
-        #auth = test_connection()
-        auth = network.get_authenticated_user().get_name()
+        auth = test_connection()
 
         if type(auth) is Exception:
             print "auth type is Exception!!"
             irc.sendmsg(str(auth.message), chan)
             irc.sendmsg(str(auth.details), chan)
         else:
-            # TODO: global name 'unicodedata' is not defined (issue residing within pylast itself?)
-            #auth = unicodedata.normalize('NFKD', auth).encode('utf8', 'ignore')
-            print auth
-            print type(auth)
             net = unicode(network.name, 'utf8')
-            print net
-            print type(net)
 
             # if type(auth) is str and type(net) is str:
             if auth and net:
