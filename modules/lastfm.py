@@ -3,6 +3,8 @@ import cgi
 import os
 import re
 
+import unicodedata
+
 import colours as clr
 
 __author__ = 'BluABK <abk@blucoders.net'
@@ -138,7 +140,7 @@ class NotPlaying(Exception):
     def __init__(self, message, errors, *args):
         """
         Exception thrown when lastfm claims the user is not playing anything
-        (Workaround for foobar2000 lastfm module's "midnight timetravel bug")
+        (Workaround for foobar2000 lastfm module's "midnight time travel bug")
 
         Takes an infinite number of arguments for when you want to return something
         along with the exception, like for instance the default message for a user
