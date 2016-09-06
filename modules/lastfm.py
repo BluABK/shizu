@@ -150,7 +150,7 @@ class NotPlaying(Exception):
         """
 
         # Call the base class constructor with the parameters it needs
-        super(NotPlaying, self).__init__(message)
+        super(NotPlaying, self).__init__(message, errors, *args)
 
         # Code for errors
         self.errors = "User is not playing anything"

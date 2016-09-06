@@ -766,9 +766,6 @@ def commands(usernick, msg, chan, irc):
 
     # General commands
     if cmd[0] == "awesome":
-        print "This is a test if printing works"
-        print "This is a test if printing works"
-        print "This is a test if printing works"
         irc.sendmsg("Everything is awesome!", chan)
         return
     elif cmd[0] == "version":
