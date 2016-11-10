@@ -97,8 +97,9 @@ def set_url(url):
     :return:
     """
     global youtube_url
-    # Strip any unrelated mumbo jumbo from url
-    youtube_url = url.split('&', 1)[0]
+    # Strip any unrelated mumbo jumbo from url, if there is an url at all
+    if url is not None:
+        youtube_url = url.split('&', 1)[0]
 
 
 def get_url():
