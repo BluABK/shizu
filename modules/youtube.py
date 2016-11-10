@@ -29,6 +29,21 @@ def get_title(keep=False):
     Grabs title of a YouTube video
     :return:
     """
+    try:
+        get_title_curl(keep)
+    except (OSError, CalledProcessError):
+        try:
+            get_title_ytdl(keep)
+        except (OSError, CalledProcessError):
+            print "Both retrieval methods failed spectacularly!"
+            return None
+
+
+def get_title_ytdl(keep=False):
+    """
+    Grabs title of a YouTube video using youtube-dl
+    :return:
+    """
     cmd = None
     if keep:
         url = get_url()
@@ -41,6 +56,29 @@ def get_title(keep=False):
         out = out.rstrip("\r\n")
         return out
     except (OSError, CalledProcessError) as e:
+        print cmd
+        return None
+
+
+def get_title_curl(keep=False):
+    """
+    Grabs title of a YouTube video using curl
+    :return:
+    """
+    cmd = None
+    if keep:
+        url = get_url()
+    else:
+        url = pop_url()
+    try:
+        print "curl: retrieving video for url: %s" % url.strip('\n')
+        # TODO: Make cross compatible with 100% pyregex
+        cmd = "curl -s &s | grep '<title>' | head -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1 | sed 's/ - YouTube$//'" \
+              % url.strip('\n')
+        out = check_output(cmd, shell=True)
+        out = out.strip("\r\n")
+        return out
+    except(OSError, CalledProcessError) as e:
         print cmd
         return None
 
