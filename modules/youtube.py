@@ -71,14 +71,14 @@ def get_title_curl(keep=False):
     else:
         url = str(pop_url())
     try:
-        print "curl: retrieving video for url: %s" % url.strip('\n')
+        print "curl: retrieving video for url: %s" % url
         # TODO: Make cross compatible with 100% pyregex
         cmd = "curl -s &s | grep '<title>' | head -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1 | sed 's/ - YouTube$//'" \
-              % url.strip('\n')
+              % url
         out = check_output(cmd, shell=True)
         out = out.strip("\r\n")
         return out
-    except(OSError, CalledProcessError) as e:
+    except(OSError, CalledProcessError):
         print cmd
         return None
 
