@@ -74,7 +74,7 @@ def get_title_curl(keep=False):
     try:
         print "curl: retrieving video for url: %s" % url
         # TODO: Make cross compatible with 100% pyregex
-        cmd = "curl -s &s | grep '<title>' | head -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1 | sed 's/ - YouTube$//'" \
+        cmd = "curl -s %s | grep '<title>' | head -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1 | sed 's/ - YouTube$//'" \
               % url
         out = check_output(cmd, shell=True)
         print "DEBUG:\t out = %s" % out
