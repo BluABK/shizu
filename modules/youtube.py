@@ -30,8 +30,14 @@ def get_title(keep=False):
     :return:
     """
     try:
-        return get_title_curl(keep)
-    except (OSError, CalledProcessError):
+        out = get_title_curl(keep)
+        if len(out) < 256 and '\n' not in out:
+            return out
+        else:
+            raise AssertionError("Youtube Title is ludicrously long")
+
+    except (OSError, CalledProcessError, AssertionError) as e:
+        print e
         try:
             return get_title_ytdl(keep)
         except (OSError, CalledProcessError):
