@@ -70,16 +70,13 @@ def get_title_curl(keep=False):
         url = get_url()
     else:
         url = pop_url()
-    print "DEBUG:\t URL of type %s" % type(url)
     try:
         print "curl: retrieving video for url: %s" % url
         # TODO: Make cross compatible with 100% pyregex
         cmd = "curl -s %s | grep '<title>' | head -n 1 | cut -d '>' -f 2 | cut -d '<' -f 1 | sed 's/ - YouTube$//'" \
               % url
         out = check_output(cmd, shell=True)
-        print "DEBUG:\t out = %s" % out
         out = out.strip("\r\n")
-        print "DEBUG:\t out = %s" % out
         return out
     except(OSError, CalledProcessError):
         print "EXCEPTION OCCURED"
