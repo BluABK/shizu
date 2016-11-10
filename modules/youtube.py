@@ -67,9 +67,9 @@ def get_title_curl(keep=False):
     """
     cmd = None
     if keep:
-        url = get_url()
+        url = str(get_url())
     else:
-        url = pop_url()
+        url = str(pop_url())
     try:
         print "curl: retrieving video for url: %s" % url.strip('\n')
         # TODO: Make cross compatible with 100% pyregex
