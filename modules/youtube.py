@@ -30,10 +30,10 @@ def get_title(keep=False):
     :return:
     """
     try:
-        get_title_curl(keep)
+        return get_title_curl(keep)
     except (OSError, CalledProcessError):
         try:
-            get_title_ytdl(keep)
+            return get_title_ytdl(keep)
         except (OSError, CalledProcessError):
             print "Both retrieval methods failed spectacularly!"
             return None
