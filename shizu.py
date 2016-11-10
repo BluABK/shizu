@@ -1150,9 +1150,7 @@ class Client:
                 # Check is message was received via proxy nickname
                 if nick.lower() in cfg.proxy_nicks().split(','):
                     tmp_chk = nickname_proxy(msg)
-                    print "DBG: tmp_chk = %s" % tmp_chk
                     if tmp_chk[0] is not None:
-                        print "DBG: tmp_chk != None"
                         nick = tmp_chk[0]
                         line = tmp_chk[1]
 
