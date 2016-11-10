@@ -97,10 +97,7 @@ def set_url(url):
     :return:
     """
     global youtube_url
-    # Strip any unrelated mumbo jumbo from url, if there is an url at all
-    if url is not None:
-        youtube_url = url.split('&', 1)[0]
-
+    youtube_url = url
 
 def get_url():
     """
@@ -154,7 +151,9 @@ def parse_url(msg):
         if re.search('(http[s]?://)?(www\.)?(youtube\.com|youtu\.be)/[^ ]+', item):
             print "YouTube: current = %s" % item
             # TODO: add_url(item)
-            set_url(item)
+            # Strip any unrelated mumbo jumbo from url, if there is an url at all
+            #if url is not None:
+            set_url(item.split('&', 1)[0])
 
 
 def printable_title(chan, irc, fancy=True):
