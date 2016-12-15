@@ -357,28 +357,27 @@ def weather_update(place, hour=-1, minute=-1, return_raw=False, limit=100, debug
         t[4] = minute
         t = time.mktime(t)
 
-        if hour < current_time.tm_hour or (hour == current_time.tm_hour and minute < current_time.tm_min):
-            t += 3600*24
+        #if hour < current_time.tm_hour or (hour == current_time.tm_hour and minute < current_time.tm_min):
+        #    t += 3600*24
 
         for f in forecasts:
-            if f is not None:
+            if debug:
+                print "Checking time:\t\t %02d - %02d" % (f.get("time_from").tm_hour, f.get("time_to").tm_hour) +\
+                      " [%d <= %d <= %s]" % (time.mktime(f.get("time_from")), t, time.mktime(f.get("time_to")))
+
+            if time.mktime(f.get("time_from")) <= t <= time.mktime(f.get("time_to")):
+                date_stamp = "%02d.%02d.%s %02d:%02d" % (
+                    f.get("time_from").tm_mday, f.get("time_from").tm_mon, f.get("time_from").tm_year,
+                    f.get("time_from").tm_hour, f.get("time_from").tm_min)
                 if debug:
-                    print "Checking time:\t\t %02d - %02d" % (f.get("time_from").tm_hour, f.get("time_to").tm_hour) +\
-                          " [%d <= %d <= %s]" % (time.mktime(f.get("time_from")), t, time.mktime(f.get("time_to")))
+                    print "\tMatched Time:\t %02d - %02d" % (f.get("time_from").tm_hour, f.get("time_to").tm_hour)
 
-                if time.mktime(f.get("time_from")) <= t <= time.mktime(f.get("time_to")):
-                    date_stamp = "%02d.%02d.%s %02d:%02d" % (
-                        f.get("time_from").tm_mday, f.get("time_from").tm_mon, f.get("time_from").tm_year,
-                        f.get("time_from").tm_hour, f.get("time_from").tm_min)
-                    if debug:
-                        print "\tMatched Time:\t %02d - %02d" % (f.get("time_from").tm_hour, f.get("time_to").tm_hour)
-
-                    if return_raw:
-                        return f
-                    else:
-                        return "%s (%s): %s, rain:%s mm, wind:%s mps, temp:%s deg C" % (
-                            f.get("place"), date_stamp, f.get("name"), f.get("rain"), f.get("wind"),
-                            f.get("temperature"))
+                if return_raw:
+                    return f
+                else:
+                    return "%s (%s): %s, rain:%s mm, wind:%s mps, temp:%s deg C" % (
+                        f.get("place"), date_stamp, f.get("name"), f.get("rain"), f.get("wind"),
+                        f.get("temperature"))
         lim_cnt += 1
 
 
