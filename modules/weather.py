@@ -361,6 +361,7 @@ def weather_update(place, hour=-1, minute=-1, return_raw=False, limit=100, debug
             t += 3600*24
 
         for f in forecasts:
+            if f is not None:
                 if debug:
                     print "Checking time:\t\t %02d - %02d" % (f.get("time_from").tm_hour, f.get("time_to").tm_hour) +\
                           " [%d <= %d <= %s]" % (time.mktime(f.get("time_from")), t, time.mktime(f.get("time_to")))
@@ -488,6 +489,21 @@ def command_yr(nick, chan, cmd, irc):
             irc.sendmsg("%s: %02d C & %s: %02d C" % (
                 extreme[0][0], extreme[0][1], extreme[1][0], extreme[1][1]), chan)
             return
+        elif cmd[0].lower() == "tryhard":
+            lookups = 0
+            try:
+                print "weather debug:"
+                print " ".join(map(str, cmd))
+                forecast = weather_update(" ".join(map(str, cmd)), hour=time.localtime().tm_hour,
+                                          minute=time.localtime().tm_min, debug=kittens)
+
+                print "Result: " + forecast
+                if forecast is not None:
+                    irc.sendmsg(forecast, chan)
+                else:
+                    irc.sendmsg("No such weather station (lookups: %s)" % lookups, chan)
+            except:
+                irc.sendmsg("https://www.konata.us/nope.gif", chan)
 
         try:
             print "weather debug:"
