@@ -255,17 +255,14 @@ def now_playing(user):
                    (my_colour, my_name, clr.off, user))
             u = user
 
-        try:
-            retval = network.get_user(u).get_now_playing()
-            if not retval:
-                # TODO: BAD practice, but it is inexplicably hard to make shizu call NotPlaying without knowing about it
-                raise Exception('LastFMNotPlaying')
-        except IndexError:
-            print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
-            return "timeout"
+        return network.get_user(u).get_now_playing()
     except pylast.WSError:
-        print ('%s[%s\t now_playing()]%s: User %s DERPED' % (my_colour, my_name, clr.off, user))
-        return None
+        print ('%s[%s\t test_playing()]%s: network.get_user(%s).get_now_playing(): No such user' %
+               (my_colour, my_name, clr.off, user))
+        return "No user with that name was found"
+    except IndexError:
+        print ('%s[%s\t now_playing()]%s: Index out of range (timeout) for %s' % (my_colour, my_name, clr.off, u))
+        return "timeout"
 
 
 def recently_played(user, num):
