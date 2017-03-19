@@ -784,6 +784,18 @@ def commands(usernick, msg, chan, irc):
     if cmd[0] == "awesome":
         irc.sendmsg("Everything is awesome!", chan)
         return
+    elif cmd[0] == "count":
+        target = 3
+        if len(cmd) > 1:
+            target = cmd[1]
+            if target >= 100:
+                irc.sendmsg("No.", chan)
+                return
+        i = 0
+        while i <= target:
+            irc.sendmsg(i, chan)
+            i += 1
+
     elif cmd[0] == "version":
         irc.sendmsg("%s" % version(), chan)
         return
