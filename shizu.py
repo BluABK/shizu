@@ -695,8 +695,8 @@ def version():
     # retv = c_date + " (" + c_hash_short + ")"
     retv = str(check_output("git log -n 1 --pretty=format:'%h - %an, %ar: %s [' --shortstat", shell=True))
     retv_copy = retv
-    retv = retv.split('\n')[0][0:] + retv.split('\n')[1][1:] + ']'
     try:
+        retv = retv.split('\n')[0][0:] + retv.split('\n')[1][1:] + ']'
         print(retv)
         return retv
     except IndexError:
