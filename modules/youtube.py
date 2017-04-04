@@ -29,6 +29,7 @@ def get_title(keep=False):
     Grabs title of a YouTube video
     :return:
     """
+    """
     try:
         out = get_title_curl(keep)
         if len(out) < 256 and '\n' not in out:
@@ -37,12 +38,16 @@ def get_title(keep=False):
             raise AssertionError("Youtube Title is ludicrously long")
 
     except (OSError, CalledProcessError, AssertionError) as e:
+
         print e
-        try:
-            return get_title_ytdl(keep)
-        except (OSError, CalledProcessError):
-            print "Both retrieval methods failed spectacularly!"
-            return None
+        """
+    try:
+        return get_title_ytdl(keep)
+    except (OSError, CalledProcessError) as e:
+        #print "Both retrieval methods failed spectacularly!"
+        print "Failed parsing YouTube Title"
+        print e
+        return None
 
 
 def get_title_ytdl(keep=False):
