@@ -694,9 +694,14 @@ def version():
     # c_hash_short = str(check_output("git rev-parse --short HEAD", shell=True)).strip("\n")
     # retv = c_date + " (" + c_hash_short + ")"
     retv = str(check_output("git log -n 1 --pretty=format:'%h - %an, %ar: %s [' --shortstat", shell=True))
+    retv_copy = retv
     retv = retv.split('\n')[0][0:] + retv.split('\n')[1][1:] + ']'
-    print(retv)
-    return retv
+    try:
+        print(retv)
+        return retv
+    except IndexError:
+        print(retv_copy)
+        return retv_copy
 
 
 def nickname_proxy(msg):
