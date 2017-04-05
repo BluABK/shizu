@@ -1159,7 +1159,11 @@ class Client:
 
                 # Check is message was received via proxy nickname
                 if nick.lower() in cfg.proxy_nicks().split(','):
-                    tmp_chk = nickname_proxy(msg)
+                    try:
+                        tmp_chk = nickname_proxy(msg)
+                    except Exception as e:
+                        print("Exception in eventloop: %s" % e)
+                        continue
                     if tmp_chk[0] is not None:
                         nick = tmp_chk[0]
                         line = tmp_chk[1]
