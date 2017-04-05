@@ -719,15 +719,20 @@ def nickname_proxy(msg):
         line = ""
     elif msg["line"][0] != '<':
         # Continued sentence; doesn't start with a usernick identifier
-        # TODO: Will fail is continued sentence starts with '<'
         real_nick = telegram_cur_nick
         line = msg["line"]
     else:
-        # Assume that sentence starts with a usernick
-        split = msg["line"].split('> ')
-        real_nick = split[0][1:]
-        line = split[1]
-        telegram_cur_nick = real_nick
+        try:
+            # Assume that sentence starts with a usernick
+            split = msg["line"].split('> ')
+            real_nick = split[0][1:]
+            line = split[1]
+            telegram_cur_nick = real_nick
+        except IndexError as inerr:
+            # Report to console and ignore message
+            print("Exception thrown by msg['%s']" % msg)
+            print inerr
+            return None
 
     # Strip any fancy smancy unicode as it won't be a valid IRC nickname
     if real_nick is not None:
