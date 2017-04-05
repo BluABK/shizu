@@ -732,7 +732,7 @@ def nickname_proxy(msg):
             # Report to console and ignore message
             print("Exception thrown by msg['%s']" % msg)
             print inerr
-            return None
+            raise inerr
 
     # Strip any fancy smancy unicode as it won't be a valid IRC nickname
     if real_nick is not None:
