@@ -225,13 +225,13 @@ def get_playing2():
 def get_playing():
     try:
         status = check_output("sudo smbstatus -L -vvv | grep BATCH | grep RDONLY | grep DENY_WRITE"
-                              " | grep -v \.jpg | grep -v \.png", shell=True)
+                              " | grep -v \.jpg | grep -v \.png | grep -v \.pdf", shell=True)
     except CalledProcessError as cpe:
         # Sometimes BATCH mode isn't set, most cases seem to be ressume playback after the handle is gone
         print "smbstatus: grep BATCH failed, trying without."
         try:
-            status = check_output("sudo smbstatus -L -vvv | grep DENY_WRITE | grep -v \.jpg | grep -v \.png",
-                           shell=True)
+            status = check_output("sudo smbstatus -L -vvv | grep DENY_WRITE | grep -v \.jpg | grep -v \.png | grep -v "
+                                  "\.pdf", shell=True)
         except CalledProcessError as cpee:
             raise Exception('SambaNotPlaying')
     except Exception as e:
