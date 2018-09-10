@@ -334,7 +334,9 @@ def get_playing():
     format_dict = format_exiftool(tmp_playback, "BitsPerSample", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_dict)
 
-    return format_np(format_dict).encode('utf-8')
+    retval = format_np(format_dict).encode('utf-8')
+    print("Returning samba np dict: {}".format(retval.__dict__))
+    return
     # except:
     # return "Shell execute failed =/"
 
