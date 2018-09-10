@@ -146,8 +146,10 @@ def format_np(format_dict):
     # File is a raw WAVE/PCM
     if "FileType" in format_dict:
         if format_dict["FileType"] == "WAV":
-            return "{} <{} {} {}>".format(format_dict["FileName"], format_dict["Bit rate"], format_dict["FileType"],
+            retval = "{} <{} {} {}>".format(format_dict["FileName"], format_dict["Bit rate"], format_dict["FileType"],
                                           format_dict["BitsPerSample"])
+            print("Returning: {}".format(retval))
+            return retval
 
     output = ""
 
@@ -336,6 +338,7 @@ def get_playing():
 
     retval = format_np(format_dict).encode('utf-8')
     print("Returning samba np dict: {}".format(retval.__dict__))
+    print("Returning samba np dict: {}".format(retval))
     return retval
     # except:
     # return "Shell execute failed =/"
