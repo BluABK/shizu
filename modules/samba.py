@@ -336,7 +336,7 @@ def get_playing():
 
     retval = format_np(format_dict).encode('utf-8')
     print("Returning samba np dict: {}".format(retval.__dict__))
-    return
+    return retval
     # except:
     # return "Shell execute failed =/"
 
