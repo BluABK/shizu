@@ -143,6 +143,12 @@ def format_exiftool(playback, criteria, format_list):
 
 
 def format_np(format_dict):
+    # File is a raw WAVE/PCM
+    if "FileType" in format_dict:
+        if format_dict["FileType"] == "WAV":
+            return "{} <{} {} {}>".format(format_dict["FileName"], format_dict["Bit rate"], format_dict["FileType"],
+                                          format_dict["BitsPerSample"])
+
     output = ""
 
     if "Albumartist" in format_dict:
@@ -174,6 +180,7 @@ def format_np(format_dict):
             output += " %s-bit" % format_dict["BitsPerSample"]
         output += ">"
     print output
+
 
     return output
 
@@ -323,6 +330,7 @@ def get_playing():
     format_dict = format_exiftool(tmp_playback, "Albumartist", format_dict)
     format_dict = format_exiftool(tmp_playback, "Isbn", format_dict)
     format_dict = format_exiftool(tmp_playback, "FileType", format_dict)
+    format_dict = format_exiftool(tmp_playback, "FileName", format_dict)
     format_dict = format_exiftool(tmp_playback, "BitsPerSample", format_dict)
     format_dict = format_mediainfo(tmp_playback, "Bit rate", "tail -n1", format_dict)
 
